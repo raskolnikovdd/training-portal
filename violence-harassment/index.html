@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Safety Training</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #F8FAFC; color: #0F172A; line-height: 1.5; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+button { font-family: inherit; cursor: pointer; border: none; }
+a { color: var(--brand-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* INTRO screen — full viewport, centered */
+.intro-bg { flex: 1; padding: 16px; background: linear-gradient(135deg, var(--brand-darkblue) 0%, var(--brand-navy) 50%, var(--brand-darkblue) 100%); display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.intro-card { max-width: 600px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 28px; }
+.intro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.brand-shield { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-shrink: 0; }
+.brand-shield svg { width: 24px; height: 24px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.brand-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary); }
+.brand-sub { font-size: 11px; color: #64748B; margin-top: 2px; }
+.intro-title { font-size: 36px; font-weight: 700; margin-bottom: 4px; letter-spacing: -1px; }
+.intro-subtitle { font-size: 15px; color: #475569; margin-bottom: 20px; }
+.meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+.meta-pill { display: flex; align-items: center; gap: 8px; padding: 10px; background: #F1F5F9; border-radius: 10px; }
+.meta-pill .icon { width: 28px; height: 28px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.meta-pill .icon svg { width: 12px; height: 12px; color: var(--brand-primary); fill: none; stroke: currentColor; stroke-width: 2; }
+.meta-pill .label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #64748B; }
+.meta-pill .value { font-size: 12px; font-weight: 700; color: #0F172A; }
+.intro-info { background: #EFF6FB; border: 1px solid #C5DEEC; border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+.intro-info .info-title { font-size: 12px; font-weight: 700; color: var(--brand-darkblue); margin-bottom: 8px; }
+.intro-info ul { list-style: none; }
+.intro-info li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; }
+.intro-info li::before { content: "✓"; color: var(--brand-primary); font-weight: 700; flex-shrink: 0; }
+.input-row { margin-bottom: 12px; }
+.input-row label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.input-row input { width: 100%; padding: 10px 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-family: inherit; transition: border-color 150ms; }
+.input-row input:focus { outline: none; border-color: var(--brand-primary); }
+.btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dark)); color: #fff; border-radius: 12px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: all 150ms; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.intro-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E8F0; font-size: 11px; color: #64748B; text-align: center; }
+
+/* SLIDE screens — one slide visible at a time, fixed viewport */
+.slide-wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; background: #F8FAFC; }
+.top-bar { background: #fff; border-bottom: 1px solid #E2E8F0; padding: 10px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0; }
+.top-bar-inner { max-width: 900px; margin: 0 auto; }
+.top-bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+.top-bar-left { display: flex; align-items: center; gap: 8px; font-size: 12px; min-width: 0; }
+.top-bar-shield { width: 24px; height: 24px; border-radius: 6px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.top-bar-shield svg { width: 12px; height: 12px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.top-bar-brand { font-weight: 700; letter-spacing: 1px; color: var(--brand-primary); white-space: nowrap; }
+.top-bar-context { color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progress-bar { height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-primary), var(--brand-primary-dark)); transition: width 500ms; }
+
+.slide-content { flex: 1; overflow-y: auto; padding: 24px 16px; display: flex; align-items: flex-start; justify-content: center; }
+.slide-inner { max-width: 760px; width: 100%; }
+
+/* SLIDE — section announcement */
+.section-intro { text-align: center; padding: 32px 16px; }
+.section-intro .icon-big { width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.section-intro .icon-big svg { width: 40px; height: 40px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.section-intro .eyebrow-text { font-size: 12px; font-weight: 700; letter-spacing: 3px; margin-bottom: 8px; }
+.section-intro h2 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.section-intro .subtitle { font-size: 16px; color: #64748B; max-width: 540px; margin: 0 auto; }
+
+/* SLIDE — content block */
+.block-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 32px; }
+.block-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; }
+.block-heading { font-size: 26px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; display: flex; gap: 12px; align-items: flex-start; }
+.block-accent { display: block; width: 5px; min-height: 28px; border-radius: 3px; margin-top: 4px; flex-shrink: 0; }
+.block-body { color: #475569; margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
+.block-bullets { list-style: none; }
+.block-bullets li { display: flex; gap: 12px; padding: 7px 0; font-size: 15px; color: #334155; line-height: 1.55; }
+.block-bullets li svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — pictograms grid (one per slide; or one slide showing the grid) */
+.picto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.picto-cell { text-align: center; padding: 16px; border: 2px solid #F1F5F9; border-radius: 12px; }
+.picto-cell img { width: 64px; height: 64px; margin-bottom: 8px; }
+.picto-label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.picto-sub { font-size: 11px; color: #64748B; line-height: 1.4; }
+
+/* SLIDE — video card */
+.video-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.video-thumb { background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); padding: 40px 24px; text-align: center; color: #fff; }
+.video-play-btn { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; margin-bottom: 12px; cursor: pointer; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+.video-play-btn svg { width: 28px; height: 28px; color: var(--brand-red); fill: currentColor; }
+.video-thumb h3 { font-size: 18px; margin-bottom: 4px; }
+.video-thumb p { font-size: 12px; color: #B0CADE; }
+.video-action { padding: 14px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.video-action-info strong { display: block; font-weight: 600; font-size: 13px; }
+.video-action-info span { color: #64748B; font-size: 12px; }
+.btn-yt { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: var(--brand-red); color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; }
+.btn-yt:hover { background: #A60D26; text-decoration: none; }
+.btn-yt svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — chemical card */
+.chem-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.chem-card-header { padding: 18px 24px; border-bottom: 1px solid #F1F5F9; }
+.chem-pictos-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.chem-pictos-row img { width: 40px; height: 40px; }
+.signal-badge { display: inline-block; padding: 5px 10px; border-radius: 6px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.chem-card-name { font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+.chem-card-full { font-size: 11px; color: #64748B; font-style: italic; margin-bottom: 10px; }
+.chem-haz { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #475569; }
+.chem-row { display: grid; grid-template-columns: 140px 1fr; border-top: 1px solid #F1F5F9; }
+.chem-row-label { padding: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; }
+.chem-row-items { padding: 12px 14px; }
+.chem-row-items ul { list-style: none; }
+.chem-row-items li { display: flex; gap: 8px; padding: 2px 0; font-size: 12px; color: #334155; align-items: flex-start; }
+
+/* SLIDE — scenario */
+.scenario { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.scenario-title { padding: 12px 18px; color: #fff; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); }
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.scenario-side { padding: 20px; }
+.scenario-situation { border-right: 1px solid #F1F5F9; }
+.scenario-answer { background: #EAF7EE; }
+.scenario-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; display: flex; gap: 6px; align-items: center; }
+.scenario-eyebrow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+.scenario-text { font-size: 12px; color: #334155; margin-bottom: 12px; line-height: 1.6; }
+.scenario-question { font-size: 16px; font-weight: 700; }
+.scenario-headline { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.scenario-bullets { list-style: none; }
+.scenario-bullets li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; line-height: 1.55; }
+.scenario-bullets li::before { content: "✓"; color: var(--brand-green); font-weight: 700; flex-shrink: 0; }
+
+/* SLIDE — knowledge check */
+.kc-banner { background: #EAF7EE; border: 2px solid #9DD8AC; border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+.kc-banner svg { width: 18px; height: 18px; color: var(--brand-green); flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+.kc-banner p { font-size: 12px; color: #334155; }
+.q-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; }
+.q-card .q-num { font-size: 11px; font-weight: 700; color: var(--brand-primary); margin-right: 6px; }
+.q-card .q-text { font-weight: 600; margin-bottom: 12px; line-height: 1.5; font-size: 16px; }
+.q-options { display: flex; flex-direction: column; gap: 6px; }
+.q-option { padding: 10px 14px; border: 2px solid #E2E8F0; border-radius: 8px; background: #fff; text-align: left; font-size: 14px; color: #334155; display: flex; align-items: center; gap: 8px; transition: all 120ms; }
+.q-option:hover { border-color: #94A3B8; }
+.q-option .letter { font-weight: 700; min-width: 20px; }
+.q-option.selected { background: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
+.q-option.correct { background: #EAF7EE; border-color: var(--brand-green); color: #1F6B33; }
+.q-option.incorrect { background: #FBE9EC; border-color: var(--brand-red); color: #8B1A2B; }
+.q-option svg { width: 16px; height: 16px; flex-shrink: 0; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; }
+.feedback { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+.feedback.right { background: #EAF7EE; color: #1F6B33; }
+.feedback.wrong { background: #FFF7E5; color: #8B5500; }
+
+/* QUIZ screen — scrollable, doesn't fit single screen */
+.quiz-screen { flex: 1; overflow-y: auto; padding: 24px 16px; }
+.quiz-inner { max-width: 760px; margin: 0 auto; }
+.quiz-q { border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fff; }
+
+/* RESULT screen */
+.result-bg { flex: 1; padding: 24px 16px; display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.result-bg.passed { background: linear-gradient(135deg, var(--brand-green), #1E8038); }
+.result-bg.failed { background: linear-gradient(135deg, var(--brand-accent), #D08000); }
+.result-card { max-width: 540px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 36px; text-align: center; }
+.result-icon { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.result-icon.pass { background: #EAF7EE; }
+.result-icon.fail { background: #FFF7E5; }
+.result-icon svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+.result-icon.pass svg { color: var(--brand-green); }
+.result-icon.fail svg { color: var(--brand-accent); }
+.result-title { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.result-subtitle { color: #475569; margin-bottom: 20px; font-size: 14px; }
+.result-record { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: left; }
+.result-record .row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 13px; }
+.result-record .row .label { color: #64748B; }
+.result-record .row .value { font-weight: 600; text-align: right; }
+.tracking-status { font-size: 12px; margin: 12px 0; padding: 8px 12px; border-radius: 8px; }
+.tracking-status.ok { background: #EAF7EE; color: #1F6B33; }
+.tracking-status.pending { background: #FFF7E5; color: #8B5500; }
+.tracking-status.fail { background: #FBE9EC; color: #8B1A2B; }
+.result-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.result-buttons button { flex: 1; min-width: 110px; }
+
+/* BOTTOM BAR — audio player + nav, fixed */
+.bottom-bar { background: #fff; border-top: 1px solid #E2E8F0; padding: 10px 16px; flex-shrink: 0; box-shadow: 0 -1px 3px rgba(0,0,0,0.04); }
+.bottom-bar-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.audio-player { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #F1F5F9; border-radius: 10px; }
+.audio-player audio { flex: 1; min-width: 0; height: 32px; }
+.audio-player audio::-webkit-media-controls-panel { background: #F1F5F9; }
+.audio-player.empty { display: none; }
+.btn-nav { padding: 10px 14px; background: #fff; color: #475569; border: 1px solid #CBD5E1; border-radius: 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.btn-nav.next { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
+.btn-nav.next:hover { background: var(--brand-primary-dark); }
+.btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+@media (max-width: 700px) {
+  .scenario-grid { grid-template-columns: 1fr; }
+  .scenario-situation { border-right: none; border-bottom: 1px solid #F1F5F9; }
+  .chem-row { grid-template-columns: 1fr; }
+  .meta-grid { grid-template-columns: 1fr; }
+  .block-card { padding: 24px 20px; }
+  .section-intro h2 { font-size: 28px; }
+  .block-heading { font-size: 22px; }
+  .top-bar-context { display: none; }
+  .btn-nav { padding: 10px 12px; }
+  .btn-nav span { display: none; }
+}
+
+.screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
+.screen.active { display: flex; }
+
+@media print {
+  html, body { overflow: visible; height: auto; }
+  .screen:not(.active), .bottom-bar, .top-bar { display: none !important; }
+  body { background: #fff; display: block; }
+  .result-card { box-shadow: none; border: 2px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div id="screen-intro" class="screen active">
+  <div class="intro-bg">
+    <div class="intro-card">
+      <div class="intro-header">
+        <div class="brand-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <div class="brand-eyebrow" id="brand-eyebrow"></div>
+          <div class="brand-sub" id="module-code"></div>
+        </div>
+      </div>
+      <h1 class="intro-title" id="intro-topic"></h1>
+      <p class="intro-subtitle" id="intro-subtitle"></p>
+      <div class="meta-grid" id="meta-grid"></div>
+      <div class="intro-info">
+        <div class="info-title">What you will learn</div>
+        <ul id="learning-objectives"></ul>
+      </div>
+      <div class="input-row">
+        <label for="learner-name">Your full name</label>
+        <input type="text" id="learner-name" placeholder="e.g. Casey Singh">
+      </div>
+      <div class="input-row">
+        <label for="employer">Employer / Organization</label>
+        <input type="text" id="employer" placeholder="e.g. Refresh Resources">
+      </div>
+      <button id="btn-start" class="btn-primary" disabled>Begin module <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <div class="intro-footer" id="footer-tracking-note"></div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-learn" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="topbar-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span class="top-bar-context" id="slide-counter"></span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600;" id="progress-pct"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div></div>
+  <div class="slide-content"><div class="slide-inner" id="slide-body"></div></div>
+  <div class="bottom-bar"><div class="bottom-bar-inner">
+    <button id="btn-prev" class="btn-nav"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> <span>Previous</span></button>
+    <div id="audio-container" class="audio-player empty">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#64748B" stroke-width="2" style="flex-shrink:0"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+      <audio id="slide-audio" controls preload="none"></audio>
+    </div>
+    <button id="btn-next" class="btn-nav next">Continue <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div></div>
+</div>
+
+<div id="screen-quiz" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="quiz-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span style="color: #475569;">Final quiz</span>
+      </div>
+    </div>
+  </div></div>
+  <div class="quiz-screen"><div class="quiz-inner">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary);">FINAL KNOWLEDGE CHECK</div>
+      <h2 style="font-size: 28px; font-weight: 700; margin: 8px 0;">Quiz</h2>
+      <p style="color: #475569; font-size: 14px;" id="quiz-instructions"></p>
+    </div>
+    <div id="quiz-questions"></div>
+    <button id="btn-submit-quiz" class="btn-primary" style="margin-top: 24px;" disabled>Submit answers</button>
+  </div></div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="result-bg">
+    <div class="result-card">
+      <div class="result-icon" id="result-icon"></div>
+      <h2 class="result-title" id="result-title"></h2>
+      <p class="result-subtitle" id="result-subtitle"></p>
+      <div class="result-record">
+        <div class="row"><div class="label">Name</div><div class="value" id="r-name"></div></div>
+        <div class="row"><div class="label">Employer</div><div class="value" id="r-employer"></div></div>
+        <div class="row"><div class="label">Module</div><div class="value" id="r-module"></div></div>
+        <div class="row"><div class="label">Score</div><div class="value" id="r-score"></div></div>
+        <div class="row"><div class="label">Result</div><div class="value" id="r-result"></div></div>
+        <div class="row"><div class="label">Completed</div><div class="value" id="r-date"></div></div>
+      </div>
+      <div id="tracking-status"></div>
+      <div class="result-buttons">
+        <button id="btn-retry" class="btn-primary" style="display: none;">Retry quiz</button>
+        <button id="btn-print" class="btn-nav" style="justify-content: center;">Print certificate</button>
+        <button id="btn-restart" class="btn-nav" style="justify-content: center;">New learner</button>
+      </div>
+      <p style="font-size: 11px; color: #94A3B8; margin-top: 16px;" id="result-footer"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {"meta": {"topic": "Workplace Violence & Harassment", "subtitle": "Prevention, reporting, and your rights", "code": "REF-TR-18", "version": "v1.0", "duration": "~30 min", "pass_mark_pct": 70, "regulation_alignment": "WorkSafeBC OHS Regulation ss. 4.27\u20134.31 (violence) + Workers Compensation Act / WorkSafeBC bullying & harassment requirements", "publication_basis": "Refresh Safety Management System 2024 + WorkSafeBC", "client": "refresh", "audience_summary": "All Refresh Resources field & shop workers", "what_you_will_learn": ["The difference between workplace violence and bullying & harassment, with real examples", "What is NOT harassment \u2014 including reasonable management and direction", "Everyone's responsibilities: yours, your supervisor's, and the company's", "How to report safely \u2014 that reports are taken seriously and there is no retaliation", "How to stay safe with aggressive members of the public at remote sites"]}, "sections": [{"type": "content", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "blocks": [{"heading": "Everyone has the right to a safe, respectful workplace", "body": "Refresh's policy is a work environment free from harassment in any form, where every person is treated with respect and dignity, and where no worker is exposed to violence. That is not just a nice idea \u2014 it is the law in BC, and it is your right."}, {"heading": "This is a health and safety issue, not just an HR issue", "bullets": ["Violence and harassment cause real harm \u2014 physical injury, stress, anxiety, and worse", "They affect the target, and also coworkers and bystanders who witness them", "Distraction and stress raise the risk of other incidents around equipment and chemicals", "WorkSafeBC treats violence and bullying & harassment as workplace hazards employers must control"]}, {"heading": "What this course covers", "bullets": ["What violence is, and what bullying & harassment is \u2014 they are different", "What is NOT harassment, so you can tell the difference", "Your responsibilities, and what Refresh must do", "How to report, and why you can report without fear", "Staying safe with aggressive members of the public at remote sites"]}]}, {"type": "content", "title": "Two different problems: violence vs. bullying & harassment", "eyebrow": "Section 2 \u2014 What", "icon": "book", "accent": "blue", "blocks": [{"heading": "Why we separate them", "body": "Workplace violence and bullying & harassment are both serious, but BC law treats them as two distinct hazards with different rules. Knowing which is which helps you respond the right way and report to the right place."}, {"heading": "Workplace VIOLENCE is about force or threats", "body": "WorkSafeBC OHS Regulation s. 4.27 defines violence as the attempted or actual use of physical force by a person, other than a worker, to cause injury to a worker \u2014 and it includes any threatening statement or behaviour that gives a worker reasonable cause to believe they are at risk of injury.", "bullets": ["Hitting, pushing, grabbing, or any physical attack", "Threatening to harm you (\"I know where you park\")", "Aggressive behaviour that makes you reasonably fear injury", "Often comes from a member of the public \u2014 an angry landowner, customer, or stranger"]}, {"heading": "BULLYING & HARASSMENT is about humiliating or intimidating conduct", "body": "WorkSafeBC says a worker is bullied and harassed when someone takes an action that they knew, or reasonably ought to have known, would cause that worker to be humiliated or intimidated.", "bullets": ["Verbal aggression, insults, or name-calling", "Spreading malicious rumours or gossip", "Excluding or isolating someone on purpose", "Harmful hazing, vandalizing belongings, or sabotaging someone's work", "Usually a pattern over time \u2014 and often between coworkers"]}]}, {"type": "content", "title": "What counts \u2014 and what does NOT", "eyebrow": "Section 2 \u2014 What", "icon": "book", "accent": "blue", "blocks": [{"heading": "Intent does not matter", "body": "A person cannot excuse their behaviour by saying they did not mean it to be humiliating or intimidating. What matters is whether they knew, or reasonably ought to have known, it would have that effect."}, {"heading": "Examples of bullying & harassment", "bullets": ["Yelling, swearing at, or constantly criticizing a person", "Belittling someone's opinions or making personal attacks", "Making offensive jokes by spoken word or email", "Threatening gestures, intimidation, or stalking", "Setting impossible deadlines designed to make a person fail"]}, {"heading": "What is NOT bullying & harassment", "body": "Not every unpleasant interaction or workplace conflict is bullying and harassment. WorkSafeBC is clear that reasonable management action is not harassment. When done in an appropriate manner, these are normal and acceptable:", "bullets": ["Reasonable action to manage and direct workers \u2014 assigning work, scheduling, supervising", "Expressing a difference of opinion", "Offering constructive feedback, guidance, or coaching about work performance", "Making a legitimate complaint about someone's conduct through proper channels", "Reasonable discipline carried out fairly and through established procedures"]}, {"heading": "When harassment crosses into violence", "body": "If bullying or harassing behaviour becomes violent, or involves a threat of violence, the workplace violence rules also apply (OHS Regulation ss. 4.24\u20134.31). A threat is never \"just words\" \u2014 treat it as violence and report it right away."}]}, {"type": "midcheck", "title": "Quick check \u2014 Telling them apart", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "A landowner steps toward you, raises a fist, and says \"get off my property or you'll regret it.\" Which is this?", "options": ["Bullying & harassment", "Workplace violence (a threat that gives reasonable cause to fear injury)", "Neither \u2014 it's just a disagreement"], "correct": 1, "why": "OHS Reg s. 4.27 includes threatening statements or behaviour that give a worker reasonable cause to believe they are at risk of injury. That is violence."}, {"q": "A coworker repeatedly mocks your accent and spreads rumours about you. Which is this?", "options": ["Workplace violence", "Bullying & harassment", "Reasonable management action"], "correct": 1, "why": "Humiliating, repeated conduct by a coworker is bullying & harassment. It would become violence only if it included force or a threat of injury."}, {"q": "Your supervisor gives you honest feedback that you missed a step in a procedure and asks you to redo it. Is that harassment?", "options": ["Yes, any criticism is harassment", "No \u2014 reasonable management action and constructive feedback are not harassment", "Only if it hurts your feelings"], "correct": 1, "why": "WorkSafeBC is clear that reasonable action to manage and direct workers, and constructive feedback, are not bullying and harassment."}]}, {"type": "content", "title": "Everyone's responsibilities", "eyebrow": "Section 3 \u2014 Who", "icon": "users", "accent": "purple", "blocks": [{"heading": "You \u2014 every worker", "body": "Under the Workers Compensation Act (s. 22) and Refresh's policy, every worker shares the duty to keep the workplace respectful and safe.", "bullets": ["Do not take part in violence, bullying, or harassment of anyone", "Report any violence, bullying, or harassment you experience or witness", "Follow Refresh's policies and procedures and your training", "Do not engage in any activity that could be a hazard to yourself or others"]}, {"heading": "Your supervisor", "body": "Supervisors carry the duties in the Workers Compensation Act (s. 23) for the workers under their direction.", "bullets": ["Must not bully or harass anyone \u2014 and must make sure their crew does not either", "Make sure workers know the potential for violence and the procedures to handle it", "Apply and comply with Refresh's policies and procedures", "Take reports seriously and act on them promptly"]}, {"heading": "Refresh \u2014 the employer", "body": "The Workers Compensation Act (s. 21) requires the employer to protect the health and safety of its workers.", "bullets": ["Have a policy and procedures to prevent and address violence and harassment", "Assess the risk of violence and put controls in place", "Inform and train workers, and provide the necessary supervision", "Investigate incidents and follow up, and review the policies each year"]}]}, {"type": "content", "title": "What Refresh must do \u2014 assess, prevent, investigate", "eyebrow": "Section 3 \u2014 Who", "icon": "shield", "accent": "darkblue", "blocks": [{"heading": "Assess the risk (OHS Reg s. 4.28)", "body": "A risk assessment must be done in any workplace where a risk of violence may be present. It considers:", "bullets": ["Previous experience in that workplace (any prior acts of violence at Refresh)", "Occupational experience in similar workplaces", "The location and circumstances where the work will take place \u2014 including remote sites"]}, {"heading": "Prevent or control the risk (OHS Reg s. 4.29)", "bullets": ["If a risk is found, Refresh must set up procedures, policies, and work arrangements to eliminate it", "If it cannot be eliminated, those arrangements must minimize the risk", "Refresh will inform you of the nature and extent of any risk (s. 4.30)", "That includes warning you if someone you may meet has a history of violent behaviour"]}, {"heading": "Investigate and follow up (OHS Reg s. 4.30(3)(d), ss. 4.24\u20134.26)", "bullets": ["Incidents of violence must be reported, investigated, and documented", "Improper activity or behaviour between workers must be reported and investigated under Part 3", "For bullying & harassment, Refresh must investigate all incidents and follow up with corrective actions", "Investigations are confidential \u2014 identities are not disclosed except as needed to investigate"]}, {"heading": "Medical follow-up (OHS Reg s. 4.31)", "body": "If you report an injury or any adverse symptom from an incident of violence, Refresh must advise you to consult a physician of your choice for treatment or referral. Take that seriously \u2014 symptoms are not always physical."}]}, {"type": "content", "title": "How to report \u2014 and why you can report safely", "eyebrow": "Section 4 \u2014 How", "icon": "clipboard", "accent": "green", "blocks": [{"heading": "Reporting is the most important thing you can do", "body": "Refresh's policy says bullying and harassment must be reported to your supervisor and senior management immediately, and that all incidents and complaints are dealt with right away. The company cannot fix what it does not know about."}, {"heading": "How to report", "bullets": ["Tell your supervisor or a manager \u2014 verbally or in writing", "If the concern involves your supervisor, go to the next level of management", "For violence or a threat, report it the same way you would any serious incident", "If you are in immediate danger, get to safety and call 911 first, then report"]}, {"heading": "If you experience bullying or harassment", "bullets": ["If you feel safe to, firmly tell the person the behaviour is not acceptable and ask them to stop", "You can ask a supervisor to be with you when you speak to the person", "Keep a factual journal \u2014 dates, times, what happened, and any witnesses", "Keep copies of any emails, texts, or notes", "Report it \u2014 and if your concern is minimized, go to the next level"]}, {"heading": "Reports are taken seriously \u2014 and there is no retaliation", "bullets": ["Every report is handled promptly and kept confidential", "Identities are shared only as far as needed to investigate the complaint", "Do not retaliate against anyone, and you will not be punished for making a good-faith report", "Filing a knowingly false and malicious complaint is the only kind that leads to discipline"]}]}, {"type": "midcheck", "title": "Quick check \u2014 Responsibilities and reporting", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "Whose job is it to assess the risk of violence and put controls in place?", "options": ["Each worker, on their own", "The employer (Refresh)", "WorkSafeBC inspectors"], "correct": 1, "why": "OHS Reg ss. 4.28\u20134.29 put the risk assessment and controls on the employer. Workers participate and are informed of the results."}, {"q": "You report harassment in good faith. What does Refresh's policy say happens to you?", "options": ["You could be disciplined for complaining", "Nothing negative \u2014 reports are taken seriously, kept confidential, and there is no retaliation", "Your name is posted so everyone knows"], "correct": 1, "why": "Good-faith reports are handled confidentially with no retaliation. Only a knowingly false and malicious complaint can lead to discipline."}, {"q": "You report an adverse symptom after a violent incident at a site. What must Refresh do?", "options": ["Tell you to walk it off", "Advise you to consult a physician of your choice for treatment or referral", "Wait to see if it gets worse"], "correct": 1, "why": "OHS Reg s. 4.31 requires the employer to advise a worker reporting injury or adverse symptoms from violence to see a physician of their choice."}]}, {"type": "content", "title": "Staying safe with aggressive members of the public", "eyebrow": "Section 5 \u2014 Field safety", "icon": "shield", "accent": "red", "blocks": [{"heading": "Why field & shop workers face this", "body": "Refresh crews work at remote sites, on leases, and on landowners' property, often alone or in small teams. Most people are reasonable. But you may meet someone who is angry, impaired, or aggressive \u2014 and help may be far away. A plan keeps you safe."}, {"heading": "Spot the warning signs early", "bullets": ["Raised voice, swearing, clenched fists, or invading your space", "Pacing, sudden mood changes, or fixating on a grievance", "Signs of impairment by alcohol or drugs", "Threats \u2014 direct (\"I'll hurt you\") or implied (\"you don't want to come back here\")"]}, {"heading": "De-escalate if it is safe to", "bullets": ["Stay calm, keep your voice low and even, and do not argue back", "Keep a respectful distance and do not block their exit or let them block yours", "Listen, acknowledge their concern, and avoid challenging body language", "You are not there to win the argument \u2014 you are there to stay safe"]}, {"heading": "When in doubt, leave", "bullets": ["Your safety comes before the task \u2014 there is no job worth getting hurt over", "Withdraw to your vehicle, leave the site, and drive to a safe distance", "Call your supervisor or dispatch and report what happened", "If you are in immediate danger, call 911 \u2014 that is never over-reacting", "Tell your supervisor before you go back, so the risk can be reassessed (s. 4.28)"]}]}, {"type": "scenarios", "title": "Four real Refresh scenarios", "eyebrow": "Section 6 \u2014 What would you do?", "icon": "alert", "accent": "amber", "intro": "Read the situation, think about your move, then check the answer. One right approach for each.", "items": [{"title": "Scenario 1 \u2014 Aggressive person at a remote site", "situation": "You're alone topping up a chemical tote at a remote lease. A man pulls up, gets out yelling that you have no right to be there, and walks quickly toward you with his fists clenched.", "question": "What do you do?", "answer_headline": "Disengage and get to safety \u2014 do not try to win the argument.", "bullets": ["Keep calm, keep distance, and do not block his path or let him block yours", "Move toward your vehicle; leave the site and drive to a safe distance", "Call your supervisor or dispatch and report it right away", "If you fear injury, call 911 \u2014 a threat that makes you fear harm is violence (s. 4.27)", "Don't return until Refresh reassesses the risk for that site (s. 4.28)"]}, {"title": "Scenario 2 \u2014 Repeated belittling by a coworker", "situation": "A coworker in the shop keeps mocking how you do your job in front of others, calls you names, and dismisses your ideas in every meeting. It has been going on for weeks and you dread coming in.", "question": "Is this just personality, or something you should act on?", "answer_headline": "This is bullying & harassment. Document it and report it.", "bullets": ["Repeated humiliating conduct by a coworker meets WorkSafeBC's definition of bullying & harassment", "If you feel safe to, firmly tell them to stop \u2014 you can bring a supervisor with you", "Keep a factual journal: dates, times, what was said, and any witnesses", "Report it to your supervisor or senior management \u2014 it must be reported immediately", "Refresh must investigate and follow up; your report is kept confidential with no retaliation"]}, {"title": "Scenario 3 \u2014 A threat", "situation": "After you shut down a job for a safety reason, a contractor on site leans in and says quietly, \"I know what truck is yours. Watch yourself.\"", "question": "How serious is this and what do you do?", "answer_headline": "Treat it as workplace violence and report it now.", "bullets": ["A threatening statement that gives reasonable cause to fear injury is violence under s. 4.27", "Do not respond in kind \u2014 create distance and leave if you feel unsafe", "Report it to your supervisor and management immediately; write down the exact words", "Incidents of violence must be reported, investigated, and documented (s. 4.30)", "If you have any stress symptoms afterward, Refresh must advise you to see a physician (s. 4.31)"]}, {"title": "Scenario 4 \u2014 Witnessing harassment", "situation": "You see a senior crew member repeatedly single out a new hire \u2014 offensive jokes, harsh public criticism, and excluding them from breaks. The new hire hasn't said anything and looks miserable.", "question": "It's not happening to you. Do you do anything?", "answer_headline": "Yes. Witnesses have a duty to report too.", "bullets": ["Every worker must report bullying & harassment they witness, not only what they experience", "Bystanders are affected too, and staying silent lets it continue", "Report it to your supervisor or senior management \u2014 you can do so confidentially", "Do not join in, and do not retaliate against anyone", "Refresh must investigate all incidents and take corrective action"]}]}], "quiz": [{"q": "Which statement best describes the difference between workplace violence and bullying & harassment?", "options": ["They are the same thing with different names", "Violence involves force or threats of injury; bullying & harassment is humiliating or intimidating conduct", "Violence only happens between coworkers; harassment only comes from the public", "Bullying & harassment is illegal but violence is not"], "correct": 1, "why": "OHS Reg s. 4.27 defines violence as force or threats causing reasonable fear of injury. Bullying & harassment is conduct that humiliates or intimidates."}, {"q": "WorkSafeBC defines a worker as bullied and harassed when someone takes an action that:", "options": ["They intended to be cruel", "They knew, or reasonably ought to have known, would humiliate or intimidate the worker", "Was reported to WorkSafeBC first", "happened more than ten times"], "correct": 1, "why": "The test is whether the person knew or reasonably ought to have known the action would humiliate or intimidate. Intent is not required."}, {"q": "Which of these is NOT bullying & harassment?", "options": ["Spreading malicious rumours about a coworker", "A supervisor giving reasonable direction and constructive feedback about work", "Repeatedly belittling someone's opinions in meetings", "Making offensive jokes by email"], "correct": 1, "why": "WorkSafeBC is clear that reasonable action to manage and direct workers, and constructive feedback, are not bullying and harassment."}, {"q": "A member of the public says \"you'll regret it if you come back here\" in a way that makes you fear for your safety. This is:", "options": ["Just venting \u2014 ignore it", "Workplace violence, because a threat that gives reasonable cause to fear injury counts", "Bullying & harassment only", "Not a workplace issue since it's not a coworker"], "correct": 1, "why": "OHS Reg s. 4.27 includes threatening statements or behaviour that give a worker reasonable cause to believe they are at risk of injury."}, {"q": "Does intent matter when deciding if behaviour is bullying & harassment?", "options": ["Yes \u2014 if they didn't mean it, it's fine", "No \u2014 a person cannot excuse it by saying they didn't intend to humiliate or intimidate", "Only if a manager was watching", "Only for sexual harassment"], "correct": 1, "why": "Intent does not determine whether conduct is bullying & harassment. The effect, judged by what a person reasonably ought to have known, is what matters."}, {"q": "Whose responsibility is it to assess the risk of violence and establish controls?", "options": ["Each worker individually", "The employer (Refresh)", "The landowner", "No one \u2014 it's just bad luck"], "correct": 1, "why": "OHS Reg ss. 4.28\u20134.29 require the employer to assess the risk and establish procedures and arrangements to eliminate or minimize it."}, {"q": "What must a worker do about bullying & harassment they witness happening to someone else?", "options": ["Nothing \u2014 it's not their business", "Report it \u2014 workers must report harassment they experience or observe", "Confront the person physically", "Wait until the target complains first"], "correct": 1, "why": "Every worker has a duty not to engage in harassment and to report harassing behaviour they experience or observe in the workplace."}, {"q": "You report harassment in good faith. According to Refresh's policy, what happens?", "options": ["You may be disciplined for complaining", "It is handled confidentially with no retaliation; only a knowingly false, malicious complaint leads to discipline", "Your name is shared with everyone involved", "It is ignored unless there are three reports"], "correct": 1, "why": "Good-faith reports are confidential and protected from retaliation. Only a false and malicious complaint can result in discipline."}, {"q": "You are alone at a remote site and someone becomes aggressive and threatening. What is your first priority?", "options": ["Finish the task quickly so you can leave after", "Get yourself to safety \u2014 withdraw to your vehicle and leave, then report", "Stand your ground so you don't look weak", "Argue until they calm down"], "correct": 1, "why": "Your safety comes before the task. Disengage, get to a safe distance, then call your supervisor or 911 if you are in danger."}, {"q": "When bullying or harassing behaviour involves a threat of violence, what applies?", "options": ["Nothing changes \u2014 it's still just harassment", "The workplace violence rules also apply (OHS Reg ss. 4.24\u20134.31)", "It is no longer a workplace issue", "It can only be handled by the police"], "correct": 1, "why": "If harassment becomes violent or includes a threat of violence, the violence provisions also apply, and it must be reported and investigated."}, {"q": "After a violent incident you feel anxious and shaken but have no visible injury. What must Refresh do?", "options": ["Nothing, since there's no physical injury", "Advise you to consult a physician of your choice for treatment or referral", "Send you home without pay", "Wait until you ask"], "correct": 1, "why": "OHS Reg s. 4.31 requires the employer to advise a worker reporting injury or adverse symptoms from violence to see a physician of their choice."}, {"q": "How should you report a violent threat made against you at a worksite?", "options": ["Keep it to yourself to avoid trouble", "Report it to your supervisor and management immediately; if in immediate danger, call 911 first", "Post about it online", "Only mention it at the next monthly meeting"], "correct": 1, "why": "Violence and threats must be reported immediately so they can be investigated and documented. In immediate danger, get safe and call 911 first."}, {"q": "Which of these best helps you de-escalate an angry person when it is safe to try?", "options": ["Raise your voice to match theirs", "Stay calm, keep a respectful distance, listen, and don't block their exit", "Tell them they're wrong and prove it", "Turn your back and ignore them"], "correct": 1, "why": "Calm tone, distance, listening, and keeping exits clear reduce the risk. If de-escalation isn't working or you feel unsafe, leave."}, {"q": "Refresh's investigation of a harassment complaint is:", "options": ["Posted publicly so everyone learns from it", "Confidential \u2014 identities are shared only as far as needed to investigate, with corrective action and follow-up", "Skipped if the person says they didn't mean it", "Optional for the employer"], "correct": 1, "why": "Employers must investigate all incidents, keep them confidential, take corrective action, and follow up \u2014 and may not excuse conduct by claimed lack of intent."}], "tracking": {"provider": "supabase", "supabase_url": "https://muftkbpnedufsyiyuwhk.supabase.co", "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11ZnRrYnBuZWR1ZnN5aXl1d2hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjIzMzEsImV4cCI6MjA5NjI5ODMzMX0.OjnNDsjVizKn12GndFfRrD15JDmfqc4NKXFlnabbtxY", "token": "b28e1bd7-9f38-4d8e-a799-a3c04fd7c23d", "course_id": "violence-harassment", "module_id": "violence-harassment-v1.0"}};
+const BRAND = {"client_id": "refresh", "client_name": "Refresh Resources", "client_short": "REFRESH", "tagline": "REFRESH RESOURCES TRAINING", "logo_text_primary": "REFRESH", "logo_text_secondary": "RESOURCES", "colors": {"primary": "#0098DA", "primary_dark": "#007FB8", "navy": "#114F69", "accent": "#F0A500", "red": "#C8102E", "green": "#2BA84A", "purple": "#8A4FBE", "darkblue": "#0A3447"}};
+const SLIDES = [{"kind": "section_intro", "section_idx": 0, "section_title": "Why this matters", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "subtitle": "", "audio_text": "Why this matters.", "id": "why-this-matters", "audio": "audio/why-this-matters.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "Everyone has the right to a safe, respectful workplace", "body": "Refresh's policy is a work environment free from harassment in any form, where every person is treated with respect and dignity, and where no worker is exposed to violence. That is not just a nice idea \u2014 it is the law in BC, and it is your right.", "bullets": null, "audio_text": "Everyone has the right to a safe, respectful workplace Refresh's policy is a work environment free from harassment in any form, where every person is treated with respect and dignity, and where no worker is exposed to violence. That is not just a nice idea \u2014 it is the law in BC, and it is your right.", "id": "everyone-has-the-right-to-a-safe-respectful-workplace-refres", "audio": "audio/everyone-has-the-right-to-a-safe-respectful-workplace-refres.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "This is a health and safety issue, not just an HR issue", "body": "", "bullets": ["Violence and harassment cause real harm \u2014 physical injury, stress, anxiety, and worse", "They affect the target, and also coworkers and bystanders who witness them", "Distraction and stress raise the risk of other incidents around equipment and chemicals", "WorkSafeBC treats violence and bullying & harassment as workplace hazards employers must control"], "audio_text": "This is a health and safety issue, not just an HR issue Violence and harassment cause real harm \u2014 physical injury, stress, anxiety, and worse They affect the target, and also coworkers and bystanders who witness them Distraction and stress raise the risk of other incidents around equipment and chemicals WorkSafeBC treats violence and bullying & harassment as workplace hazards employers must control", "id": "this-is-a-health-and-safety-issue-not-just-an-hr-issue-viole", "audio": "audio/this-is-a-health-and-safety-issue-not-just-an-hr-issue-viole.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "What this course covers", "body": "", "bullets": ["What violence is, and what bullying & harassment is \u2014 they are different", "What is NOT harassment, so you can tell the difference", "Your responsibilities, and what Refresh must do", "How to report, and why you can report without fear", "Staying safe with aggressive members of the public at remote sites"], "audio_text": "What this course covers What violence is, and what bullying & harassment is \u2014 they are different What is NOT harassment, so you can tell the difference Your responsibilities, and what Refresh must do How to report, and why you can report without fear Staying safe with aggressive members of the public at remote sites", "id": "what-this-course-covers-what-violence-is-and-what-bullying-h", "audio": "audio/what-this-course-covers-what-violence-is-and-what-bullying-h.mp3"}, {"kind": "section_intro", "section_idx": 1, "section_title": "Two different problems: violence vs. bullying & harassment", "title": "Two different problems: violence vs. bullying & harassment", "eyebrow": "Section 2 \u2014 What", "icon": "book", "accent": "blue", "subtitle": "", "audio_text": "Two different problems: violence vs. bullying & harassment.", "id": "two-different-problems-violence-vs-bullying-harassment", "audio": "audio/two-different-problems-violence-vs-bullying-harassment.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "Two different problems: violence vs. bullying & harassment", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "Why we separate them", "body": "Workplace violence and bullying & harassment are both serious, but BC law treats them as two distinct hazards with different rules. Knowing which is which helps you respond the right way and report to the right place.", "bullets": null, "audio_text": "Why we separate them Workplace violence and bullying & harassment are both serious, but BC law treats them as two distinct hazards with different rules. Knowing which is which helps you respond the right way and report to the right place.", "id": "why-we-separate-them-workplace-violence-and-bullying-harassm", "audio": "audio/why-we-separate-them-workplace-violence-and-bullying-harassm.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "Two different problems: violence vs. bullying & harassment", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "Workplace VIOLENCE is about force or threats", "body": "WorkSafeBC OHS Regulation s. 4.27 defines violence as the attempted or actual use of physical force by a person, other than a worker, to cause injury to a worker \u2014 and it includes any threatening statement or behaviour that gives a worker reasonable cause to believe they are at risk of injury.", "bullets": ["Hitting, pushing, grabbing, or any physical attack", "Threatening to harm you (\"I know where you park\")", "Aggressive behaviour that makes you reasonably fear injury", "Often comes from a member of the public \u2014 an angry landowner, customer, or stranger"], "audio_text": "Workplace VIOLENCE is about force or threats WorkSafeBC OHS Regulation s. 4.27 defines violence as the attempted or actual use of physical force by a person, other than a worker, to cause injury to a worker \u2014 and it includes any threatening statement or behaviour that gives a worker reasonable cause to believe they are at risk of injury. Hitting, pushing, grabbing, or any physical attack Threatening to harm you (\"I know where you park\") Aggressive behaviour that makes you reasonably fear injury Often comes from a member of the public \u2014 an angry landowner, customer, or stranger", "id": "workplace-violence-is-about-force-or-threats-worksafebc-ohs-", "audio": "audio/workplace-violence-is-about-force-or-threats-worksafebc-ohs-.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "Two different problems: violence vs. bullying & harassment", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "BULLYING & HARASSMENT is about humiliating or intimidating conduct", "body": "WorkSafeBC says a worker is bullied and harassed when someone takes an action that they knew, or reasonably ought to have known, would cause that worker to be humiliated or intimidated.", "bullets": ["Verbal aggression, insults, or name-calling", "Spreading malicious rumours or gossip", "Excluding or isolating someone on purpose", "Harmful hazing, vandalizing belongings, or sabotaging someone's work", "Usually a pattern over time \u2014 and often between coworkers"], "audio_text": "BULLYING & HARASSMENT is about humiliating or intimidating conduct WorkSafeBC says a worker is bullied and harassed when someone takes an action that they knew, or reasonably ought to have known, would cause that worker to be humiliated or intimidated. Verbal aggression, insults, or name-calling Spreading malicious rumours or gossip Excluding or isolating someone on purpose Harmful hazing, vandalizing belongings, or sabotaging someone's work Usually a pattern over time \u2014 and often between coworkers", "id": "bullying-harassment-is-about-humiliating-or-intimidating-con", "audio": "audio/bullying-harassment-is-about-humiliating-or-intimidating-con.mp3"}, {"kind": "section_intro", "section_idx": 2, "section_title": "What counts \u2014 and what does NOT", "title": "What counts \u2014 and what does NOT", "eyebrow": "Section 2 \u2014 What", "icon": "book", "accent": "blue", "subtitle": "", "audio_text": "What counts \u2014 and what does NOT.", "id": "what-counts-and-what-does-not", "audio": "audio/what-counts-and-what-does-not.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "What counts \u2014 and what does NOT", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "Intent does not matter", "body": "A person cannot excuse their behaviour by saying they did not mean it to be humiliating or intimidating. What matters is whether they knew, or reasonably ought to have known, it would have that effect.", "bullets": null, "audio_text": "Intent does not matter A person cannot excuse their behaviour by saying they did not mean it to be humiliating or intimidating. What matters is whether they knew, or reasonably ought to have known, it would have that effect.", "id": "intent-does-not-matter-a-person-cannot-excuse-their-behaviou", "audio": "audio/intent-does-not-matter-a-person-cannot-excuse-their-behaviou.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "What counts \u2014 and what does NOT", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "Examples of bullying & harassment", "body": "", "bullets": ["Yelling, swearing at, or constantly criticizing a person", "Belittling someone's opinions or making personal attacks", "Making offensive jokes by spoken word or email", "Threatening gestures, intimidation, or stalking", "Setting impossible deadlines designed to make a person fail"], "audio_text": "Examples of bullying & harassment Yelling, swearing at, or constantly criticizing a person Belittling someone's opinions or making personal attacks Making offensive jokes by spoken word or email Threatening gestures, intimidation, or stalking Setting impossible deadlines designed to make a person fail", "id": "examples-of-bullying-harassment-yelling-swearing-at-or-const", "audio": "audio/examples-of-bullying-harassment-yelling-swearing-at-or-const.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "What counts \u2014 and what does NOT", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "What is NOT bullying & harassment", "body": "Not every unpleasant interaction or workplace conflict is bullying and harassment. WorkSafeBC is clear that reasonable management action is not harassment. When done in an appropriate manner, these are normal and acceptable:", "bullets": ["Reasonable action to manage and direct workers \u2014 assigning work, scheduling, supervising", "Expressing a difference of opinion", "Offering constructive feedback, guidance, or coaching about work performance", "Making a legitimate complaint about someone's conduct through proper channels", "Reasonable discipline carried out fairly and through established procedures"], "audio_text": "What is NOT bullying & harassment Not every unpleasant interaction or workplace conflict is bullying and harassment. WorkSafeBC is clear that reasonable management action is not harassment. When done in an appropriate manner, these are normal and acceptable: Reasonable action to manage and direct workers \u2014 assigning work, scheduling, supervising Expressing a difference of opinion Offering constructive feedback, guidance, or coaching about work performance Making a legitimate complaint about someone's conduct through proper channels Reasonable discipline carried out fairly and through established procedures", "id": "what-is-not-bullying-harassment-not-every-unpleasant-interac", "audio": "audio/what-is-not-bullying-harassment-not-every-unpleasant-interac.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "What counts \u2014 and what does NOT", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "When harassment crosses into violence", "body": "If bullying or harassing behaviour becomes violent, or involves a threat of violence, the workplace violence rules also apply (OHS Regulation ss. 4.24\u20134.31). A threat is never \"just words\" \u2014 treat it as violence and report it right away.", "bullets": null, "audio_text": "When harassment crosses into violence If bullying or harassing behaviour becomes violent, or involves a threat of violence, the workplace violence rules also apply (OHS Regulation ss. 4.24\u20134.31). A threat is never \"just words\" \u2014 treat it as violence and report it right away.", "id": "when-harassment-crosses-into-violence-if-bullying-or-harassi", "audio": "audio/when-harassment-crosses-into-violence-if-bullying-or-harassi.mp3"}, {"kind": "section_intro", "section_idx": 3, "section_title": "Quick check \u2014 Telling them apart", "title": "Quick check \u2014 Telling them apart", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Telling them apart.", "id": "quick-check-telling-them-apart", "audio": "audio/quick-check-telling-them-apart.mp3"}, {"kind": "midcheck_q", "section_idx": 3, "section_title": "Quick check \u2014 Telling them apart", "key": "3-0", "q": {"q": "A landowner steps toward you, raises a fist, and says \"get off my property or you'll regret it.\" Which is this?", "options": ["Bullying & harassment", "Workplace violence (a threat that gives reasonable cause to fear injury)", "Neither \u2014 it's just a disagreement"], "correct": 1, "why": "OHS Reg s. 4.27 includes threatening statements or behaviour that give a worker reasonable cause to believe they are at risk of injury. That is violence."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 3, "section_title": "Quick check \u2014 Telling them apart", "key": "3-1", "q": {"q": "A coworker repeatedly mocks your accent and spreads rumours about you. Which is this?", "options": ["Workplace violence", "Bullying & harassment", "Reasonable management action"], "correct": 1, "why": "Humiliating, repeated conduct by a coworker is bullying & harassment. It would become violence only if it included force or a threat of injury."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 3, "section_title": "Quick check \u2014 Telling them apart", "key": "3-2", "q": {"q": "Your supervisor gives you honest feedback that you missed a step in a procedure and asks you to redo it. Is that harassment?", "options": ["Yes, any criticism is harassment", "No \u2014 reasonable management action and constructive feedback are not harassment", "Only if it hurts your feelings"], "correct": 1, "why": "WorkSafeBC is clear that reasonable action to manage and direct workers, and constructive feedback, are not bullying and harassment."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 4, "section_title": "Everyone's responsibilities", "title": "Everyone's responsibilities", "eyebrow": "Section 3 \u2014 Who", "icon": "users", "accent": "purple", "subtitle": "", "audio_text": "Everyone's responsibilities.", "id": "everyone-s-responsibilities", "audio": "audio/everyone-s-responsibilities.mp3"}, {"kind": "block", "section_idx": 4, "section_title": "Everyone's responsibilities", "eyebrow": "Section 3 \u2014 Who", "accent": "purple", "heading": "You \u2014 every worker", "body": "Under the Workers Compensation Act (s. 22) and Refresh's policy, every worker shares the duty to keep the workplace respectful and safe.", "bullets": ["Do not take part in violence, bullying, or harassment of anyone", "Report any violence, bullying, or harassment you experience or witness", "Follow Refresh's policies and procedures and your training", "Do not engage in any activity that could be a hazard to yourself or others"], "audio_text": "You \u2014 every worker Under the Workers Compensation Act (s. 22) and Refresh's policy, every worker shares the duty to keep the workplace respectful and safe. Do not take part in violence, bullying, or harassment of anyone Report any violence, bullying, or harassment you experience or witness Follow Refresh's policies and procedures and your training Do not engage in any activity that could be a hazard to yourself or others", "id": "you-every-worker-under-the-workers-compensation-act-s-22-and", "audio": "audio/you-every-worker-under-the-workers-compensation-act-s-22-and.mp3"}, {"kind": "block", "section_idx": 4, "section_title": "Everyone's responsibilities", "eyebrow": "Section 3 \u2014 Who", "accent": "purple", "heading": "Your supervisor", "body": "Supervisors carry the duties in the Workers Compensation Act (s. 23) for the workers under their direction.", "bullets": ["Must not bully or harass anyone \u2014 and must make sure their crew does not either", "Make sure workers know the potential for violence and the procedures to handle it", "Apply and comply with Refresh's policies and procedures", "Take reports seriously and act on them promptly"], "audio_text": "Your supervisor Supervisors carry the duties in the Workers Compensation Act (s. 23) for the workers under their direction. Must not bully or harass anyone \u2014 and must make sure their crew does not either Make sure workers know the potential for violence and the procedures to handle it Apply and comply with Refresh's policies and procedures Take reports seriously and act on them promptly", "id": "your-supervisor-supervisors-carry-the-duties-in-the-workers-", "audio": "audio/your-supervisor-supervisors-carry-the-duties-in-the-workers-.mp3"}, {"kind": "block", "section_idx": 4, "section_title": "Everyone's responsibilities", "eyebrow": "Section 3 \u2014 Who", "accent": "purple", "heading": "Refresh \u2014 the employer", "body": "The Workers Compensation Act (s. 21) requires the employer to protect the health and safety of its workers.", "bullets": ["Have a policy and procedures to prevent and address violence and harassment", "Assess the risk of violence and put controls in place", "Inform and train workers, and provide the necessary supervision", "Investigate incidents and follow up, and review the policies each year"], "audio_text": "Refresh \u2014 the employer The Workers Compensation Act (s. 21) requires the employer to protect the health and safety of its workers. Have a policy and procedures to prevent and address violence and harassment Assess the risk of violence and put controls in place Inform and train workers, and provide the necessary supervision Investigate incidents and follow up, and review the policies each year", "id": "refresh-the-employer-the-workers-compensation-act-s-21-requi", "audio": "audio/refresh-the-employer-the-workers-compensation-act-s-21-requi.mp3"}, {"kind": "section_intro", "section_idx": 5, "section_title": "What Refresh must do \u2014 assess, prevent, investigate", "title": "What Refresh must do \u2014 assess, prevent, investigate", "eyebrow": "Section 3 \u2014 Who", "icon": "shield", "accent": "darkblue", "subtitle": "", "audio_text": "What Refresh must do \u2014 assess, prevent, investigate.", "id": "what-refresh-must-do-assess-prevent-investigate", "audio": "audio/what-refresh-must-do-assess-prevent-investigate.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "What Refresh must do \u2014 assess, prevent, investigate", "eyebrow": "Section 3 \u2014 Who", "accent": "darkblue", "heading": "Assess the risk (OHS Reg s. 4.28)", "body": "A risk assessment must be done in any workplace where a risk of violence may be present. It considers:", "bullets": ["Previous experience in that workplace (any prior acts of violence at Refresh)", "Occupational experience in similar workplaces", "The location and circumstances where the work will take place \u2014 including remote sites"], "audio_text": "Assess the risk (OHS Reg s. 4.28) A risk assessment must be done in any workplace where a risk of violence may be present. It considers: Previous experience in that workplace (any prior acts of violence at Refresh) Occupational experience in similar workplaces The location and circumstances where the work will take place \u2014 including remote sites", "id": "assess-the-risk-ohs-reg-s-4-28-a-risk-assessment-must-be-don", "audio": "audio/assess-the-risk-ohs-reg-s-4-28-a-risk-assessment-must-be-don.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "What Refresh must do \u2014 assess, prevent, investigate", "eyebrow": "Section 3 \u2014 Who", "accent": "darkblue", "heading": "Prevent or control the risk (OHS Reg s. 4.29)", "body": "", "bullets": ["If a risk is found, Refresh must set up procedures, policies, and work arrangements to eliminate it", "If it cannot be eliminated, those arrangements must minimize the risk", "Refresh will inform you of the nature and extent of any risk (s. 4.30)", "That includes warning you if someone you may meet has a history of violent behaviour"], "audio_text": "Prevent or control the risk (OHS Reg s. 4.29) If a risk is found, Refresh must set up procedures, policies, and work arrangements to eliminate it If it cannot be eliminated, those arrangements must minimize the risk Refresh will inform you of the nature and extent of any risk (s. 4.30) That includes warning you if someone you may meet has a history of violent behaviour", "id": "prevent-or-control-the-risk-ohs-reg-s-4-29-if-a-risk-is-foun", "audio": "audio/prevent-or-control-the-risk-ohs-reg-s-4-29-if-a-risk-is-foun.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "What Refresh must do \u2014 assess, prevent, investigate", "eyebrow": "Section 3 \u2014 Who", "accent": "darkblue", "heading": "Investigate and follow up (OHS Reg s. 4.30(3)(d), ss. 4.24\u20134.26)", "body": "", "bullets": ["Incidents of violence must be reported, investigated, and documented", "Improper activity or behaviour between workers must be reported and investigated under Part 3", "For bullying & harassment, Refresh must investigate all incidents and follow up with corrective actions", "Investigations are confidential \u2014 identities are not disclosed except as needed to investigate"], "audio_text": "Investigate and follow up (OHS Reg s. 4.30(3)(d), ss. 4.24\u20134.26) Incidents of violence must be reported, investigated, and documented Improper activity or behaviour between workers must be reported and investigated under Part 3 For bullying & harassment, Refresh must investigate all incidents and follow up with corrective actions Investigations are confidential \u2014 identities are not disclosed except as needed to investigate", "id": "investigate-and-follow-up-ohs-reg-s-4-30-3-d-ss-4-24-4-26-in", "audio": "audio/investigate-and-follow-up-ohs-reg-s-4-30-3-d-ss-4-24-4-26-in.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "What Refresh must do \u2014 assess, prevent, investigate", "eyebrow": "Section 3 \u2014 Who", "accent": "darkblue", "heading": "Medical follow-up (OHS Reg s. 4.31)", "body": "If you report an injury or any adverse symptom from an incident of violence, Refresh must advise you to consult a physician of your choice for treatment or referral. Take that seriously \u2014 symptoms are not always physical.", "bullets": null, "audio_text": "Medical follow-up (OHS Reg s. 4.31) If you report an injury or any adverse symptom from an incident of violence, Refresh must advise you to consult a physician of your choice for treatment or referral. Take that seriously \u2014 symptoms are not always physical.", "id": "medical-follow-up-ohs-reg-s-4-31-if-you-report-an-injury-or-", "audio": "audio/medical-follow-up-ohs-reg-s-4-31-if-you-report-an-injury-or-.mp3"}, {"kind": "section_intro", "section_idx": 6, "section_title": "How to report \u2014 and why you can report safely", "title": "How to report \u2014 and why you can report safely", "eyebrow": "Section 4 \u2014 How", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "How to report \u2014 and why you can report safely.", "id": "how-to-report-and-why-you-can-report-safely", "audio": "audio/how-to-report-and-why-you-can-report-safely.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "How to report \u2014 and why you can report safely", "eyebrow": "Section 4 \u2014 How", "accent": "green", "heading": "Reporting is the most important thing you can do", "body": "Refresh's policy says bullying and harassment must be reported to your supervisor and senior management immediately, and that all incidents and complaints are dealt with right away. The company cannot fix what it does not know about.", "bullets": null, "audio_text": "Reporting is the most important thing you can do Refresh's policy says bullying and harassment must be reported to your supervisor and senior management immediately, and that all incidents and complaints are dealt with right away. The company cannot fix what it does not know about.", "id": "reporting-is-the-most-important-thing-you-can-do-refresh-s-p", "audio": "audio/reporting-is-the-most-important-thing-you-can-do-refresh-s-p.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "How to report \u2014 and why you can report safely", "eyebrow": "Section 4 \u2014 How", "accent": "green", "heading": "How to report", "body": "", "bullets": ["Tell your supervisor or a manager \u2014 verbally or in writing", "If the concern involves your supervisor, go to the next level of management", "For violence or a threat, report it the same way you would any serious incident", "If you are in immediate danger, get to safety and call 911 first, then report"], "audio_text": "How to report Tell your supervisor or a manager \u2014 verbally or in writing If the concern involves your supervisor, go to the next level of management For violence or a threat, report it the same way you would any serious incident If you are in immediate danger, get to safety and call 911 first, then report", "id": "how-to-report-tell-your-supervisor-or-a-manager-verbally-or-", "audio": "audio/how-to-report-tell-your-supervisor-or-a-manager-verbally-or-.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "How to report \u2014 and why you can report safely", "eyebrow": "Section 4 \u2014 How", "accent": "green", "heading": "If you experience bullying or harassment", "body": "", "bullets": ["If you feel safe to, firmly tell the person the behaviour is not acceptable and ask them to stop", "You can ask a supervisor to be with you when you speak to the person", "Keep a factual journal \u2014 dates, times, what happened, and any witnesses", "Keep copies of any emails, texts, or notes", "Report it \u2014 and if your concern is minimized, go to the next level"], "audio_text": "If you experience bullying or harassment If you feel safe to, firmly tell the person the behaviour is not acceptable and ask them to stop You can ask a supervisor to be with you when you speak to the person Keep a factual journal \u2014 dates, times, what happened, and any witnesses Keep copies of any emails, texts, or notes Report it \u2014 and if your concern is minimized, go to the next level", "id": "if-you-experience-bullying-or-harassment-if-you-feel-safe-to", "audio": "audio/if-you-experience-bullying-or-harassment-if-you-feel-safe-to.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "How to report \u2014 and why you can report safely", "eyebrow": "Section 4 \u2014 How", "accent": "green", "heading": "Reports are taken seriously \u2014 and there is no retaliation", "body": "", "bullets": ["Every report is handled promptly and kept confidential", "Identities are shared only as far as needed to investigate the complaint", "Do not retaliate against anyone, and you will not be punished for making a good-faith report", "Filing a knowingly false and malicious complaint is the only kind that leads to discipline"], "audio_text": "Reports are taken seriously \u2014 and there is no retaliation Every report is handled promptly and kept confidential Identities are shared only as far as needed to investigate the complaint Do not retaliate against anyone, and you will not be punished for making a good-faith report Filing a knowingly false and malicious complaint is the only kind that leads to discipline", "id": "reports-are-taken-seriously-and-there-is-no-retaliation-ever", "audio": "audio/reports-are-taken-seriously-and-there-is-no-retaliation-ever.mp3"}, {"kind": "section_intro", "section_idx": 7, "section_title": "Quick check \u2014 Responsibilities and reporting", "title": "Quick check \u2014 Responsibilities and reporting", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Responsibilities and reporting.", "id": "quick-check-responsibilities-and-reporting", "audio": "audio/quick-check-responsibilities-and-reporting.mp3"}, {"kind": "midcheck_q", "section_idx": 7, "section_title": "Quick check \u2014 Responsibilities and reporting", "key": "7-0", "q": {"q": "Whose job is it to assess the risk of violence and put controls in place?", "options": ["Each worker, on their own", "The employer (Refresh)", "WorkSafeBC inspectors"], "correct": 1, "why": "OHS Reg ss. 4.28\u20134.29 put the risk assessment and controls on the employer. Workers participate and are informed of the results."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 7, "section_title": "Quick check \u2014 Responsibilities and reporting", "key": "7-1", "q": {"q": "You report harassment in good faith. What does Refresh's policy say happens to you?", "options": ["You could be disciplined for complaining", "Nothing negative \u2014 reports are taken seriously, kept confidential, and there is no retaliation", "Your name is posted so everyone knows"], "correct": 1, "why": "Good-faith reports are handled confidentially with no retaliation. Only a knowingly false and malicious complaint can lead to discipline."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 7, "section_title": "Quick check \u2014 Responsibilities and reporting", "key": "7-2", "q": {"q": "You report an adverse symptom after a violent incident at a site. What must Refresh do?", "options": ["Tell you to walk it off", "Advise you to consult a physician of your choice for treatment or referral", "Wait to see if it gets worse"], "correct": 1, "why": "OHS Reg s. 4.31 requires the employer to advise a worker reporting injury or adverse symptoms from violence to see a physician of their choice."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 8, "section_title": "Staying safe with aggressive members of the public", "title": "Staying safe with aggressive members of the public", "eyebrow": "Section 5 \u2014 Field safety", "icon": "shield", "accent": "red", "subtitle": "", "audio_text": "Staying safe with aggressive members of the public.", "id": "staying-safe-with-aggressive-members-of-the-public", "audio": "audio/staying-safe-with-aggressive-members-of-the-public.mp3"}, {"kind": "block", "section_idx": 8, "section_title": "Staying safe with aggressive members of the public", "eyebrow": "Section 5 \u2014 Field safety", "accent": "red", "heading": "Why field & shop workers face this", "body": "Refresh crews work at remote sites, on leases, and on landowners' property, often alone or in small teams. Most people are reasonable. But you may meet someone who is angry, impaired, or aggressive \u2014 and help may be far away. A plan keeps you safe.", "bullets": null, "audio_text": "Why field & shop workers face this Refresh crews work at remote sites, on leases, and on landowners' property, often alone or in small teams. Most people are reasonable. But you may meet someone who is angry, impaired, or aggressive \u2014 and help may be far away. A plan keeps you safe.", "id": "why-field-shop-workers-face-this-refresh-crews-work-at-remot", "audio": "audio/why-field-shop-workers-face-this-refresh-crews-work-at-remot.mp3"}, {"kind": "block", "section_idx": 8, "section_title": "Staying safe with aggressive members of the public", "eyebrow": "Section 5 \u2014 Field safety", "accent": "red", "heading": "Spot the warning signs early", "body": "", "bullets": ["Raised voice, swearing, clenched fists, or invading your space", "Pacing, sudden mood changes, or fixating on a grievance", "Signs of impairment by alcohol or drugs", "Threats \u2014 direct (\"I'll hurt you\") or implied (\"you don't want to come back here\")"], "audio_text": "Spot the warning signs early Raised voice, swearing, clenched fists, or invading your space Pacing, sudden mood changes, or fixating on a grievance Signs of impairment by alcohol or drugs Threats \u2014 direct (\"I'll hurt you\") or implied (\"you don't want to come back here\")", "id": "spot-the-warning-signs-early-raised-voice-swearing-clenched-", "audio": "audio/spot-the-warning-signs-early-raised-voice-swearing-clenched-.mp3"}, {"kind": "block", "section_idx": 8, "section_title": "Staying safe with aggressive members of the public", "eyebrow": "Section 5 \u2014 Field safety", "accent": "red", "heading": "De-escalate if it is safe to", "body": "", "bullets": ["Stay calm, keep your voice low and even, and do not argue back", "Keep a respectful distance and do not block their exit or let them block yours", "Listen, acknowledge their concern, and avoid challenging body language", "You are not there to win the argument \u2014 you are there to stay safe"], "audio_text": "De-escalate if it is safe to Stay calm, keep your voice low and even, and do not argue back Keep a respectful distance and do not block their exit or let them block yours Listen, acknowledge their concern, and avoid challenging body language You are not there to win the argument \u2014 you are there to stay safe", "id": "de-escalate-if-it-is-safe-to-stay-calm-keep-your-voice-low-a", "audio": "audio/de-escalate-if-it-is-safe-to-stay-calm-keep-your-voice-low-a.mp3"}, {"kind": "block", "section_idx": 8, "section_title": "Staying safe with aggressive members of the public", "eyebrow": "Section 5 \u2014 Field safety", "accent": "red", "heading": "When in doubt, leave", "body": "", "bullets": ["Your safety comes before the task \u2014 there is no job worth getting hurt over", "Withdraw to your vehicle, leave the site, and drive to a safe distance", "Call your supervisor or dispatch and report what happened", "If you are in immediate danger, call 911 \u2014 that is never over-reacting", "Tell your supervisor before you go back, so the risk can be reassessed (s. 4.28)"], "audio_text": "When in doubt, leave Your safety comes before the task \u2014 there is no job worth getting hurt over Withdraw to your vehicle, leave the site, and drive to a safe distance Call your supervisor or dispatch and report what happened If you are in immediate danger, call 911 \u2014 that is never over-reacting Tell your supervisor before you go back, so the risk can be reassessed (s. 4.28)", "id": "when-in-doubt-leave-your-safety-comes-before-the-task-there-", "audio": "audio/when-in-doubt-leave-your-safety-comes-before-the-task-there-.mp3"}, {"kind": "section_intro", "section_idx": 9, "section_title": "Four real Refresh scenarios", "title": "Four real Refresh scenarios", "eyebrow": "Section 6 \u2014 What would you do?", "icon": "alert", "accent": "amber", "subtitle": "Read the situation, think about your move, then check the answer. One right approach for each.", "audio_text": "Four real Refresh scenarios. Read the situation, think about your move, then check the answer. One right approach for each.", "id": "four-real-refresh-scenarios-read-the-situation-think-about-y", "audio": "audio/four-real-refresh-scenarios-read-the-situation-think-about-y.mp3"}, {"kind": "scenario", "section_idx": 9, "section_title": "Four real Refresh scenarios", "scenario": {"title": "Scenario 1 \u2014 Aggressive person at a remote site", "situation": "You're alone topping up a chemical tote at a remote lease. A man pulls up, gets out yelling that you have no right to be there, and walks quickly toward you with his fists clenched.", "question": "What do you do?", "answer_headline": "Disengage and get to safety \u2014 do not try to win the argument.", "bullets": ["Keep calm, keep distance, and do not block his path or let him block yours", "Move toward your vehicle; leave the site and drive to a safe distance", "Call your supervisor or dispatch and report it right away", "If you fear injury, call 911 \u2014 a threat that makes you fear harm is violence (s. 4.27)", "Don't return until Refresh reassesses the risk for that site (s. 4.28)"]}, "audio_text": "Scenario 1 \u2014 Aggressive person at a remote site. You're alone topping up a chemical tote at a remote lease. A man pulls up, gets out yelling that you have no right to be there, and walks quickly toward you with his fists clenched. What do you do? The right answer: Disengage and get to safety \u2014 do not try to win the argument.", "id": "scenario-1-aggressive-person-at-a-remote-site-you-re-alone-t", "audio": "audio/scenario-1-aggressive-person-at-a-remote-site-you-re-alone-t.mp3"}, {"kind": "scenario", "section_idx": 9, "section_title": "Four real Refresh scenarios", "scenario": {"title": "Scenario 2 \u2014 Repeated belittling by a coworker", "situation": "A coworker in the shop keeps mocking how you do your job in front of others, calls you names, and dismisses your ideas in every meeting. It has been going on for weeks and you dread coming in.", "question": "Is this just personality, or something you should act on?", "answer_headline": "This is bullying & harassment. Document it and report it.", "bullets": ["Repeated humiliating conduct by a coworker meets WorkSafeBC's definition of bullying & harassment", "If you feel safe to, firmly tell them to stop \u2014 you can bring a supervisor with you", "Keep a factual journal: dates, times, what was said, and any witnesses", "Report it to your supervisor or senior management \u2014 it must be reported immediately", "Refresh must investigate and follow up; your report is kept confidential with no retaliation"]}, "audio_text": "Scenario 2 \u2014 Repeated belittling by a coworker. A coworker in the shop keeps mocking how you do your job in front of others, calls you names, and dismisses your ideas in every meeting. It has been going on for weeks and you dread coming in. Is this just personality, or something you should act on? The right answer: This is bullying & harassment. Document it and report it.", "id": "scenario-2-repeated-belittling-by-a-coworker-a-coworker-in-t", "audio": "audio/scenario-2-repeated-belittling-by-a-coworker-a-coworker-in-t.mp3"}, {"kind": "scenario", "section_idx": 9, "section_title": "Four real Refresh scenarios", "scenario": {"title": "Scenario 3 \u2014 A threat", "situation": "After you shut down a job for a safety reason, a contractor on site leans in and says quietly, \"I know what truck is yours. Watch yourself.\"", "question": "How serious is this and what do you do?", "answer_headline": "Treat it as workplace violence and report it now.", "bullets": ["A threatening statement that gives reasonable cause to fear injury is violence under s. 4.27", "Do not respond in kind \u2014 create distance and leave if you feel unsafe", "Report it to your supervisor and management immediately; write down the exact words", "Incidents of violence must be reported, investigated, and documented (s. 4.30)", "If you have any stress symptoms afterward, Refresh must advise you to see a physician (s. 4.31)"]}, "audio_text": "Scenario 3 \u2014 A threat. After you shut down a job for a safety reason, a contractor on site leans in and says quietly, \"I know what truck is yours. Watch yourself.\" How serious is this and what do you do? The right answer: Treat it as workplace violence and report it now.", "id": "scenario-3-a-threat-after-you-shut-down-a-job-for-a-safety-r", "audio": "audio/scenario-3-a-threat-after-you-shut-down-a-job-for-a-safety-r.mp3"}, {"kind": "scenario", "section_idx": 9, "section_title": "Four real Refresh scenarios", "scenario": {"title": "Scenario 4 \u2014 Witnessing harassment", "situation": "You see a senior crew member repeatedly single out a new hire \u2014 offensive jokes, harsh public criticism, and excluding them from breaks. The new hire hasn't said anything and looks miserable.", "question": "It's not happening to you. Do you do anything?", "answer_headline": "Yes. Witnesses have a duty to report too.", "bullets": ["Every worker must report bullying & harassment they witness, not only what they experience", "Bystanders are affected too, and staying silent lets it continue", "Report it to your supervisor or senior management \u2014 you can do so confidentially", "Do not join in, and do not retaliate against anyone", "Refresh must investigate all incidents and take corrective action"]}, "audio_text": "Scenario 4 \u2014 Witnessing harassment. You see a senior crew member repeatedly single out a new hire \u2014 offensive jokes, harsh public criticism, and excluding them from breaks. The new hire hasn't said anything and looks miserable. It's not happening to you. Do you do anything? The right answer: Yes. Witnesses have a duty to report too.", "id": "scenario-4-witnessing-harassment-you-see-a-senior-crew-membe", "audio": "audio/scenario-4-witnessing-harassment-you-see-a-senior-crew-membe.mp3"}];  // expanded list of slides — one entry per visible slide
+
+// Apply brand CSS variables
+const r = document.documentElement;
+r.style.setProperty('--brand-primary', BRAND.colors.primary);
+r.style.setProperty('--brand-primary-dark', BRAND.colors.primary_dark);
+r.style.setProperty('--brand-navy', BRAND.colors.navy);
+r.style.setProperty('--brand-darkblue', BRAND.colors.darkblue);
+r.style.setProperty('--brand-accent', BRAND.colors.accent);
+r.style.setProperty('--brand-red', BRAND.colors.red);
+r.style.setProperty('--brand-green', BRAND.colors.green);
+r.style.setProperty('--brand-purple', BRAND.colors.purple);
+document.title = (CONTENT.meta.topic || 'Training') + ' — ' + BRAND.client_name;
+
+const ACCENTS = { blue: BRAND.colors.primary, amber: BRAND.colors.accent, red: BRAND.colors.red, green: BRAND.colors.green, purple: BRAND.colors.purple, darkblue: BRAND.colors.darkblue };
+const ICONS = {
+  alert: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-20H6.5A2.5 2.5 0 004 4.5v15z"/>',
+  users: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/>',
+  video: '<path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/>',
+  flask: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>',
+  file: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/>',
+  beaker: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6M6 14h12"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+  clipboard: '<path d="M9 2h6a2 2 0 012 2v2H7V4a2 2 0 012-2zM5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  award: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>',
+  shieldcheck: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'
+};
+
+let state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+
+function svg(path, color) { return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
+function escapeHtml(s) { if (s == null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  state.screen = name;
+  // Pause any playing audio when changing screens
+  const aud = document.getElementById('slide-audio');
+  if (aud) { aud.pause(); aud.currentTime = 0; }
+}
+
+function renderIntroMeta() {
+  document.getElementById('brand-eyebrow').textContent = BRAND.tagline || (BRAND.client_name + ' E-LEARNING');
+  document.getElementById('module-code').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' · ' + CONTENT.meta.version : '');
+  document.getElementById('intro-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('intro-subtitle').textContent = CONTENT.meta.subtitle || '';
+  document.getElementById('topbar-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('quiz-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('r-module').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' ' + CONTENT.meta.version : '');
+  document.getElementById('result-footer').textContent = CONTENT.meta.regulation_alignment ? 'Aligned with ' + CONTENT.meta.regulation_alignment : '';
+
+  const pills = [
+    { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', label: 'Duration', value: CONTENT.meta.duration || '~30 min' },
+    { icon: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>', label: 'Pass mark', value: (CONTENT.meta.pass_mark_pct || 70) + '%' },
+    { icon: '<path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>', label: 'Slides', value: SLIDES.length },
+    { icon: '<path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14"/>', label: 'Audio', value: SLIDES.some(s => s.audio) ? 'Voiceover' : 'Read-only' }
+  ];
+  document.getElementById('meta-grid').innerHTML = pills.map(p => '<div class="meta-pill"><div class="icon">' + svg(p.icon) + '</div><div><div class="label">' + escapeHtml(p.label) + '</div><div class="value">' + escapeHtml(p.value) + '</div></div></div>').join('');
+
+  document.getElementById('learning-objectives').innerHTML = (CONTENT.meta.what_you_will_learn || []).map(o => '<li>' + escapeHtml(o) + '</li>').join('');
+  document.getElementById('footer-tracking-note').textContent = trackingEnabled() ? 'Your completion will be recorded with ' + BRAND.client_short + '.' : 'Print or save your certificate when you finish.';
+}
+
+function renderSlide() {
+  const slide = SLIDES[state.slideIdx];
+  if (!slide) return;
+  const total = SLIDES.length, progress = ((state.slideIdx + 1) / (total + 1)) * 100;
+
+  document.getElementById('slide-counter').textContent = slide.section_title || '';
+  document.getElementById('progress-pct').textContent = (state.slideIdx + 1) + ' / ' + total;
+  document.getElementById('progress-fill').style.width = progress + '%';
+
+  let html = '';
+  const slideKind = slide.kind;
+  if (slideKind === 'section_intro') html = renderSectionIntro(slide);
+  else if (slideKind === 'block') html = renderBlockSlide(slide);
+  else if (slideKind === 'video') html = renderVideoSlide(slide);
+  else if (slideKind === 'pictograms') html = renderPictogramsSlide(slide);
+  else if (slideKind === 'chemcard') html = renderChemCardSlide(slide);
+  else if (slideKind === 'scenario') html = renderScenarioSlide(slide);
+  else if (slideKind === 'midcheck_q') html = renderMidCheckQSlide(slide);
+
+  document.getElementById('slide-body').innerHTML = html;
+  attachMidCheckHandlers();
+
+  // Audio — autoplay each slide's narration. Browsers permit this after the learner's
+  // first interaction (Begin / Continue clicks); if blocked, the visible Play control still works.
+  const audioEl = document.getElementById('slide-audio');
+  const audioContainer = document.getElementById('audio-container');
+  if (slide.audio) {
+    audioEl.src = slide.audio;
+    audioContainer.classList.remove('empty');
+    audioEl.currentTime = 0;
+    const _p = audioEl.play();
+    if (_p && _p.catch) _p.catch(() => {});
+  } else {
+    audioEl.removeAttribute('src');
+    audioContainer.classList.add('empty');
+  }
+
+  // Nav
+  document.getElementById('btn-prev').disabled = state.slideIdx === 0;
+  const isLast = state.slideIdx === total - 1;
+  document.getElementById('btn-next').innerHTML = (isLast ? 'Final quiz' : 'Continue') + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+
+  // Scroll the slide content area to top
+  const sc = document.querySelector('#screen-learn .slide-content');
+  if (sc) sc.scrollTop = 0;
+}
+
+function renderSectionIntro(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="section-intro"><div class="icon-big" style="background:' + ac + '">' + svg(ICONS[slide.icon] || ICONS.book, '#fff') + '</div>' +
+    '<div class="eyebrow-text" style="color:' + ac + '">' + escapeHtml(slide.eyebrow || '') + '</div>' +
+    '<h2>' + escapeHtml(slide.title) + '</h2>' +
+    (slide.subtitle ? '<p class="subtitle">' + escapeHtml(slide.subtitle) + '</p>' : '') + '</div>';
+}
+
+function renderBlockSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    (slide.eyebrow ? '<div class="block-eyebrow" style="color:' + ac + '">' + escapeHtml(slide.eyebrow) + '</div>' : '') +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading) + '</h3>' +
+    (slide.body ? '<p class="block-body">' + escapeHtml(slide.body) + '</p>' : '') +
+    (slide.bullets ? '<ul class="block-bullets">' + slide.bullets.map(bl => '<li><svg viewBox="0 0 24 24" style="color:' + ac + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>' + escapeHtml(bl) + '</span></li>').join('') + '</ul>' : '') + '</div>';
+}
+
+function renderVideoSlide(slide) {
+  const url = slide.video_url || '#';
+  return '<div class="video-card"><div class="video-thumb"><div class="video-play-btn" onclick="window.open(' + JSON.stringify(url) + ', \'_blank\', \'noopener\')"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><h3>' + escapeHtml(slide.video_title || '') + '</h3><p>' + escapeHtml(slide.video_source || '') + ' · ' + escapeHtml(slide.video_duration || '') + '</p></div><div class="video-action"><div class="video-action-info"><strong>Click to watch</strong><span>Opens in a new tab</span></div><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener" class="btn-yt">Watch on YouTube <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a></div></div>';
+}
+
+function renderPictogramsSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading || 'Pictograms') + '</h3>' +
+    (slide.intro ? '<p class="block-body">' + escapeHtml(slide.intro) + '</p>' : '') +
+    '<div class="picto-grid">' + slide.items.map(p => '<div class="picto-cell"><img src="' + (p.image_data || p.image || '') + '" alt="' + escapeHtml(p.label) + '"><div class="picto-label">' + escapeHtml(p.label) + '</div><div class="picto-sub">' + escapeHtml(p.sub || '') + '</div></div>').join('') + '</div></div>';
+}
+
+function renderChemCardSlide(slide) {
+  const c = slide.card;
+  const sigColor = c.signal === 'DANGER' ? ACCENTS.red : ACCENTS.amber;
+  const rowColors = { 'EXPOSURE LIMITS': ACCENTS.amber, 'PPE': ACCENTS.blue, 'FIRST AID': ACCENTS.green, 'SPILL': ACCENTS.purple, 'STORAGE': ACCENTS.darkblue };
+  return '<div class="chem-card"><div class="chem-card-header"><div class="chem-pictos-row">' +
+    (c.pictogram_data || []).map(p => '<img src="' + p + '" alt="">').join('') +
+    '<span class="signal-badge" style="background:' + sigColor + '">' + escapeHtml(c.signal || '') + '</span></div>' +
+    '<div class="chem-card-name">' + escapeHtml(c.name) + '</div><div class="chem-card-full">' + escapeHtml(c.full_name || '') + (c.supplier ? ' · ' + escapeHtml(c.supplier) : '') + '</div>' +
+    '<div class="chem-haz">' + escapeHtml(c.hazard_summary || '') + '</div></div>' +
+    (c.rows || []).map(row => {
+      const rc = rowColors[row.label] || ACCENTS.blue;
+      return '<div class="chem-row"><div class="chem-row-label" style="background:' + rc + '">' + escapeHtml(row.label) + '</div><div class="chem-row-items"><ul>' +
+        row.items.map(it => '<li><span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:' + rc + ';margin-top:7px;margin-right:6px;flex-shrink:0;"></span>' + escapeHtml(it) + '</li>').join('') + '</ul></div></div>';
+    }).join('') + '</div>';
+}
+
+function renderScenarioSlide(slide) {
+  const sc = slide.scenario;
+  return '<div class="scenario"><div class="scenario-title">' + escapeHtml(sc.title) + '</div><div class="scenario-grid">' +
+    '<div class="scenario-side scenario-situation"><div class="scenario-eyebrow" style="color:' + ACCENTS.blue + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.blue + '"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Situation</div><p class="scenario-text">' + escapeHtml(sc.situation) + '</p><p class="scenario-question">' + escapeHtml(sc.question) + '</p></div>' +
+    '<div class="scenario-side scenario-answer"><div class="scenario-eyebrow" style="color:' + ACCENTS.green + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.green + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Right answer</div><p class="scenario-headline">' + escapeHtml(sc.answer_headline) + '</p><ul class="scenario-bullets">' + (sc.bullets || []).map(b => '<li>' + escapeHtml(b) + '</li>').join('') + '</ul></div></div></div>';
+}
+
+function renderMidCheckQSlide(slide) {
+  const q = slide.q, key = slide.key;
+  const ans = state.midAnswers[key], answered = ans !== undefined;
+  return '<div class="kc-banner"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><p><strong>Quick check.</strong> You\'ll see the answer right away — won\'t count against your final quiz.</p></div>' +
+    '<div class="q-card"><div class="q-text">' + escapeHtml(q.q) + '</div><div class="q-options">' +
+    q.options.map((opt, oi) => {
+      let cls = 'q-option';
+      if (answered) { if (oi === q.correct) cls += ' correct'; else if (ans === oi) cls += ' incorrect'; }
+      const checkSvg = answered && oi === q.correct ? '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>' : '';
+      return '<button class="' + cls + '" data-mid="' + key + '" data-opt="' + oi + '" ' + (answered ? 'disabled' : '') + '><span>' + escapeHtml(opt) + '</span>' + checkSvg + '</button>';
+    }).join('') + '</div>' +
+    (answered ? '<div class="feedback ' + (ans === q.correct ? 'right' : 'wrong') + '"><strong>' + (ans === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+}
+
+function attachMidCheckHandlers() {
+  document.querySelectorAll('[data-mid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.mid, opt = parseInt(btn.dataset.opt);
+      if (state.midAnswers[key] !== undefined) return;
+      state.midAnswers[key] = opt;
+      renderSlide();
+    });
+  });
+}
+
+function renderQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  document.getElementById('quiz-instructions').textContent = quiz.length + ' questions. ' + (CONTENT.meta.pass_mark_pct || 70) + '% to pass (' + passN + '/' + quiz.length + ').';
+  document.getElementById('quiz-questions').innerHTML = quiz.map((q, i) => {
+    return '<div class="quiz-q"><div><span style="font-size:11px;font-weight:700;color:var(--brand-primary);">Q' + (i + 1) + '.</span> <span style="font-weight:600;">' + escapeHtml(q.q) + '</span></div><div class="q-options" style="margin-top:14px;">' +
+      q.options.map((opt, j) => {
+        let cls = 'q-option';
+        if (state.quizSubmitted) { if (j === q.correct) cls += ' correct'; else if (state.quizAnswers[i] === j) cls += ' incorrect'; }
+        else if (state.quizAnswers[i] === j) cls += ' selected';
+        return '<button class="' + cls + '" data-q="' + i + '" data-opt="' + j + '" ' + (state.quizSubmitted ? 'disabled' : '') + '><span class="letter">' + String.fromCharCode(65 + j) + '.</span><span style="flex:1;">' + escapeHtml(opt) + '</span></button>';
+      }).join('') + '</div>' +
+      (state.quizSubmitted && q.why ? '<div class="feedback ' + (state.quizAnswers[i] === q.correct ? 'right' : 'wrong') + '" style="margin-top:12px;"><strong>' + (state.quizAnswers[i] === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+  }).join('');
+  document.querySelectorAll('#quiz-questions [data-q]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.quizSubmitted) return;
+      state.quizAnswers[parseInt(btn.dataset.q)] = parseInt(btn.dataset.opt);
+      renderQuiz();
+      checkQuizComplete();
+    });
+  });
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  const all = (CONTENT.quiz || []).every((_, i) => state.quizAnswers[i] !== undefined);
+  document.getElementById('btn-submit-quiz').disabled = !all;
+}
+
+function submitQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  let s = 0;
+  quiz.forEach((q, i) => { if (state.quizAnswers[i] === q.correct) s++; });
+  state.score = s; state.passed = s >= passN; state.quizSubmitted = true;
+  renderResult(); showScreen('result');
+  if (trackingEnabled()) sendCompletion();
+}
+
+function renderResult() {
+  const passed = state.passed, quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  const pct = Math.round((state.score / quiz.length) * 100);
+  document.querySelector('#screen-result .result-bg').className = 'result-bg ' + (passed ? 'passed' : 'failed');
+  document.getElementById('result-icon').className = 'result-icon ' + (passed ? 'pass' : 'fail');
+  document.getElementById('result-icon').innerHTML = passed ? svg(ICONS.award) : svg('<path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15A9 9 0 0018.36 18.36L23 14"/>');
+  document.getElementById('result-title').textContent = passed ? 'Module complete' : 'Not quite there';
+  document.getElementById('result-subtitle').textContent = passed ? 'You have successfully completed this training module.' : 'You need ' + passN + ' out of ' + quiz.length + ' correct to pass. Review and try again.';
+  document.getElementById('r-name').textContent = state.learnerName;
+  document.getElementById('r-employer').textContent = state.employer;
+  document.getElementById('r-score').textContent = state.score + ' / ' + quiz.length + ' (' + pct + '%)';
+  const rResult = document.getElementById('r-result');
+  rResult.textContent = passed ? 'PASSED' : 'FAILED';
+  rResult.style.color = passed ? ACCENTS.green : ACCENTS.amber;
+  document.getElementById('r-date').textContent = new Date().toLocaleString('en-CA');
+  document.getElementById('btn-retry').style.display = passed ? 'none' : 'inline-flex';
+}
+
+function setTrackingStatus(status, msg) {
+  const el = document.getElementById('tracking-status');
+  el.className = 'tracking-status ' + status; el.textContent = msg;
+}
+// Tracking is "enabled" only when real config is present — placeholders (containing "__")
+// leave it disabled so the module still works and just shows the print-certificate note.
+function trackingEnabled() {
+  const t = CONTENT.tracking || {};
+  if (t.provider === 'supabase') {
+    return /^https?:\/\//.test(t.supabase_url || '') && !!t.anon_key && !!t.token &&
+           (t.supabase_url.indexOf('__') === -1) && (String(t.token).indexOf('__') === -1);
+  }
+  return !!t.endpoint && t.endpoint.indexOf('__') === -1;
+}
+function sendCompletion() {
+  const t = CONTENT.tracking || {};
+  const total = (CONTENT.quiz || []).length;
+  const pct = total ? Math.round((state.score / total) * 100) : 0;
+  setTrackingStatus('pending', '⟳ Saving completion record...');
+  if (t.provider === 'supabase') {
+    // Strawboss-compatible path: call a SECURITY DEFINER RPC. The anon key is public by
+    // design; the per-course token scopes what can be written (company + course).
+    const url = t.supabase_url.replace(/\/+$/, '') + '/rest/v1/rpc/submit_course_completion';
+    fetch(url, {
+      method: 'POST',
+      headers: { 'apikey': t.anon_key, 'Authorization': 'Bearer ' + t.anon_key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        p_token: t.token,
+        p_worker_name: state.learnerName,
+        p_worker_email: state.workerEmail || null,
+        p_employer: state.employer,
+        p_score: state.score, p_total: total, p_pct: pct, p_passed: state.passed
+      })
+    }).then(res => {
+      if (res.ok) setTrackingStatus('ok', '✓ Completion recorded.');
+      else setTrackingStatus('fail', '⚠ Could not save record (' + res.status + '). Screenshot this page for your supervisor.');
+    }).catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  } else {
+    // Legacy path: generic endpoint (e.g. Google Apps Script), fire-and-forget.
+    const payload = {
+      module: t.module_id || ((CONTENT.meta.code || '') + ' ' + (CONTENT.meta.version || '')),
+      name: state.learnerName, employer: state.employer,
+      score: state.score, total: total, pct: pct,
+      passed: state.passed, timestamp: new Date().toISOString()
+    };
+    fetch(t.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload), mode: 'no-cors' })
+      .then(() => setTrackingStatus('ok', '✓ Completion record saved.'))
+      .catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  }
+}
+
+// Wire up
+function refreshStartButton() {
+  const name = document.getElementById('learner-name').value.trim();
+  const emp = document.getElementById('employer').value.trim();
+  document.getElementById('btn-start').disabled = !(name && emp);
+}
+document.getElementById('learner-name').addEventListener('input', refreshStartButton);
+document.getElementById('employer').addEventListener('input', refreshStartButton);
+document.getElementById('btn-start').addEventListener('click', () => {
+  state.learnerName = document.getElementById('learner-name').value.trim();
+  state.employer = document.getElementById('employer').value.trim();
+  state.slideIdx = 0;
+  showScreen('learn'); renderSlide();
+});
+document.getElementById('btn-prev').addEventListener('click', () => { if (state.slideIdx > 0) { state.slideIdx--; renderSlide(); } });
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (state.slideIdx < SLIDES.length - 1) { state.slideIdx++; renderSlide(); }
+  else { showScreen('quiz'); renderQuiz(); }
+});
+document.getElementById('btn-submit-quiz').addEventListener('click', submitQuiz);
+document.getElementById('btn-retry').addEventListener('click', () => { state.quizAnswers = {}; state.quizSubmitted = false; state.score = 0; showScreen('quiz'); renderQuiz(); });
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+document.getElementById('btn-restart').addEventListener('click', () => {
+  state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+  document.getElementById('learner-name').value = '';
+  document.getElementById('employer').value = '';
+  refreshStartButton(); showScreen('intro');
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (state.screen !== 'learn') return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); document.getElementById('btn-next').click(); }
+  else if (e.key === 'ArrowLeft') { document.getElementById('btn-prev').click(); }
+});
+
+renderIntroMeta();
+</script>
+</body>
+</html>
