@@ -241,6 +241,10 @@ a:hover { text-decoration: underline; }
         <label for="employer">Employer / Organization</label>
         <input type="text" id="employer" placeholder="e.g. Refresh Resources">
       </div>
+      <div class="input-row">
+        <label for="learner-email">Email (so your training is tracked to you)</label>
+        <input type="email" id="learner-email" placeholder="e.g. casey@example.com" autocomplete="email" inputmode="email">
+      </div>
       <button id="btn-start" class="btn-primary" disabled>Begin module <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
       <div class="intro-footer" id="footer-tracking-note"></div>
     </div>
@@ -352,7 +356,7 @@ const ICONS = {
   shieldcheck: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'
 };
 
-let state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+let state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', workerEmail: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
 
 function svg(path, color) { return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
 function escapeHtml(s) { if (s == null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
@@ -624,16 +628,29 @@ function sendCompletion() {
 }
 
 // Wire up
+function validEmail(e) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e); }
 function refreshStartButton() {
   const name = document.getElementById('learner-name').value.trim();
   const emp = document.getElementById('employer').value.trim();
-  document.getElementById('btn-start').disabled = !(name && emp);
+  const email = document.getElementById('learner-email').value.trim();
+  document.getElementById('btn-start').disabled = !(name && emp && validEmail(email));
 }
 document.getElementById('learner-name').addEventListener('input', refreshStartButton);
 document.getElementById('employer').addEventListener('input', refreshStartButton);
+document.getElementById('learner-email').addEventListener('input', refreshStartButton);
+// Pre-fill from this device's saved identity so a returning worker doesn't retype
+try {
+  const _saved = JSON.parse(localStorage.getItem('refresh_training_worker') || '{}');
+  if (_saved.name) document.getElementById('learner-name').value = _saved.name;
+  if (_saved.employer) document.getElementById('employer').value = _saved.employer;
+  if (_saved.email) document.getElementById('learner-email').value = _saved.email;
+} catch (e) {}
+refreshStartButton();
 document.getElementById('btn-start').addEventListener('click', () => {
   state.learnerName = document.getElementById('learner-name').value.trim();
   state.employer = document.getElementById('employer').value.trim();
+  state.workerEmail = document.getElementById('learner-email').value.trim().toLowerCase();
+  try { localStorage.setItem('refresh_training_worker', JSON.stringify({ name: state.learnerName, employer: state.employer, email: state.workerEmail })); } catch (e) {}
   state.slideIdx = 0;
   showScreen('learn'); renderSlide();
 });
@@ -646,9 +663,10 @@ document.getElementById('btn-submit-quiz').addEventListener('click', submitQuiz)
 document.getElementById('btn-retry').addEventListener('click', () => { state.quizAnswers = {}; state.quizSubmitted = false; state.score = 0; showScreen('quiz'); renderQuiz(); });
 document.getElementById('btn-print').addEventListener('click', () => window.print());
 document.getElementById('btn-restart').addEventListener('click', () => {
-  state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+  state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', workerEmail: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
   document.getElementById('learner-name').value = '';
   document.getElementById('employer').value = '';
+  document.getElementById('learner-email').value = '';
   refreshStartButton(); showScreen('intro');
 });
 
