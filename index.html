@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Refresh Resources — Safety Training Centre</title>
+<style>
+  :root{
+    --primary:#0098DA; --primary-dark:#007FB8; --navy:#114F69; --darkblue:#0A3447;
+    --accent:#F0A500; --green:#2BA84A; --red:#C8102E;
+    --ink:#15252e; --grey:#5b6b75; --line:#e3e9ee; --bg:#f4f7fa; --card:#ffffff;
+    --shadow:0 1px 2px rgba(16,40,55,.06), 0 6px 22px rgba(16,40,55,.07);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--primary-dark); text-decoration:none}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 20px}
+
+  /* Header */
+  header{
+    background:linear-gradient(135deg,var(--navy),var(--darkblue));
+    color:#fff; padding:30px 0 34px;
+  }
+  .brandline{display:flex; align-items:center; gap:13px}
+  .mark{
+    width:46px;height:46px;border-radius:11px;flex:none;
+    background:linear-gradient(135deg,var(--primary),#00b4f0);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 14px rgba(0,152,218,.4);
+  }
+  .mark svg{width:26px;height:26px;color:#fff}
+  .wordmark{font-weight:800;letter-spacing:.5px;font-size:19px;line-height:1.05}
+  .wordmark span{display:block;font-weight:600;font-size:11px;letter-spacing:3px;color:#9fd4ee}
+  h1.title{font-size:30px;margin:24px 0 6px;font-weight:800;letter-spacing:-.3px}
+  .sub{color:#bcd8e6;max-width:620px;font-size:15.5px;margin:0}
+
+  /* How it works */
+  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:-22px 0 6px}
+  .step{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px 16px;box-shadow:var(--shadow);
+  }
+  .step .n{
+    width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;
+    font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;
+  }
+  .step h3{margin:0 0 3px;font-size:14.5px}
+  .step p{margin:0;font-size:13px;color:var(--grey)}
+
+  section.block{margin:34px 0}
+  .eyebrow{font-size:11px;font-weight:800;letter-spacing:2.5px;color:var(--primary-dark);text-transform:uppercase}
+  h2.sec{font-size:21px;margin:6px 0 16px;font-weight:800}
+
+  /* Course cards */
+  .courses{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}
+  .course{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;
+    box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .12s ease,box-shadow .12s ease;
+  }
+  .course:hover{transform:translateY(-2px);box-shadow:0 2px 6px rgba(16,40,55,.08),0 14px 34px rgba(16,40,55,.12)}
+  .course .top{padding:18px 18px 0;display:flex;align-items:flex-start;gap:13px}
+  .ico{
+    width:46px;height:46px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;
+  }
+  .ico svg{width:25px;height:25px}
+  .ico.blue{background:linear-gradient(135deg,var(--primary),#00b4f0)}
+  .ico.amber{background:linear-gradient(135deg,#f0a500,#f7c244)}
+  .course .top h3{margin:0;font-size:17px;font-weight:800;line-height:1.2}
+  .course .top .code{font-size:11.5px;color:var(--grey);font-weight:600;letter-spacing:.4px;margin-top:2px}
+  .course .body{padding:11px 18px 4px;flex:1}
+  .course .body p{margin:0;color:var(--grey);font-size:14px}
+  .meta{display:flex;flex-wrap:wrap;gap:7px;padding:12px 18px 0}
+  .chip{font-size:11.5px;font-weight:600;color:var(--navy);background:#eef6fb;border:1px solid #d8ecf6;border-radius:999px;padding:3px 10px}
+  .course .foot{padding:16px 18px 18px}
+  .btn{
+    display:block;width:100%;text-align:center;background:var(--primary);color:#fff;font-weight:700;font-size:15px;
+    padding:12px;border-radius:11px;border:none;cursor:pointer;letter-spacing:.2px;
+  }
+  .btn:hover{background:var(--primary-dark)}
+
+  /* Coming soon */
+  .soon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+  .soon{
+    background:var(--card);border:1px dashed #cdd8df;border-radius:12px;padding:13px 14px;
+    display:flex;align-items:center;gap:11px;opacity:.92;
+  }
+  .soon .dot{width:9px;height:9px;border-radius:50%;background:#c2ccd3;flex:none}
+  .soon .t{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.25}
+  .soon .t span{display:block;font-size:11px;font-weight:600;color:#9aa7b0;letter-spacing:.5px}
+
+  .note{
+    background:#fff8e8;border:1px solid #f4e2b4;border-radius:13px;padding:14px 16px;
+    font-size:13.5px;color:#6b5413;display:flex;gap:11px;align-items:flex-start;margin-top:18px;
+  }
+  .note svg{width:19px;height:19px;color:var(--accent);flex:none;margin-top:1px}
+
+  footer{border-top:1px solid var(--line);margin-top:46px;padding:26px 0 40px;color:var(--grey);font-size:13px}
+  footer strong{color:var(--ink)}
+  footer .pss{display:flex;align-items:center;gap:9px;font-weight:700;color:var(--navy);margin-bottom:6px}
+
+  @media(max-width:680px){
+    .how{grid-template-columns:1fr;margin-top:-14px}
+    h1.title{font-size:25px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brandline">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg>
+      </div>
+      <div class="wordmark">REFRESH RESOURCES<span>SAFETY TRAINING CENTRE</span></div>
+    </div>
+    <h1 class="title">Worker Safety Training</h1>
+    <p class="sub">Complete your assigned courses below. Each one is self-paced, works on your phone or computer, and finishes with a short quiz and a completion certificate. Your result is recorded automatically.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- How it works -->
+  <div class="how">
+    <div class="step"><div class="n">1</div><h3>Pick a course</h3><p>Tap a course below. Work through the slides at your own pace using the Next / Back buttons.</p></div>
+    <div class="step"><div class="n">2</div><h3>Pass the quiz</h3><p>Each course ends with a short quiz. You need 70% to pass, and you can retake it if needed.</p></div>
+    <div class="step"><div class="n">3</div><h3>Get your certificate</h3><p>Enter your real name and employer. Your completion is logged and you can save your certificate.</p></div>
+  </div>
+
+  <!-- Available courses -->
+  <section class="block">
+    <div class="eyebrow">Available now</div>
+    <h2 class="sec">Courses ready to take</h2>
+    <div class="courses">
+
+      <div class="course">
+        <div class="top">
+          <div class="ico blue" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z"/></svg>
+          </div>
+          <div><h3>Personal Protective Equipment</h3><div class="code">PPE &middot; REF-TR-02</div></div>
+        </div>
+        <div class="body"><p>Where PPE fits in the hierarchy of controls, how it's selected, and how to inspect, wear, and store it correctly.</p></div>
+        <div class="meta"><span class="chip">~60 min</span><span class="chip">Quiz &middot; 70% to pass</span><span class="chip">Certificate</span></div>
+        <div class="foot"><a class="btn" href="ppe/">Start course &rarr;</a></div>
+      </div>
+
+      <div class="course">
+        <div class="top">
+          <div class="ico amber" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 2.3a2 2 0 0 1 3.4 0l8 13.4A2 2 0 0 1 20 19H4a2 2 0 0 1-1.7-3.3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          </div>
+          <div><h3>WHMIS 2015</h3><div class="code">Hazardous Materials &middot; REF-TR-01</div></div>
+        </div>
+        <div class="body"><p>Labels, the 9 pictograms, signal words, and Safety Data Sheets — worked through using Refresh's actual chemicals.</p></div>
+        <div class="meta"><span class="chip">~60 min</span><span class="chip">Quiz &middot; 70% to pass</span><span class="chip">Certificate</span></div>
+        <div class="foot"><a class="btn" href="whmis/">Start course &rarr;</a></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Coming soon -->
+  <section class="block">
+    <div class="eyebrow">In production</div>
+    <h2 class="sec">More courses coming</h2>
+    <div class="soon-grid">
+      <div class="soon"><span class="dot"></span><div class="t">Chemical &amp; Biological Hazards<span>COMING SOON</span></div></div>
+      <div class="soon"><span class="dot"></span><div class="t">Emergency Preparedness &amp; Response<span>COMING SOON</span></div></div>
+      <div class="soon"><span class="dot"></span><div class="t">Ergonomics &amp; Manual Material Handling<span>COMING SOON</span></div></div>
+      <div class="soon"><span class="dot"></span><div class="t">Flammable &amp; Combustible Substances<span>COMING SOON</span></div></div>
+      <div class="soon"><span class="dot"></span><div class="t">Hazard ID &amp; Risk Assessment<span>COMING SOON</span></div></div>
+      <div class="soon"><span class="dot"></span><div class="t">Hydrogen Sulfide (H&#8322;S)<span>COMING SOON</span></div></div>
+      <div class="soon"><span class="dot"></span><div class="t">Ladders (Portable)<span>COMING SOON</span></div></div>
+      <div class="soon"><span class="dot"></span><div class="t">Noise &amp; Hearing Protection<span>COMING SOON</span></div></div>
+      <div class="soon"><span class="dot"></span><div class="t">Transportation of Dangerous Goods<span>COMING SOON</span></div></div>
+      <div class="soon"><span class="dot"></span><div class="t">Working Alone<span>COMING SOON</span></div></div>
+    </div>
+    <div class="note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <div>This is a working pilot. The two courses above are fully functional. The rest are being built from your training materials and will appear here as they're finished.</div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="pss" aria-label="Pragmatic Safety Services">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z"/></svg>
+      Pragmatic Safety Services
+    </div>
+    Training delivered and hosted by Pragmatic Safety Services &middot; <a href="https://pragmaticsafety.ca">pragmaticsafety.ca</a><br>
+    Course completions are recorded for your employer's training records and compliance reporting.
+  </div>
+</footer>
+
+</body>
+</html>
