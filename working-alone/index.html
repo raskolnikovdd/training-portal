@@ -410,12 +410,16 @@ function renderSlide() {
   document.getElementById('slide-body').innerHTML = html;
   attachMidCheckHandlers();
 
-  // Audio
+  // Audio — autoplay each slide's narration. Browsers permit this after the learner's
+  // first interaction (Begin / Continue clicks); if blocked, the visible Play control still works.
   const audioEl = document.getElementById('slide-audio');
   const audioContainer = document.getElementById('audio-container');
   if (slide.audio) {
     audioEl.src = slide.audio;
     audioContainer.classList.remove('empty');
+    audioEl.currentTime = 0;
+    const _p = audioEl.play();
+    if (_p && _p.catch) _p.catch(() => {});
   } else {
     audioEl.removeAttribute('src');
     audioContainer.classList.add('empty');
