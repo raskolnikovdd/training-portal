@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Safety Training</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #F8FAFC; color: #0F172A; line-height: 1.5; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+button { font-family: inherit; cursor: pointer; border: none; }
+a { color: var(--brand-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* INTRO screen — full viewport, centered */
+.intro-bg { flex: 1; padding: 16px; background: linear-gradient(135deg, var(--brand-darkblue) 0%, var(--brand-navy) 50%, var(--brand-darkblue) 100%); display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.intro-card { max-width: 600px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 28px; }
+.intro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.brand-shield { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-shrink: 0; }
+.brand-shield svg { width: 24px; height: 24px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.brand-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary); }
+.brand-sub { font-size: 11px; color: #64748B; margin-top: 2px; }
+.intro-title { font-size: 36px; font-weight: 700; margin-bottom: 4px; letter-spacing: -1px; }
+.intro-subtitle { font-size: 15px; color: #475569; margin-bottom: 20px; }
+.meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+.meta-pill { display: flex; align-items: center; gap: 8px; padding: 10px; background: #F1F5F9; border-radius: 10px; }
+.meta-pill .icon { width: 28px; height: 28px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.meta-pill .icon svg { width: 12px; height: 12px; color: var(--brand-primary); fill: none; stroke: currentColor; stroke-width: 2; }
+.meta-pill .label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #64748B; }
+.meta-pill .value { font-size: 12px; font-weight: 700; color: #0F172A; }
+.intro-info { background: #EFF6FB; border: 1px solid #C5DEEC; border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+.intro-info .info-title { font-size: 12px; font-weight: 700; color: var(--brand-darkblue); margin-bottom: 8px; }
+.intro-info ul { list-style: none; }
+.intro-info li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; }
+.intro-info li::before { content: "✓"; color: var(--brand-primary); font-weight: 700; flex-shrink: 0; }
+.input-row { margin-bottom: 12px; }
+.input-row label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.input-row input { width: 100%; padding: 10px 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-family: inherit; transition: border-color 150ms; }
+.input-row input:focus { outline: none; border-color: var(--brand-primary); }
+.btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dark)); color: #fff; border-radius: 12px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: all 150ms; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.intro-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E8F0; font-size: 11px; color: #64748B; text-align: center; }
+
+/* SLIDE screens — one slide visible at a time, fixed viewport */
+.slide-wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; background: #F8FAFC; }
+.top-bar { background: #fff; border-bottom: 1px solid #E2E8F0; padding: 10px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0; }
+.top-bar-inner { max-width: 900px; margin: 0 auto; }
+.top-bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+.top-bar-left { display: flex; align-items: center; gap: 8px; font-size: 12px; min-width: 0; }
+.top-bar-shield { width: 24px; height: 24px; border-radius: 6px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.top-bar-shield svg { width: 12px; height: 12px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.top-bar-brand { font-weight: 700; letter-spacing: 1px; color: var(--brand-primary); white-space: nowrap; }
+.top-bar-context { color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progress-bar { height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-primary), var(--brand-primary-dark)); transition: width 500ms; }
+
+.slide-content { flex: 1; overflow-y: auto; padding: 24px 16px; display: flex; align-items: flex-start; justify-content: center; }
+.slide-inner { max-width: 760px; width: 100%; }
+
+/* SLIDE — section announcement */
+.section-intro { text-align: center; padding: 32px 16px; }
+.section-intro .icon-big { width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.section-intro .icon-big svg { width: 40px; height: 40px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.section-intro .eyebrow-text { font-size: 12px; font-weight: 700; letter-spacing: 3px; margin-bottom: 8px; }
+.section-intro h2 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.section-intro .subtitle { font-size: 16px; color: #64748B; max-width: 540px; margin: 0 auto; }
+
+/* SLIDE — content block */
+.block-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 32px; }
+.block-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; }
+.block-heading { font-size: 26px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; display: flex; gap: 12px; align-items: flex-start; }
+.block-accent { display: block; width: 5px; min-height: 28px; border-radius: 3px; margin-top: 4px; flex-shrink: 0; }
+.block-body { color: #475569; margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
+.block-bullets { list-style: none; }
+.block-bullets li { display: flex; gap: 12px; padding: 7px 0; font-size: 15px; color: #334155; line-height: 1.55; }
+.block-bullets li svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — pictograms grid (one per slide; or one slide showing the grid) */
+.picto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.picto-cell { text-align: center; padding: 16px; border: 2px solid #F1F5F9; border-radius: 12px; }
+.picto-cell img { width: 64px; height: 64px; margin-bottom: 8px; }
+.picto-label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.picto-sub { font-size: 11px; color: #64748B; line-height: 1.4; }
+
+/* SLIDE — video card */
+.video-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.video-thumb { background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); padding: 40px 24px; text-align: center; color: #fff; }
+.video-play-btn { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; margin-bottom: 12px; cursor: pointer; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+.video-play-btn svg { width: 28px; height: 28px; color: var(--brand-red); fill: currentColor; }
+.video-thumb h3 { font-size: 18px; margin-bottom: 4px; }
+.video-thumb p { font-size: 12px; color: #B0CADE; }
+.video-action { padding: 14px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.video-action-info strong { display: block; font-weight: 600; font-size: 13px; }
+.video-action-info span { color: #64748B; font-size: 12px; }
+.btn-yt { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: var(--brand-red); color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; }
+.btn-yt:hover { background: #A60D26; text-decoration: none; }
+.btn-yt svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — chemical card */
+.chem-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.chem-card-header { padding: 18px 24px; border-bottom: 1px solid #F1F5F9; }
+.chem-pictos-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.chem-pictos-row img { width: 40px; height: 40px; }
+.signal-badge { display: inline-block; padding: 5px 10px; border-radius: 6px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.chem-card-name { font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+.chem-card-full { font-size: 11px; color: #64748B; font-style: italic; margin-bottom: 10px; }
+.chem-haz { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #475569; }
+.chem-row { display: grid; grid-template-columns: 140px 1fr; border-top: 1px solid #F1F5F9; }
+.chem-row-label { padding: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; }
+.chem-row-items { padding: 12px 14px; }
+.chem-row-items ul { list-style: none; }
+.chem-row-items li { display: flex; gap: 8px; padding: 2px 0; font-size: 12px; color: #334155; align-items: flex-start; }
+
+/* SLIDE — scenario */
+.scenario { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.scenario-title { padding: 12px 18px; color: #fff; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); }
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.scenario-side { padding: 20px; }
+.scenario-situation { border-right: 1px solid #F1F5F9; }
+.scenario-answer { background: #EAF7EE; }
+.scenario-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; display: flex; gap: 6px; align-items: center; }
+.scenario-eyebrow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+.scenario-text { font-size: 12px; color: #334155; margin-bottom: 12px; line-height: 1.6; }
+.scenario-question { font-size: 16px; font-weight: 700; }
+.scenario-headline { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.scenario-bullets { list-style: none; }
+.scenario-bullets li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; line-height: 1.55; }
+.scenario-bullets li::before { content: "✓"; color: var(--brand-green); font-weight: 700; flex-shrink: 0; }
+
+/* SLIDE — knowledge check */
+.kc-banner { background: #EAF7EE; border: 2px solid #9DD8AC; border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+.kc-banner svg { width: 18px; height: 18px; color: var(--brand-green); flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+.kc-banner p { font-size: 12px; color: #334155; }
+.q-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; }
+.q-card .q-num { font-size: 11px; font-weight: 700; color: var(--brand-primary); margin-right: 6px; }
+.q-card .q-text { font-weight: 600; margin-bottom: 12px; line-height: 1.5; font-size: 16px; }
+.q-options { display: flex; flex-direction: column; gap: 6px; }
+.q-option { padding: 10px 14px; border: 2px solid #E2E8F0; border-radius: 8px; background: #fff; text-align: left; font-size: 14px; color: #334155; display: flex; align-items: center; gap: 8px; transition: all 120ms; }
+.q-option:hover { border-color: #94A3B8; }
+.q-option .letter { font-weight: 700; min-width: 20px; }
+.q-option.selected { background: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
+.q-option.correct { background: #EAF7EE; border-color: var(--brand-green); color: #1F6B33; }
+.q-option.incorrect { background: #FBE9EC; border-color: var(--brand-red); color: #8B1A2B; }
+.q-option svg { width: 16px; height: 16px; flex-shrink: 0; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; }
+.feedback { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+.feedback.right { background: #EAF7EE; color: #1F6B33; }
+.feedback.wrong { background: #FFF7E5; color: #8B5500; }
+
+/* QUIZ screen — scrollable, doesn't fit single screen */
+.quiz-screen { flex: 1; overflow-y: auto; padding: 24px 16px; }
+.quiz-inner { max-width: 760px; margin: 0 auto; }
+.quiz-q { border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fff; }
+
+/* RESULT screen */
+.result-bg { flex: 1; padding: 24px 16px; display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.result-bg.passed { background: linear-gradient(135deg, var(--brand-green), #1E8038); }
+.result-bg.failed { background: linear-gradient(135deg, var(--brand-accent), #D08000); }
+.result-card { max-width: 540px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 36px; text-align: center; }
+.result-icon { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.result-icon.pass { background: #EAF7EE; }
+.result-icon.fail { background: #FFF7E5; }
+.result-icon svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+.result-icon.pass svg { color: var(--brand-green); }
+.result-icon.fail svg { color: var(--brand-accent); }
+.result-title { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.result-subtitle { color: #475569; margin-bottom: 20px; font-size: 14px; }
+.result-record { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: left; }
+.result-record .row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 13px; }
+.result-record .row .label { color: #64748B; }
+.result-record .row .value { font-weight: 600; text-align: right; }
+.tracking-status { font-size: 12px; margin: 12px 0; padding: 8px 12px; border-radius: 8px; }
+.tracking-status.ok { background: #EAF7EE; color: #1F6B33; }
+.tracking-status.pending { background: #FFF7E5; color: #8B5500; }
+.tracking-status.fail { background: #FBE9EC; color: #8B1A2B; }
+.result-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.result-buttons button { flex: 1; min-width: 110px; }
+
+/* BOTTOM BAR — audio player + nav, fixed */
+.bottom-bar { background: #fff; border-top: 1px solid #E2E8F0; padding: 10px 16px; flex-shrink: 0; box-shadow: 0 -1px 3px rgba(0,0,0,0.04); }
+.bottom-bar-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.audio-player { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #F1F5F9; border-radius: 10px; }
+.audio-player audio { flex: 1; min-width: 0; height: 32px; }
+.audio-player audio::-webkit-media-controls-panel { background: #F1F5F9; }
+.audio-player.empty { display: none; }
+.btn-nav { padding: 10px 14px; background: #fff; color: #475569; border: 1px solid #CBD5E1; border-radius: 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.btn-nav.next { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
+.btn-nav.next:hover { background: var(--brand-primary-dark); }
+.btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+@media (max-width: 700px) {
+  .scenario-grid { grid-template-columns: 1fr; }
+  .scenario-situation { border-right: none; border-bottom: 1px solid #F1F5F9; }
+  .chem-row { grid-template-columns: 1fr; }
+  .meta-grid { grid-template-columns: 1fr; }
+  .block-card { padding: 24px 20px; }
+  .section-intro h2 { font-size: 28px; }
+  .block-heading { font-size: 22px; }
+  .top-bar-context { display: none; }
+  .btn-nav { padding: 10px 12px; }
+  .btn-nav span { display: none; }
+}
+
+.screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
+.screen.active { display: flex; }
+
+@media print {
+  html, body { overflow: visible; height: auto; }
+  .screen:not(.active), .bottom-bar, .top-bar { display: none !important; }
+  body { background: #fff; display: block; }
+  .result-card { box-shadow: none; border: 2px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div id="screen-intro" class="screen active">
+  <div class="intro-bg">
+    <div class="intro-card">
+      <div class="intro-header">
+        <div class="brand-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <div class="brand-eyebrow" id="brand-eyebrow"></div>
+          <div class="brand-sub" id="module-code"></div>
+        </div>
+      </div>
+      <h1 class="intro-title" id="intro-topic"></h1>
+      <p class="intro-subtitle" id="intro-subtitle"></p>
+      <div class="meta-grid" id="meta-grid"></div>
+      <div class="intro-info">
+        <div class="info-title">What you will learn</div>
+        <ul id="learning-objectives"></ul>
+      </div>
+      <div class="input-row">
+        <label for="learner-name">Your full name</label>
+        <input type="text" id="learner-name" placeholder="e.g. Casey Singh">
+      </div>
+      <div class="input-row">
+        <label for="employer">Employer / Organization</label>
+        <input type="text" id="employer" placeholder="e.g. Refresh Resources">
+      </div>
+      <button id="btn-start" class="btn-primary" disabled>Begin module <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <div class="intro-footer" id="footer-tracking-note"></div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-learn" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="topbar-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span class="top-bar-context" id="slide-counter"></span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600;" id="progress-pct"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div></div>
+  <div class="slide-content"><div class="slide-inner" id="slide-body"></div></div>
+  <div class="bottom-bar"><div class="bottom-bar-inner">
+    <button id="btn-prev" class="btn-nav"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> <span>Previous</span></button>
+    <div id="audio-container" class="audio-player empty">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#64748B" stroke-width="2" style="flex-shrink:0"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+      <audio id="slide-audio" controls preload="none"></audio>
+    </div>
+    <button id="btn-next" class="btn-nav next">Continue <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div></div>
+</div>
+
+<div id="screen-quiz" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="quiz-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span style="color: #475569;">Final quiz</span>
+      </div>
+    </div>
+  </div></div>
+  <div class="quiz-screen"><div class="quiz-inner">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary);">FINAL KNOWLEDGE CHECK</div>
+      <h2 style="font-size: 28px; font-weight: 700; margin: 8px 0;">Quiz</h2>
+      <p style="color: #475569; font-size: 14px;" id="quiz-instructions"></p>
+    </div>
+    <div id="quiz-questions"></div>
+    <button id="btn-submit-quiz" class="btn-primary" style="margin-top: 24px;" disabled>Submit answers</button>
+  </div></div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="result-bg">
+    <div class="result-card">
+      <div class="result-icon" id="result-icon"></div>
+      <h2 class="result-title" id="result-title"></h2>
+      <p class="result-subtitle" id="result-subtitle"></p>
+      <div class="result-record">
+        <div class="row"><div class="label">Name</div><div class="value" id="r-name"></div></div>
+        <div class="row"><div class="label">Employer</div><div class="value" id="r-employer"></div></div>
+        <div class="row"><div class="label">Module</div><div class="value" id="r-module"></div></div>
+        <div class="row"><div class="label">Score</div><div class="value" id="r-score"></div></div>
+        <div class="row"><div class="label">Result</div><div class="value" id="r-result"></div></div>
+        <div class="row"><div class="label">Completed</div><div class="value" id="r-date"></div></div>
+      </div>
+      <div id="tracking-status"></div>
+      <div class="result-buttons">
+        <button id="btn-retry" class="btn-primary" style="display: none;">Retry quiz</button>
+        <button id="btn-print" class="btn-nav" style="justify-content: center;">Print certificate</button>
+        <button id="btn-restart" class="btn-nav" style="justify-content: center;">New learner</button>
+      </div>
+      <p style="font-size: 11px; color: #94A3B8; margin-top: 16px;" id="result-footer"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {"meta": {"topic": "Flammable & Combustible Substances", "subtitle": "Hot work and ignition control", "code": "REF-TR-07", "version": "v1.0", "duration": "~35 min", "pass_mark_pct": 70, "regulation_alignment": "WorkSafeBC OHS Regulation Part 5 (Substances) & Part 12 (Hot Work, s. 12.116)", "publication_basis": "Refresh hot-work & ignition-control toolbox talk", "client": "refresh", "audience_summary": "All Refresh Resources field & shop workers", "what_you_will_learn": ["The fire triangle and the ignition sources you control on a Refresh job", "Which flammable and combustible Refresh products are on site, and why EMBR11058A is highly flammable", "When a hot work permit is required and how the atmosphere is tested before spark- or flame-producing work", "How fire-watch works and which extinguishing media are right for a methanol or solvent fire", "How to store and transfer flammable and combustible liquids safely"]}, "sections": [{"type": "content", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "blocks": [{"heading": "Hot work near flammables has killed workers in BC", "body": "Welding, cutting, grinding, or open-flame heating near a flammable vapour is one of the most lethal things we do. When a spark meets a flammable atmosphere, there is no second chance. These incidents are preventable \u2014 and that is the whole point of this course."}, {"heading": "What makes a Refresh site different", "bullets": ["Several of our products give off flammable vapours, including methanol and solvent vapours", "Many sites are well pads where the gas itself is flammable", "Methanol burns with an almost invisible flame, so a fire can spread before anyone sees it", "Totes, tanks, lines, and skids can hold flammable residue even when they look empty"]}, {"heading": "What you will be able to do after this course", "bullets": ["Recognize ignition sources before they cause a fire", "Know which products on site are flammable or combustible", "Refuse to start hot work until the permit and atmospheric test are done", "Pick the right extinguisher and stand a proper fire-watch"]}]}, {"type": "content", "title": "The fire triangle and ignition sources", "eyebrow": "Section 2 \u2014 The basics", "icon": "book", "accent": "red", "blocks": [{"heading": "Fire needs three things", "body": "A fire cannot start or keep burning unless all three sides of the fire triangle are present at the same time. Take any one away and the fire cannot happen. Ignition control is about removing the ignition source side of the triangle.", "bullets": ["Fuel \u2014 flammable vapour, liquid, or gas (methanol, solvent, well-pad gas)", "Oxygen \u2014 already in the air all around us", "Ignition source \u2014 a spark, flame, hot surface, or static discharge"]}, {"heading": "Ignition sources we create on the job", "bullets": ["Welding and cutting on or near tanks, totes, lines, or skids", "Grinding and sparking power tools near a flammable atmosphere", "Open-flame heating \u2014 torches and propane heaters at well pads", "Smoking, lighters, or any open flame in a chemical handling area", "Static discharge while transferring flammable liquids \u2014 bond and ground"]}, {"heading": "Flammable versus combustible", "body": "Both can burn \u2014 the difference is how easily they give off enough vapour to ignite.", "bullets": ["Flammable liquids ignite easily at normal working temperatures", "Combustible liquids need to be warmed before they give off enough vapour to ignite", "On a hot day or near a heat source, a combustible liquid can behave like a flammable one", "Treat both as a fire hazard until an SDS or qualified person tells you otherwise"]}]}, {"type": "content", "title": "Flammable and combustible products at Refresh", "eyebrow": "Section 3 \u2014 Our products", "icon": "beaker", "accent": "purple", "blocks": [{"heading": "Products that give off flammable vapours", "body": "Some Refresh products contain methanol or solvents that release flammable vapours. Check the SDS for every product you handle \u2014 Section 2 lists the flammability hazard and Section 7 covers safe handling and storage.", "bullets": ["HSCV20254A (sulfide scavenger) contains methanol", "EMBR11058A (emulsion breaker) is highly flammable \u2014 covered below", "Methanol and solvent vapours are heavier than you think and can travel to an ignition source"]}, {"heading": "EMBR11058A is more than just methanol", "body": "Do not think of EMBR11058A as simply a methanol-based product. It is classified GHS Flammable Cat 2 (highly flammable) and its flammability risk is HIGHER than methanol alone.", "bullets": ["GHS Flammable Liquid Category 2 \u2014 highly flammable", "Acute inhalation toxicity Category 4 \u2014 the vapour is also a breathing hazard", "Contains aromatic naphtha and 1,2,4-trimethylbenzene in addition to other components", "Keep it well away from any ignition source and transfer it bonded and grounded"]}, {"heading": "The atmosphere itself can be the fuel", "bullets": ["At well-pad sites the gas in the air is flammable on its own", "A flammable atmosphere can be present even with no open container in sight", "This is why the air must be tested before any spark- or flame-producing work", "When in doubt, treat the atmosphere as flammable until a test proves otherwise"]}]}, {"type": "midcheck", "title": "Quick check \u2014 Basics and products", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "Which three things must all be present for a fire?", "options": ["Heat, water, and pressure", "Fuel, oxygen, and an ignition source", "Fuel, nitrogen, and a spark"], "correct": 1, "why": "The fire triangle is fuel, oxygen, and an ignition source. Remove any one side and the fire cannot start or continue. Ignition control removes the ignition-source side."}, {"q": "How should you think about EMBR11058A?", "options": ["As a simple methanol-based product, no worse than methanol", "As highly flammable \u2014 GHS Flammable Cat 2 with a flammability risk higher than methanol alone", "As a combustible liquid that only burns when heated"], "correct": 1, "why": "EMBR11058A is GHS Flammable Cat 2 (highly flammable), with acute inhalation toxicity Cat 4 and aromatic naphtha plus 1,2,4-trimethylbenzene. Its flammability risk is higher than methanol alone."}, {"q": "At a well-pad site, where can the fuel for a fire come from?", "options": ["Only from an open container of product", "Only from the welding machine", "From product vapours AND from the flammable gas already in the air"], "correct": 2, "why": "At well pads the gas in the air is flammable on its own, on top of any product vapours. A flammable atmosphere can be present with no open container in sight \u2014 which is why the air must be tested."}]}, {"type": "content", "title": "Hot work permits and atmospheric testing", "eyebrow": "Section 4 \u2014 Permits", "icon": "clipboard", "accent": "blue", "blocks": [{"heading": "No permit, no hot work", "body": "A hot work permit is required for any spark- or flame-producing work in our chemical or sour gas areas. The permit confirms the hazards were assessed, the atmosphere was tested, and a fire-watch is in place before work starts.", "bullets": ["Hot work means welding, cutting, grinding, open-flame heating, or anything that makes sparks", "No permit means no work \u2014 there are no exceptions for small or quick jobs", "The permit lists the test intervals and who is on fire-watch"]}, {"heading": "Test the atmosphere first (s. 12.116)", "body": "Under WorkSafeBC OHS Regulation s. 12.116, no hot work may be done on or near a place where a flammable substance is likely until the atmosphere has been tested by a qualified person and confirmed safe, with the procedures in writing.", "bullets": ["A qualified person tests the atmosphere with a calibrated 4-gas monitor before work starts", "Re-test at the intervals on the permit and after every break", "A container that may have held a combustible substance must be thoroughly cleaned BEFORE any welding or burning", "If the test is not done, the work does not start"]}, {"heading": "The LEL reading \u2014 Refresh house rule", "body": "LEL stands for Lower Explosive Limit \u2014 how close the air is to having enough vapour to ignite. Refresh uses a stricter rule than most permits.", "bullets": ["Refresh house rule: the LEL must read 0% before hot work begins", "Typical hot-work permits allow a low reading, often under 5 to 10 percent LEL", "Refresh goes to zero to leave no margin near our flammable products", "If the monitor will not settle at 0%, stop and tell your supervisor"]}]}, {"type": "content", "title": "Fire-watch and extinguishers", "eyebrow": "Section 5 \u2014 Fire-watch", "icon": "shield", "accent": "red", "blocks": [{"heading": "Someone watches while you work", "body": "A fire-watch is a trained person whose only job is to watch for fire during hot work and for a set time after it ends. They do not do other tasks while on watch.", "bullets": ["The fire-watch stays in place during all hot work", "They keep watching for at least 30 minutes after the hot work ends", "Smouldering ignition can re-flash hours later, so the watch is not optional", "The fire-watch must have the right extinguisher within reach"]}, {"heading": "The right media for a methanol or solvent fire", "body": "Picking the wrong extinguisher can make a flammable-liquid fire worse. Match the media to the fuel using the SDS.", "bullets": ["Foam is suitable \u2014 it smothers the flammable liquid and is a Class B media", "ABC dry chemical is acceptable because it works on Class B (flammable liquid) fires", "A high-volume water jet is NOT suitable \u2014 methanol burns nearly invisibly and water spreads it", "Match the media to the fuel \u2014 check the SDS for the product on site"]}, {"heading": "If a fire starts", "bullets": ["Only fight a small fire if it is safe and you are trained \u2014 otherwise get out", "Raise the alarm and get people clear of the area", "Use foam or ABC dry chemical on a flammable-liquid fire, never a water jet", "Account for everyone and call emergency services"]}]}, {"type": "midcheck", "title": "Quick check \u2014 Permits and fire-watch", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "Who tests the atmosphere before hot work, and what does the test confirm?", "options": ["Any worker nearby, confirming it smells fine", "A qualified person, confirming the atmosphere is safe under s. 12.116", "The fire-watch, confirming the extinguisher works"], "correct": 1, "why": "Under s. 12.116 a qualified person tests the atmosphere with a calibrated monitor and confirms it is safe before any hot work, with the procedures in writing."}, {"q": "What LEL reading does the Refresh house rule require before hot work?", "options": ["Under 10% LEL is fine", "Under 5% LEL is fine", "0% LEL \u2014 stricter than the typical permit minimum"], "correct": 2, "why": "Refresh requires the LEL to read 0% as a house rule. Typical hot-work permits allow a low reading, often under 5 to 10 percent LEL, but Refresh goes to zero to leave no margin."}, {"q": "A methanol fire breaks out near a tote. Which is the WRONG choice?", "options": ["Foam extinguisher", "ABC dry chemical extinguisher", "A high-volume water jet"], "correct": 2, "why": "A high-volume water jet is not suitable \u2014 methanol burns nearly invisibly and water spreads it. Foam (Class B) and ABC dry chemical (works on Class B) are appropriate."}]}, {"type": "content", "title": "Safe storage and transfer", "eyebrow": "Section 6 \u2014 Storage", "icon": "flask", "accent": "darkblue", "blocks": [{"heading": "Keep fuel and ignition apart", "body": "The simplest way to prevent a fire is to keep flammable products away from anything that could ignite them. Storage and transfer are where this is won or lost.", "bullets": ["Store flammable and combustible liquids away from ignition sources and heat", "Keep containers closed and labelled when not in use", "Store in a cool, well-ventilated area so vapours do not build up", "Keep only the quantity you need in the work area"]}, {"heading": "Bond and ground every flammable transfer", "body": "Pouring or pumping a flammable liquid can build up static electricity. A static spark can ignite a methanol-air mix.", "bullets": ["Bond the containers together and ground them before transferring", "Bonding and grounding give static a safe path instead of jumping as a spark", "Transfer slowly to reduce static build-up", "Keep all ignition sources out of the transfer area"]}, {"heading": "Control ignition sources in storage and handling areas", "bullets": ["No smoking, no open flame, and no lighters in chemical handling areas", "No non-explosion-proof electronics in the hot work zone \u2014 cell phones included", "Keep spill response materials nearby so a leak does not become a vapour cloud", "Report damaged totes, leaking containers, or missing labels right away"]}]}, {"type": "scenarios", "title": "Real Refresh scenarios", "eyebrow": "Section 7 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "intro": "One right answer for each. Read the situation, think, then check.", "items": [{"title": "Scenario 1 \u2014 A quick grind on a skid", "situation": "A bracket on a skid at a well pad needs a quick grind. It is a five-minute job and there is product in totes nearby. Your supervisor is off site and no permit has been issued.", "question": "Do you start grinding?", "answer_headline": "No. Stop \u2014 grinding is hot work and needs a permit.", "bullets": ["Grinding makes sparks, so it is hot work even for a five-minute job", "A hot work permit is required for spark-producing work in chemical or sour gas areas", "The atmosphere must be tested by a qualified person first under s. 12.116", "Call your supervisor, get the permit and atmospheric test done, then proceed"]}, {"title": "Scenario 2 \u2014 The empty-looking tote", "situation": "You are asked to weld a fitting on a tote that held a combustible product. The tote looks empty and dry inside, and the crew is in a hurry.", "question": "Is it safe to weld?", "answer_headline": "No. Empty-looking is not the same as clean.", "bullets": ["A container that may have held a combustible substance must be thoroughly cleaned BEFORE any welding or burning (s. 12.116)", "Residue and trapped vapour can ignite even when the tote looks dry", "Have the tote cleaned and the atmosphere tested by a qualified person", "Only weld once it is confirmed safe and the permit is in place"]}, {"title": "Scenario 3 \u2014 The LEL will not reach zero", "situation": "You have a hot work permit and a fire-watch ready. The 4-gas monitor keeps reading 4% LEL and will not settle at zero. The permit at your last employer allowed up to 10%.", "question": "Can you start because 4% is under 10%?", "answer_headline": "No. The Refresh house rule is 0% LEL.", "bullets": ["Refresh requires the LEL to read 0% before hot work begins \u2014 stricter than the permit minimum", "A reading that will not settle at zero means a flammable atmosphere is present", "Stop, ventilate or find the source, and re-test", "Tell your supervisor and do not start until the monitor reads 0%"]}, {"title": "Scenario 4 \u2014 Picking an extinguisher", "situation": "You are the fire-watch for welding near drums of a methanol-containing product. The nearest equipment is a pressurized water hose and an ABC dry chemical extinguisher.", "question": "Which do you stage for the watch?", "answer_headline": "Stage the ABC dry chemical \u2014 add foam if available.", "bullets": ["ABC dry chemical is acceptable because it works on Class B flammable-liquid fires", "Foam is also suitable and smothers the burning liquid \u2014 add it if you can", "Do not rely on the water hose \u2014 a high-volume water jet spreads a methanol fire", "Confirm the right media on the product SDS before the work starts"]}]}], "quiz": [{"q": "What are the three sides of the fire triangle?", "options": ["Heat, smoke, and ash", "Fuel, oxygen, and an ignition source", "Spark, water, and pressure", "Fuel, nitrogen, and heat"], "correct": 1, "why": "A fire needs fuel, oxygen, and an ignition source all at once. Remove any one side and the fire cannot start or continue. Ignition control removes the ignition-source side."}, {"q": "Why is EMBR11058A a greater fire hazard than plain methanol?", "options": ["It is only methanol-based, so it is the same hazard", "It is GHS Flammable Cat 2 and contains aromatic naphtha and 1,2,4-trimethylbenzene, so its flammability risk is higher than methanol alone", "It is a combustible liquid that needs heating before it burns", "It is non-flammable but corrosive"], "correct": 1, "why": "EMBR11058A is GHS Flammable Cat 2 (highly flammable) with acute inhalation toxicity Cat 4 and contains aromatic naphtha plus 1,2,4-trimethylbenzene. Its flammability risk is higher than methanol alone."}, {"q": "Which of these is hot work that needs a permit?", "options": ["Reading a gauge", "Grinding a bracket near totes of product", "Filling out the toolbox talk form", "Walking the site before the job"], "correct": 1, "why": "Grinding makes sparks, so it is hot work and needs a permit in chemical or sour gas areas \u2014 even a quick five-minute job. No permit, no hot work."}, {"q": "Under s. 12.116, who must test the atmosphere before hot work on or near a flammable substance?", "options": ["Any worker who is nearby", "A qualified person, who confirms it is safe with procedures in writing", "The fire-watch only", "No one \u2014 visual check is enough"], "correct": 1, "why": "Section 12.116 requires a qualified person to test the atmosphere and confirm it is safe, with the procedures in writing, before any hot work."}, {"q": "What LEL reading does the Refresh house rule require before hot work begins?", "options": ["Under 10% LEL", "Under 5% LEL", "0% LEL", "Any reading is fine if you have a fire-watch"], "correct": 2, "why": "Refresh requires the LEL to read 0% as a house rule. Typical hot-work permits allow a low reading, often under 5 to 10 percent LEL, but Refresh goes to zero to leave no margin near our flammable products."}, {"q": "A tote that may have held a combustible product needs welding. What must happen first?", "options": ["Nothing \u2014 weld it if it looks empty and dry", "It must be thoroughly cleaned before any welding or burning", "Just open the cap to let vapour out", "Rinse the outside only"], "correct": 1, "why": "Section 12.116 requires a container that may have held a combustible substance to be thoroughly cleaned before any welding or burning. Empty-looking is not the same as clean \u2014 residue and trapped vapour can ignite."}, {"q": "How long must the fire-watch keep watching after hot work ends?", "options": ["It can stop the moment the welder shuts off", "At least 30 minutes after the hot work ends", "Only until the permit is signed", "Until the next coffee break"], "correct": 1, "why": "The fire-watch keeps watching for at least 30 minutes after hot work ends because smouldering ignition can re-flash hours later."}, {"q": "Which extinguishing media are appropriate for a methanol or solvent fire?", "options": ["A high-volume water jet", "Foam, and ABC dry chemical because it works on Class B fires", "Only a damp cloth", "Sand thrown by hand"], "correct": 1, "why": "Foam is suitable (Class B) and ABC dry chemical is acceptable because it works on Class B flammable-liquid fires. A high-volume water jet is not suitable \u2014 methanol burns nearly invisibly and water spreads it."}, {"q": "Why is a high-volume water jet a poor choice on a methanol fire?", "options": ["It is too expensive", "Methanol burns nearly invisibly and water spreads the burning liquid", "Water never puts out any fire", "It is fine \u2014 use it first"], "correct": 1, "why": "Methanol burns with an almost invisible flame and a high-volume water jet spreads the burning liquid instead of smothering it. Use foam or ABC dry chemical."}, {"q": "Why must you bond and ground containers before transferring a flammable liquid?", "options": ["To keep the containers from tipping", "To give static electricity a safe path so it does not spark and ignite the vapour", "To measure the volume transferred", "It is not required for flammable liquids"], "correct": 1, "why": "Transferring a flammable liquid builds up static. Bonding and grounding give that static a safe path instead of jumping as a spark, which could ignite a methanol-air mix."}, {"q": "Which item must be kept OUT of the hot work zone?", "options": ["The hot work permit", "A non-explosion-proof cell phone", "The fire-watch", "An ABC dry chemical extinguisher"], "correct": 1, "why": "Non-explosion-proof electronics, including cell phones, are an ignition source and must be kept out of the hot work zone."}, {"q": "What is the difference between a flammable and a combustible liquid?", "options": ["Flammable liquids cannot burn at all", "Flammable liquids ignite easily at normal temperatures, while combustible liquids must be warmed before they give off enough vapour to ignite", "They are the same thing with different names", "Combustible liquids are always safer to weld near"], "correct": 1, "why": "Flammable liquids ignite easily at normal working temperatures. Combustible liquids need to be warmed first, but on a hot day or near heat they can behave like flammable ones \u2014 treat both as a fire hazard."}, {"q": "You have a permit and fire-watch, but the 4-gas monitor reads 3% LEL and will not reach zero. What do you do?", "options": ["Start work \u2014 3% is low enough", "Stop, ventilate or find the source, re-test, and only start when it reads 0%", "Remove the monitor and proceed", "Wait five minutes then start regardless of the reading"], "correct": 1, "why": "The Refresh house rule is 0% LEL. A reading that will not settle at zero means a flammable atmosphere is present. Stop, ventilate or find the source, re-test, and tell your supervisor \u2014 do not start until it reads 0%."}, {"q": "Where should flammable and combustible liquids be stored?", "options": ["Next to the propane heater to keep them from freezing", "In a cool, well-ventilated area away from ignition sources, in closed and labelled containers", "In open buckets so vapours escape", "Anywhere, as long as a fire-watch is nearby"], "correct": 1, "why": "Store flammable and combustible liquids in a cool, well-ventilated area away from ignition sources and heat, in closed and labelled containers, keeping only the quantity you need in the work area."}], "tracking": {"provider": "supabase", "supabase_url": "https://muftkbpnedufsyiyuwhk.supabase.co", "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11ZnRrYnBuZWR1ZnN5aXl1d2hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjIzMzEsImV4cCI6MjA5NjI5ODMzMX0.OjnNDsjVizKn12GndFfRrD15JDmfqc4NKXFlnabbtxY", "token": "0aa384a0-7b9e-42bf-ada2-d9b492622105", "course_id": "flammable-hotwork", "module_id": "flammable-hotwork-v1.0"}};
+const BRAND = {"client_id": "refresh", "client_name": "Refresh Resources", "client_short": "REFRESH", "tagline": "REFRESH RESOURCES TRAINING", "logo_text_primary": "REFRESH", "logo_text_secondary": "RESOURCES", "colors": {"primary": "#0098DA", "primary_dark": "#007FB8", "navy": "#114F69", "accent": "#F0A500", "red": "#C8102E", "green": "#2BA84A", "purple": "#8A4FBE", "darkblue": "#0A3447"}};
+const SLIDES = [{"kind": "section_intro", "section_idx": 0, "section_title": "Why this matters", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "subtitle": "", "audio_text": "Why this matters.", "id": "why-this-matters", "audio": "audio/why-this-matters.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "Hot work near flammables has killed workers in BC", "body": "Welding, cutting, grinding, or open-flame heating near a flammable vapour is one of the most lethal things we do. When a spark meets a flammable atmosphere, there is no second chance. These incidents are preventable \u2014 and that is the whole point of this course.", "bullets": null, "audio_text": "Hot work near flammables has killed workers in BC Welding, cutting, grinding, or open-flame heating near a flammable vapour is one of the most lethal things we do. When a spark meets a flammable atmosphere, there is no second chance. These incidents are preventable \u2014 and that is the whole point of this course.", "id": "hot-work-near-flammables-has-killed-workers-in-bc-welding-cu", "audio": "audio/hot-work-near-flammables-has-killed-workers-in-bc-welding-cu.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "What makes a Refresh site different", "body": "", "bullets": ["Several of our products give off flammable vapours, including methanol and solvent vapours", "Many sites are well pads where the gas itself is flammable", "Methanol burns with an almost invisible flame, so a fire can spread before anyone sees it", "Totes, tanks, lines, and skids can hold flammable residue even when they look empty"], "audio_text": "What makes a Refresh site different Several of our products give off flammable vapours, including methanol and solvent vapours Many sites are well pads where the gas itself is flammable Methanol burns with an almost invisible flame, so a fire can spread before anyone sees it Totes, tanks, lines, and skids can hold flammable residue even when they look empty", "id": "what-makes-a-refresh-site-different-several-of-our-products-", "audio": "audio/what-makes-a-refresh-site-different-several-of-our-products-.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "What you will be able to do after this course", "body": "", "bullets": ["Recognize ignition sources before they cause a fire", "Know which products on site are flammable or combustible", "Refuse to start hot work until the permit and atmospheric test are done", "Pick the right extinguisher and stand a proper fire-watch"], "audio_text": "What you will be able to do after this course Recognize ignition sources before they cause a fire Know which products on site are flammable or combustible Refuse to start hot work until the permit and atmospheric test are done Pick the right extinguisher and stand a proper fire-watch", "id": "what-you-will-be-able-to-do-after-this-course-recognize-igni", "audio": "audio/what-you-will-be-able-to-do-after-this-course-recognize-igni.mp3"}, {"kind": "section_intro", "section_idx": 1, "section_title": "The fire triangle and ignition sources", "title": "The fire triangle and ignition sources", "eyebrow": "Section 2 \u2014 The basics", "icon": "book", "accent": "red", "subtitle": "", "audio_text": "The fire triangle and ignition sources.", "id": "the-fire-triangle-and-ignition-sources", "audio": "audio/the-fire-triangle-and-ignition-sources.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "The fire triangle and ignition sources", "eyebrow": "Section 2 \u2014 The basics", "accent": "red", "heading": "Fire needs three things", "body": "A fire cannot start or keep burning unless all three sides of the fire triangle are present at the same time. Take any one away and the fire cannot happen. Ignition control is about removing the ignition source side of the triangle.", "bullets": ["Fuel \u2014 flammable vapour, liquid, or gas (methanol, solvent, well-pad gas)", "Oxygen \u2014 already in the air all around us", "Ignition source \u2014 a spark, flame, hot surface, or static discharge"], "audio_text": "Fire needs three things A fire cannot start or keep burning unless all three sides of the fire triangle are present at the same time. Take any one away and the fire cannot happen. Ignition control is about removing the ignition source side of the triangle. Fuel \u2014 flammable vapour, liquid, or gas (methanol, solvent, well-pad gas) Oxygen \u2014 already in the air all around us Ignition source \u2014 a spark, flame, hot surface, or static discharge", "id": "fire-needs-three-things-a-fire-cannot-start-or-keep-burning-", "audio": "audio/fire-needs-three-things-a-fire-cannot-start-or-keep-burning-.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "The fire triangle and ignition sources", "eyebrow": "Section 2 \u2014 The basics", "accent": "red", "heading": "Ignition sources we create on the job", "body": "", "bullets": ["Welding and cutting on or near tanks, totes, lines, or skids", "Grinding and sparking power tools near a flammable atmosphere", "Open-flame heating \u2014 torches and propane heaters at well pads", "Smoking, lighters, or any open flame in a chemical handling area", "Static discharge while transferring flammable liquids \u2014 bond and ground"], "audio_text": "Ignition sources we create on the job Welding and cutting on or near tanks, totes, lines, or skids Grinding and sparking power tools near a flammable atmosphere Open-flame heating \u2014 torches and propane heaters at well pads Smoking, lighters, or any open flame in a chemical handling area Static discharge while transferring flammable liquids \u2014 bond and ground", "id": "ignition-sources-we-create-on-the-job-welding-and-cutting-on", "audio": "audio/ignition-sources-we-create-on-the-job-welding-and-cutting-on.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "The fire triangle and ignition sources", "eyebrow": "Section 2 \u2014 The basics", "accent": "red", "heading": "Flammable versus combustible", "body": "Both can burn \u2014 the difference is how easily they give off enough vapour to ignite.", "bullets": ["Flammable liquids ignite easily at normal working temperatures", "Combustible liquids need to be warmed before they give off enough vapour to ignite", "On a hot day or near a heat source, a combustible liquid can behave like a flammable one", "Treat both as a fire hazard until an SDS or qualified person tells you otherwise"], "audio_text": "Flammable versus combustible Both can burn \u2014 the difference is how easily they give off enough vapour to ignite. Flammable liquids ignite easily at normal working temperatures Combustible liquids need to be warmed before they give off enough vapour to ignite On a hot day or near a heat source, a combustible liquid can behave like a flammable one Treat both as a fire hazard until an SDS or qualified person tells you otherwise", "id": "flammable-versus-combustible-both-can-burn-the-difference-is", "audio": "audio/flammable-versus-combustible-both-can-burn-the-difference-is.mp3"}, {"kind": "section_intro", "section_idx": 2, "section_title": "Flammable and combustible products at Refresh", "title": "Flammable and combustible products at Refresh", "eyebrow": "Section 3 \u2014 Our products", "icon": "beaker", "accent": "purple", "subtitle": "", "audio_text": "Flammable and combustible products at Refresh.", "id": "flammable-and-combustible-products-at-refresh", "audio": "audio/flammable-and-combustible-products-at-refresh.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Flammable and combustible products at Refresh", "eyebrow": "Section 3 \u2014 Our products", "accent": "purple", "heading": "Products that give off flammable vapours", "body": "Some Refresh products contain methanol or solvents that release flammable vapours. Check the SDS for every product you handle \u2014 Section 2 lists the flammability hazard and Section 7 covers safe handling and storage.", "bullets": ["HSCV20254A (sulfide scavenger) contains methanol", "EMBR11058A (emulsion breaker) is highly flammable \u2014 covered below", "Methanol and solvent vapours are heavier than you think and can travel to an ignition source"], "audio_text": "Products that give off flammable vapours Some Refresh products contain methanol or solvents that release flammable vapours. Check the SDS for every product you handle \u2014 Section 2 lists the flammability hazard and Section 7 covers safe handling and storage. HSCV20254A (sulfide scavenger) contains methanol EMBR11058A (emulsion breaker) is highly flammable \u2014 covered below Methanol and solvent vapours are heavier than you think and can travel to an ignition source", "id": "products-that-give-off-flammable-vapours-some-refresh-produc", "audio": "audio/products-that-give-off-flammable-vapours-some-refresh-produc.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Flammable and combustible products at Refresh", "eyebrow": "Section 3 \u2014 Our products", "accent": "purple", "heading": "EMBR11058A is more than just methanol", "body": "Do not think of EMBR11058A as simply a methanol-based product. It is classified GHS Flammable Cat 2 (highly flammable) and its flammability risk is HIGHER than methanol alone.", "bullets": ["GHS Flammable Liquid Category 2 \u2014 highly flammable", "Acute inhalation toxicity Category 4 \u2014 the vapour is also a breathing hazard", "Contains aromatic naphtha and 1,2,4-trimethylbenzene in addition to other components", "Keep it well away from any ignition source and transfer it bonded and grounded"], "audio_text": "EMBR11058A is more than just methanol Do not think of EMBR11058A as simply a methanol-based product. It is classified GHS Flammable Cat 2 (highly flammable) and its flammability risk is HIGHER than methanol alone. GHS Flammable Liquid Category 2 \u2014 highly flammable Acute inhalation toxicity Category 4 \u2014 the vapour is also a breathing hazard Contains aromatic naphtha and 1,2,4-trimethylbenzene in addition to other components Keep it well away from any ignition source and transfer it bonded and grounded", "id": "embr11058a-is-more-than-just-methanol-do-not-think-of-embr11", "audio": "audio/embr11058a-is-more-than-just-methanol-do-not-think-of-embr11.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Flammable and combustible products at Refresh", "eyebrow": "Section 3 \u2014 Our products", "accent": "purple", "heading": "The atmosphere itself can be the fuel", "body": "", "bullets": ["At well-pad sites the gas in the air is flammable on its own", "A flammable atmosphere can be present even with no open container in sight", "This is why the air must be tested before any spark- or flame-producing work", "When in doubt, treat the atmosphere as flammable until a test proves otherwise"], "audio_text": "The atmosphere itself can be the fuel At well-pad sites the gas in the air is flammable on its own A flammable atmosphere can be present even with no open container in sight This is why the air must be tested before any spark- or flame-producing work When in doubt, treat the atmosphere as flammable until a test proves otherwise", "id": "the-atmosphere-itself-can-be-the-fuel-at-well-pad-sites-the-", "audio": "audio/the-atmosphere-itself-can-be-the-fuel-at-well-pad-sites-the-.mp3"}, {"kind": "section_intro", "section_idx": 3, "section_title": "Quick check \u2014 Basics and products", "title": "Quick check \u2014 Basics and products", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Basics and products.", "id": "quick-check-basics-and-products", "audio": "audio/quick-check-basics-and-products.mp3"}, {"kind": "midcheck_q", "section_idx": 3, "section_title": "Quick check \u2014 Basics and products", "key": "3-0", "q": {"q": "Which three things must all be present for a fire?", "options": ["Heat, water, and pressure", "Fuel, oxygen, and an ignition source", "Fuel, nitrogen, and a spark"], "correct": 1, "why": "The fire triangle is fuel, oxygen, and an ignition source. Remove any one side and the fire cannot start or continue. Ignition control removes the ignition-source side."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 3, "section_title": "Quick check \u2014 Basics and products", "key": "3-1", "q": {"q": "How should you think about EMBR11058A?", "options": ["As a simple methanol-based product, no worse than methanol", "As highly flammable \u2014 GHS Flammable Cat 2 with a flammability risk higher than methanol alone", "As a combustible liquid that only burns when heated"], "correct": 1, "why": "EMBR11058A is GHS Flammable Cat 2 (highly flammable), with acute inhalation toxicity Cat 4 and aromatic naphtha plus 1,2,4-trimethylbenzene. Its flammability risk is higher than methanol alone."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 3, "section_title": "Quick check \u2014 Basics and products", "key": "3-2", "q": {"q": "At a well-pad site, where can the fuel for a fire come from?", "options": ["Only from an open container of product", "Only from the welding machine", "From product vapours AND from the flammable gas already in the air"], "correct": 2, "why": "At well pads the gas in the air is flammable on its own, on top of any product vapours. A flammable atmosphere can be present with no open container in sight \u2014 which is why the air must be tested."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 4, "section_title": "Hot work permits and atmospheric testing", "title": "Hot work permits and atmospheric testing", "eyebrow": "Section 4 \u2014 Permits", "icon": "clipboard", "accent": "blue", "subtitle": "", "audio_text": "Hot work permits and atmospheric testing.", "id": "hot-work-permits-and-atmospheric-testing", "audio": "audio/hot-work-permits-and-atmospheric-testing.mp3"}, {"kind": "block", "section_idx": 4, "section_title": "Hot work permits and atmospheric testing", "eyebrow": "Section 4 \u2014 Permits", "accent": "blue", "heading": "No permit, no hot work", "body": "A hot work permit is required for any spark- or flame-producing work in our chemical or sour gas areas. The permit confirms the hazards were assessed, the atmosphere was tested, and a fire-watch is in place before work starts.", "bullets": ["Hot work means welding, cutting, grinding, open-flame heating, or anything that makes sparks", "No permit means no work \u2014 there are no exceptions for small or quick jobs", "The permit lists the test intervals and who is on fire-watch"], "audio_text": "No permit, no hot work A hot work permit is required for any spark- or flame-producing work in our chemical or sour gas areas. The permit confirms the hazards were assessed, the atmosphere was tested, and a fire-watch is in place before work starts. Hot work means welding, cutting, grinding, open-flame heating, or anything that makes sparks No permit means no work \u2014 there are no exceptions for small or quick jobs The permit lists the test intervals and who is on fire-watch", "id": "no-permit-no-hot-work-a-hot-work-permit-is-required-for-any-", "audio": "audio/no-permit-no-hot-work-a-hot-work-permit-is-required-for-any-.mp3"}, {"kind": "block", "section_idx": 4, "section_title": "Hot work permits and atmospheric testing", "eyebrow": "Section 4 \u2014 Permits", "accent": "blue", "heading": "Test the atmosphere first (s. 12.116)", "body": "Under WorkSafeBC OHS Regulation s. 12.116, no hot work may be done on or near a place where a flammable substance is likely until the atmosphere has been tested by a qualified person and confirmed safe, with the procedures in writing.", "bullets": ["A qualified person tests the atmosphere with a calibrated 4-gas monitor before work starts", "Re-test at the intervals on the permit and after every break", "A container that may have held a combustible substance must be thoroughly cleaned BEFORE any welding or burning", "If the test is not done, the work does not start"], "audio_text": "Test the atmosphere first (s. 12.116) Under WorkSafeBC OHS Regulation s. 12.116, no hot work may be done on or near a place where a flammable substance is likely until the atmosphere has been tested by a qualified person and confirmed safe, with the procedures in writing. A qualified person tests the atmosphere with a calibrated 4-gas monitor before work starts Re-test at the intervals on the permit and after every break A container that may have held a combustible substance must be thoroughly cleaned BEFORE any welding or burning If the test is not done, the work does not start", "id": "test-the-atmosphere-first-s-12-116-under-worksafebc-ohs-regu", "audio": "audio/test-the-atmosphere-first-s-12-116-under-worksafebc-ohs-regu.mp3"}, {"kind": "block", "section_idx": 4, "section_title": "Hot work permits and atmospheric testing", "eyebrow": "Section 4 \u2014 Permits", "accent": "blue", "heading": "The LEL reading \u2014 Refresh house rule", "body": "LEL stands for Lower Explosive Limit \u2014 how close the air is to having enough vapour to ignite. Refresh uses a stricter rule than most permits.", "bullets": ["Refresh house rule: the LEL must read 0% before hot work begins", "Typical hot-work permits allow a low reading, often under 5 to 10 percent LEL", "Refresh goes to zero to leave no margin near our flammable products", "If the monitor will not settle at 0%, stop and tell your supervisor"], "audio_text": "The LEL reading \u2014 Refresh house rule LEL stands for Lower Explosive Limit \u2014 how close the air is to having enough vapour to ignite. Refresh uses a stricter rule than most permits. Refresh house rule: the LEL must read 0% before hot work begins Typical hot-work permits allow a low reading, often under 5 to 10 percent LEL Refresh goes to zero to leave no margin near our flammable products If the monitor will not settle at 0%, stop and tell your supervisor", "id": "the-lel-reading-refresh-house-rule-lel-stands-for-lower-expl", "audio": "audio/the-lel-reading-refresh-house-rule-lel-stands-for-lower-expl.mp3"}, {"kind": "section_intro", "section_idx": 5, "section_title": "Fire-watch and extinguishers", "title": "Fire-watch and extinguishers", "eyebrow": "Section 5 \u2014 Fire-watch", "icon": "shield", "accent": "red", "subtitle": "", "audio_text": "Fire-watch and extinguishers.", "id": "fire-watch-and-extinguishers", "audio": "audio/fire-watch-and-extinguishers.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Fire-watch and extinguishers", "eyebrow": "Section 5 \u2014 Fire-watch", "accent": "red", "heading": "Someone watches while you work", "body": "A fire-watch is a trained person whose only job is to watch for fire during hot work and for a set time after it ends. They do not do other tasks while on watch.", "bullets": ["The fire-watch stays in place during all hot work", "They keep watching for at least 30 minutes after the hot work ends", "Smouldering ignition can re-flash hours later, so the watch is not optional", "The fire-watch must have the right extinguisher within reach"], "audio_text": "Someone watches while you work A fire-watch is a trained person whose only job is to watch for fire during hot work and for a set time after it ends. They do not do other tasks while on watch. The fire-watch stays in place during all hot work They keep watching for at least 30 minutes after the hot work ends Smouldering ignition can re-flash hours later, so the watch is not optional The fire-watch must have the right extinguisher within reach", "id": "someone-watches-while-you-work-a-fire-watch-is-a-trained-per", "audio": "audio/someone-watches-while-you-work-a-fire-watch-is-a-trained-per.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Fire-watch and extinguishers", "eyebrow": "Section 5 \u2014 Fire-watch", "accent": "red", "heading": "The right media for a methanol or solvent fire", "body": "Picking the wrong extinguisher can make a flammable-liquid fire worse. Match the media to the fuel using the SDS.", "bullets": ["Foam is suitable \u2014 it smothers the flammable liquid and is a Class B media", "ABC dry chemical is acceptable because it works on Class B (flammable liquid) fires", "A high-volume water jet is NOT suitable \u2014 methanol burns nearly invisibly and water spreads it", "Match the media to the fuel \u2014 check the SDS for the product on site"], "audio_text": "The right media for a methanol or solvent fire Picking the wrong extinguisher can make a flammable-liquid fire worse. Match the media to the fuel using the SDS. Foam is suitable \u2014 it smothers the flammable liquid and is a Class B media ABC dry chemical is acceptable because it works on Class B (flammable liquid) fires A high-volume water jet is NOT suitable \u2014 methanol burns nearly invisibly and water spreads it Match the media to the fuel \u2014 check the SDS for the product on site", "id": "the-right-media-for-a-methanol-or-solvent-fire-picking-the-w", "audio": "audio/the-right-media-for-a-methanol-or-solvent-fire-picking-the-w.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Fire-watch and extinguishers", "eyebrow": "Section 5 \u2014 Fire-watch", "accent": "red", "heading": "If a fire starts", "body": "", "bullets": ["Only fight a small fire if it is safe and you are trained \u2014 otherwise get out", "Raise the alarm and get people clear of the area", "Use foam or ABC dry chemical on a flammable-liquid fire, never a water jet", "Account for everyone and call emergency services"], "audio_text": "If a fire starts Only fight a small fire if it is safe and you are trained \u2014 otherwise get out Raise the alarm and get people clear of the area Use foam or ABC dry chemical on a flammable-liquid fire, never a water jet Account for everyone and call emergency services", "id": "if-a-fire-starts-only-fight-a-small-fire-if-it-is-safe-and-y", "audio": "audio/if-a-fire-starts-only-fight-a-small-fire-if-it-is-safe-and-y.mp3"}, {"kind": "section_intro", "section_idx": 6, "section_title": "Quick check \u2014 Permits and fire-watch", "title": "Quick check \u2014 Permits and fire-watch", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Permits and fire-watch.", "id": "quick-check-permits-and-fire-watch", "audio": "audio/quick-check-permits-and-fire-watch.mp3"}, {"kind": "midcheck_q", "section_idx": 6, "section_title": "Quick check \u2014 Permits and fire-watch", "key": "6-0", "q": {"q": "Who tests the atmosphere before hot work, and what does the test confirm?", "options": ["Any worker nearby, confirming it smells fine", "A qualified person, confirming the atmosphere is safe under s. 12.116", "The fire-watch, confirming the extinguisher works"], "correct": 1, "why": "Under s. 12.116 a qualified person tests the atmosphere with a calibrated monitor and confirms it is safe before any hot work, with the procedures in writing."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 6, "section_title": "Quick check \u2014 Permits and fire-watch", "key": "6-1", "q": {"q": "What LEL reading does the Refresh house rule require before hot work?", "options": ["Under 10% LEL is fine", "Under 5% LEL is fine", "0% LEL \u2014 stricter than the typical permit minimum"], "correct": 2, "why": "Refresh requires the LEL to read 0% as a house rule. Typical hot-work permits allow a low reading, often under 5 to 10 percent LEL, but Refresh goes to zero to leave no margin."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 6, "section_title": "Quick check \u2014 Permits and fire-watch", "key": "6-2", "q": {"q": "A methanol fire breaks out near a tote. Which is the WRONG choice?", "options": ["Foam extinguisher", "ABC dry chemical extinguisher", "A high-volume water jet"], "correct": 2, "why": "A high-volume water jet is not suitable \u2014 methanol burns nearly invisibly and water spreads it. Foam (Class B) and ABC dry chemical (works on Class B) are appropriate."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 7, "section_title": "Safe storage and transfer", "title": "Safe storage and transfer", "eyebrow": "Section 6 \u2014 Storage", "icon": "flask", "accent": "darkblue", "subtitle": "", "audio_text": "Safe storage and transfer.", "id": "safe-storage-and-transfer", "audio": "audio/safe-storage-and-transfer.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Safe storage and transfer", "eyebrow": "Section 6 \u2014 Storage", "accent": "darkblue", "heading": "Keep fuel and ignition apart", "body": "The simplest way to prevent a fire is to keep flammable products away from anything that could ignite them. Storage and transfer are where this is won or lost.", "bullets": ["Store flammable and combustible liquids away from ignition sources and heat", "Keep containers closed and labelled when not in use", "Store in a cool, well-ventilated area so vapours do not build up", "Keep only the quantity you need in the work area"], "audio_text": "Keep fuel and ignition apart The simplest way to prevent a fire is to keep flammable products away from anything that could ignite them. Storage and transfer are where this is won or lost. Store flammable and combustible liquids away from ignition sources and heat Keep containers closed and labelled when not in use Store in a cool, well-ventilated area so vapours do not build up Keep only the quantity you need in the work area", "id": "keep-fuel-and-ignition-apart-the-simplest-way-to-prevent-a-f", "audio": "audio/keep-fuel-and-ignition-apart-the-simplest-way-to-prevent-a-f.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Safe storage and transfer", "eyebrow": "Section 6 \u2014 Storage", "accent": "darkblue", "heading": "Bond and ground every flammable transfer", "body": "Pouring or pumping a flammable liquid can build up static electricity. A static spark can ignite a methanol-air mix.", "bullets": ["Bond the containers together and ground them before transferring", "Bonding and grounding give static a safe path instead of jumping as a spark", "Transfer slowly to reduce static build-up", "Keep all ignition sources out of the transfer area"], "audio_text": "Bond and ground every flammable transfer Pouring or pumping a flammable liquid can build up static electricity. A static spark can ignite a methanol-air mix. Bond the containers together and ground them before transferring Bonding and grounding give static a safe path instead of jumping as a spark Transfer slowly to reduce static build-up Keep all ignition sources out of the transfer area", "id": "bond-and-ground-every-flammable-transfer-pouring-or-pumping-", "audio": "audio/bond-and-ground-every-flammable-transfer-pouring-or-pumping-.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Safe storage and transfer", "eyebrow": "Section 6 \u2014 Storage", "accent": "darkblue", "heading": "Control ignition sources in storage and handling areas", "body": "", "bullets": ["No smoking, no open flame, and no lighters in chemical handling areas", "No non-explosion-proof electronics in the hot work zone \u2014 cell phones included", "Keep spill response materials nearby so a leak does not become a vapour cloud", "Report damaged totes, leaking containers, or missing labels right away"], "audio_text": "Control ignition sources in storage and handling areas No smoking, no open flame, and no lighters in chemical handling areas No non-explosion-proof electronics in the hot work zone \u2014 cell phones included Keep spill response materials nearby so a leak does not become a vapour cloud Report damaged totes, leaking containers, or missing labels right away", "id": "control-ignition-sources-in-storage-and-handling-areas-no-sm", "audio": "audio/control-ignition-sources-in-storage-and-handling-areas-no-sm.mp3"}, {"kind": "section_intro", "section_idx": 8, "section_title": "Real Refresh scenarios", "title": "Real Refresh scenarios", "eyebrow": "Section 7 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "subtitle": "One right answer for each. Read the situation, think, then check.", "audio_text": "Real Refresh scenarios. One right answer for each. Read the situation, think, then check.", "id": "real-refresh-scenarios-one-right-answer-for-each-read-the-si", "audio": "audio/real-refresh-scenarios-one-right-answer-for-each-read-the-si.mp3"}, {"kind": "scenario", "section_idx": 8, "section_title": "Real Refresh scenarios", "scenario": {"title": "Scenario 1 \u2014 A quick grind on a skid", "situation": "A bracket on a skid at a well pad needs a quick grind. It is a five-minute job and there is product in totes nearby. Your supervisor is off site and no permit has been issued.", "question": "Do you start grinding?", "answer_headline": "No. Stop \u2014 grinding is hot work and needs a permit.", "bullets": ["Grinding makes sparks, so it is hot work even for a five-minute job", "A hot work permit is required for spark-producing work in chemical or sour gas areas", "The atmosphere must be tested by a qualified person first under s. 12.116", "Call your supervisor, get the permit and atmospheric test done, then proceed"]}, "audio_text": "Scenario 1 \u2014 A quick grind on a skid. A bracket on a skid at a well pad needs a quick grind. It is a five-minute job and there is product in totes nearby. Your supervisor is off site and no permit has been issued. Do you start grinding? The right answer: No. Stop \u2014 grinding is hot work and needs a permit.", "id": "scenario-1-a-quick-grind-on-a-skid-a-bracket-on-a-skid-at-a-", "audio": "audio/scenario-1-a-quick-grind-on-a-skid-a-bracket-on-a-skid-at-a-.mp3"}, {"kind": "scenario", "section_idx": 8, "section_title": "Real Refresh scenarios", "scenario": {"title": "Scenario 2 \u2014 The empty-looking tote", "situation": "You are asked to weld a fitting on a tote that held a combustible product. The tote looks empty and dry inside, and the crew is in a hurry.", "question": "Is it safe to weld?", "answer_headline": "No. Empty-looking is not the same as clean.", "bullets": ["A container that may have held a combustible substance must be thoroughly cleaned BEFORE any welding or burning (s. 12.116)", "Residue and trapped vapour can ignite even when the tote looks dry", "Have the tote cleaned and the atmosphere tested by a qualified person", "Only weld once it is confirmed safe and the permit is in place"]}, "audio_text": "Scenario 2 \u2014 The empty-looking tote. You are asked to weld a fitting on a tote that held a combustible product. The tote looks empty and dry inside, and the crew is in a hurry. Is it safe to weld? The right answer: No. Empty-looking is not the same as clean.", "id": "scenario-2-the-empty-looking-tote-you-are-asked-to-weld-a-fi", "audio": "audio/scenario-2-the-empty-looking-tote-you-are-asked-to-weld-a-fi.mp3"}, {"kind": "scenario", "section_idx": 8, "section_title": "Real Refresh scenarios", "scenario": {"title": "Scenario 3 \u2014 The LEL will not reach zero", "situation": "You have a hot work permit and a fire-watch ready. The 4-gas monitor keeps reading 4% LEL and will not settle at zero. The permit at your last employer allowed up to 10%.", "question": "Can you start because 4% is under 10%?", "answer_headline": "No. The Refresh house rule is 0% LEL.", "bullets": ["Refresh requires the LEL to read 0% before hot work begins \u2014 stricter than the permit minimum", "A reading that will not settle at zero means a flammable atmosphere is present", "Stop, ventilate or find the source, and re-test", "Tell your supervisor and do not start until the monitor reads 0%"]}, "audio_text": "Scenario 3 \u2014 The LEL will not reach zero. You have a hot work permit and a fire-watch ready. The 4-gas monitor keeps reading 4% LEL and will not settle at zero. The permit at your last employer allowed up to 10%. Can you start because 4% is under 10%? The right answer: No. The Refresh house rule is 0% LEL.", "id": "scenario-3-the-lel-will-not-reach-zero-you-have-a-hot-work-p", "audio": "audio/scenario-3-the-lel-will-not-reach-zero-you-have-a-hot-work-p.mp3"}, {"kind": "scenario", "section_idx": 8, "section_title": "Real Refresh scenarios", "scenario": {"title": "Scenario 4 \u2014 Picking an extinguisher", "situation": "You are the fire-watch for welding near drums of a methanol-containing product. The nearest equipment is a pressurized water hose and an ABC dry chemical extinguisher.", "question": "Which do you stage for the watch?", "answer_headline": "Stage the ABC dry chemical \u2014 add foam if available.", "bullets": ["ABC dry chemical is acceptable because it works on Class B flammable-liquid fires", "Foam is also suitable and smothers the burning liquid \u2014 add it if you can", "Do not rely on the water hose \u2014 a high-volume water jet spreads a methanol fire", "Confirm the right media on the product SDS before the work starts"]}, "audio_text": "Scenario 4 \u2014 Picking an extinguisher. You are the fire-watch for welding near drums of a methanol-containing product. The nearest equipment is a pressurized water hose and an ABC dry chemical extinguisher. Which do you stage for the watch? The right answer: Stage the ABC dry chemical \u2014 add foam if available.", "id": "scenario-4-picking-an-extinguisher-you-are-the-fire-watch-fo", "audio": "audio/scenario-4-picking-an-extinguisher-you-are-the-fire-watch-fo.mp3"}];  // expanded list of slides — one entry per visible slide
+
+// Apply brand CSS variables
+const r = document.documentElement;
+r.style.setProperty('--brand-primary', BRAND.colors.primary);
+r.style.setProperty('--brand-primary-dark', BRAND.colors.primary_dark);
+r.style.setProperty('--brand-navy', BRAND.colors.navy);
+r.style.setProperty('--brand-darkblue', BRAND.colors.darkblue);
+r.style.setProperty('--brand-accent', BRAND.colors.accent);
+r.style.setProperty('--brand-red', BRAND.colors.red);
+r.style.setProperty('--brand-green', BRAND.colors.green);
+r.style.setProperty('--brand-purple', BRAND.colors.purple);
+document.title = (CONTENT.meta.topic || 'Training') + ' — ' + BRAND.client_name;
+
+const ACCENTS = { blue: BRAND.colors.primary, amber: BRAND.colors.accent, red: BRAND.colors.red, green: BRAND.colors.green, purple: BRAND.colors.purple, darkblue: BRAND.colors.darkblue };
+const ICONS = {
+  alert: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-20H6.5A2.5 2.5 0 004 4.5v15z"/>',
+  users: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/>',
+  video: '<path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/>',
+  flask: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>',
+  file: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/>',
+  beaker: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6M6 14h12"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+  clipboard: '<path d="M9 2h6a2 2 0 012 2v2H7V4a2 2 0 012-2zM5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  award: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>',
+  shieldcheck: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'
+};
+
+let state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+
+function svg(path, color) { return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
+function escapeHtml(s) { if (s == null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  state.screen = name;
+  // Pause any playing audio when changing screens
+  const aud = document.getElementById('slide-audio');
+  if (aud) { aud.pause(); aud.currentTime = 0; }
+}
+
+function renderIntroMeta() {
+  document.getElementById('brand-eyebrow').textContent = BRAND.tagline || (BRAND.client_name + ' E-LEARNING');
+  document.getElementById('module-code').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' · ' + CONTENT.meta.version : '');
+  document.getElementById('intro-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('intro-subtitle').textContent = CONTENT.meta.subtitle || '';
+  document.getElementById('topbar-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('quiz-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('r-module').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' ' + CONTENT.meta.version : '');
+  document.getElementById('result-footer').textContent = CONTENT.meta.regulation_alignment ? 'Aligned with ' + CONTENT.meta.regulation_alignment : '';
+
+  const pills = [
+    { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', label: 'Duration', value: CONTENT.meta.duration || '~30 min' },
+    { icon: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>', label: 'Pass mark', value: (CONTENT.meta.pass_mark_pct || 70) + '%' },
+    { icon: '<path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>', label: 'Slides', value: SLIDES.length },
+    { icon: '<path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14"/>', label: 'Audio', value: SLIDES.some(s => s.audio) ? 'Voiceover' : 'Read-only' }
+  ];
+  document.getElementById('meta-grid').innerHTML = pills.map(p => '<div class="meta-pill"><div class="icon">' + svg(p.icon) + '</div><div><div class="label">' + escapeHtml(p.label) + '</div><div class="value">' + escapeHtml(p.value) + '</div></div></div>').join('');
+
+  document.getElementById('learning-objectives').innerHTML = (CONTENT.meta.what_you_will_learn || []).map(o => '<li>' + escapeHtml(o) + '</li>').join('');
+  document.getElementById('footer-tracking-note').textContent = trackingEnabled() ? 'Your completion will be recorded with ' + BRAND.client_short + '.' : 'Print or save your certificate when you finish.';
+}
+
+function renderSlide() {
+  const slide = SLIDES[state.slideIdx];
+  if (!slide) return;
+  const total = SLIDES.length, progress = ((state.slideIdx + 1) / (total + 1)) * 100;
+
+  document.getElementById('slide-counter').textContent = slide.section_title || '';
+  document.getElementById('progress-pct').textContent = (state.slideIdx + 1) + ' / ' + total;
+  document.getElementById('progress-fill').style.width = progress + '%';
+
+  let html = '';
+  const slideKind = slide.kind;
+  if (slideKind === 'section_intro') html = renderSectionIntro(slide);
+  else if (slideKind === 'block') html = renderBlockSlide(slide);
+  else if (slideKind === 'video') html = renderVideoSlide(slide);
+  else if (slideKind === 'pictograms') html = renderPictogramsSlide(slide);
+  else if (slideKind === 'chemcard') html = renderChemCardSlide(slide);
+  else if (slideKind === 'scenario') html = renderScenarioSlide(slide);
+  else if (slideKind === 'midcheck_q') html = renderMidCheckQSlide(slide);
+
+  document.getElementById('slide-body').innerHTML = html;
+  attachMidCheckHandlers();
+
+  // Audio — autoplay each slide's narration. Browsers permit this after the learner's
+  // first interaction (Begin / Continue clicks); if blocked, the visible Play control still works.
+  const audioEl = document.getElementById('slide-audio');
+  const audioContainer = document.getElementById('audio-container');
+  if (slide.audio) {
+    audioEl.src = slide.audio;
+    audioContainer.classList.remove('empty');
+    audioEl.currentTime = 0;
+    const _p = audioEl.play();
+    if (_p && _p.catch) _p.catch(() => {});
+  } else {
+    audioEl.removeAttribute('src');
+    audioContainer.classList.add('empty');
+  }
+
+  // Nav
+  document.getElementById('btn-prev').disabled = state.slideIdx === 0;
+  const isLast = state.slideIdx === total - 1;
+  document.getElementById('btn-next').innerHTML = (isLast ? 'Final quiz' : 'Continue') + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+
+  // Scroll the slide content area to top
+  const sc = document.querySelector('#screen-learn .slide-content');
+  if (sc) sc.scrollTop = 0;
+}
+
+function renderSectionIntro(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="section-intro"><div class="icon-big" style="background:' + ac + '">' + svg(ICONS[slide.icon] || ICONS.book, '#fff') + '</div>' +
+    '<div class="eyebrow-text" style="color:' + ac + '">' + escapeHtml(slide.eyebrow || '') + '</div>' +
+    '<h2>' + escapeHtml(slide.title) + '</h2>' +
+    (slide.subtitle ? '<p class="subtitle">' + escapeHtml(slide.subtitle) + '</p>' : '') + '</div>';
+}
+
+function renderBlockSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    (slide.eyebrow ? '<div class="block-eyebrow" style="color:' + ac + '">' + escapeHtml(slide.eyebrow) + '</div>' : '') +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading) + '</h3>' +
+    (slide.body ? '<p class="block-body">' + escapeHtml(slide.body) + '</p>' : '') +
+    (slide.bullets ? '<ul class="block-bullets">' + slide.bullets.map(bl => '<li><svg viewBox="0 0 24 24" style="color:' + ac + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>' + escapeHtml(bl) + '</span></li>').join('') + '</ul>' : '') + '</div>';
+}
+
+function renderVideoSlide(slide) {
+  const url = slide.video_url || '#';
+  return '<div class="video-card"><div class="video-thumb"><div class="video-play-btn" onclick="window.open(' + JSON.stringify(url) + ', \'_blank\', \'noopener\')"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><h3>' + escapeHtml(slide.video_title || '') + '</h3><p>' + escapeHtml(slide.video_source || '') + ' · ' + escapeHtml(slide.video_duration || '') + '</p></div><div class="video-action"><div class="video-action-info"><strong>Click to watch</strong><span>Opens in a new tab</span></div><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener" class="btn-yt">Watch on YouTube <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a></div></div>';
+}
+
+function renderPictogramsSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading || 'Pictograms') + '</h3>' +
+    (slide.intro ? '<p class="block-body">' + escapeHtml(slide.intro) + '</p>' : '') +
+    '<div class="picto-grid">' + slide.items.map(p => '<div class="picto-cell"><img src="' + (p.image_data || p.image || '') + '" alt="' + escapeHtml(p.label) + '"><div class="picto-label">' + escapeHtml(p.label) + '</div><div class="picto-sub">' + escapeHtml(p.sub || '') + '</div></div>').join('') + '</div></div>';
+}
+
+function renderChemCardSlide(slide) {
+  const c = slide.card;
+  const sigColor = c.signal === 'DANGER' ? ACCENTS.red : ACCENTS.amber;
+  const rowColors = { 'EXPOSURE LIMITS': ACCENTS.amber, 'PPE': ACCENTS.blue, 'FIRST AID': ACCENTS.green, 'SPILL': ACCENTS.purple, 'STORAGE': ACCENTS.darkblue };
+  return '<div class="chem-card"><div class="chem-card-header"><div class="chem-pictos-row">' +
+    (c.pictogram_data || []).map(p => '<img src="' + p + '" alt="">').join('') +
+    '<span class="signal-badge" style="background:' + sigColor + '">' + escapeHtml(c.signal || '') + '</span></div>' +
+    '<div class="chem-card-name">' + escapeHtml(c.name) + '</div><div class="chem-card-full">' + escapeHtml(c.full_name || '') + (c.supplier ? ' · ' + escapeHtml(c.supplier) : '') + '</div>' +
+    '<div class="chem-haz">' + escapeHtml(c.hazard_summary || '') + '</div></div>' +
+    (c.rows || []).map(row => {
+      const rc = rowColors[row.label] || ACCENTS.blue;
+      return '<div class="chem-row"><div class="chem-row-label" style="background:' + rc + '">' + escapeHtml(row.label) + '</div><div class="chem-row-items"><ul>' +
+        row.items.map(it => '<li><span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:' + rc + ';margin-top:7px;margin-right:6px;flex-shrink:0;"></span>' + escapeHtml(it) + '</li>').join('') + '</ul></div></div>';
+    }).join('') + '</div>';
+}
+
+function renderScenarioSlide(slide) {
+  const sc = slide.scenario;
+  return '<div class="scenario"><div class="scenario-title">' + escapeHtml(sc.title) + '</div><div class="scenario-grid">' +
+    '<div class="scenario-side scenario-situation"><div class="scenario-eyebrow" style="color:' + ACCENTS.blue + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.blue + '"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Situation</div><p class="scenario-text">' + escapeHtml(sc.situation) + '</p><p class="scenario-question">' + escapeHtml(sc.question) + '</p></div>' +
+    '<div class="scenario-side scenario-answer"><div class="scenario-eyebrow" style="color:' + ACCENTS.green + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.green + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Right answer</div><p class="scenario-headline">' + escapeHtml(sc.answer_headline) + '</p><ul class="scenario-bullets">' + (sc.bullets || []).map(b => '<li>' + escapeHtml(b) + '</li>').join('') + '</ul></div></div></div>';
+}
+
+function renderMidCheckQSlide(slide) {
+  const q = slide.q, key = slide.key;
+  const ans = state.midAnswers[key], answered = ans !== undefined;
+  return '<div class="kc-banner"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><p><strong>Quick check.</strong> You\'ll see the answer right away — won\'t count against your final quiz.</p></div>' +
+    '<div class="q-card"><div class="q-text">' + escapeHtml(q.q) + '</div><div class="q-options">' +
+    q.options.map((opt, oi) => {
+      let cls = 'q-option';
+      if (answered) { if (oi === q.correct) cls += ' correct'; else if (ans === oi) cls += ' incorrect'; }
+      const checkSvg = answered && oi === q.correct ? '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>' : '';
+      return '<button class="' + cls + '" data-mid="' + key + '" data-opt="' + oi + '" ' + (answered ? 'disabled' : '') + '><span>' + escapeHtml(opt) + '</span>' + checkSvg + '</button>';
+    }).join('') + '</div>' +
+    (answered ? '<div class="feedback ' + (ans === q.correct ? 'right' : 'wrong') + '"><strong>' + (ans === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+}
+
+function attachMidCheckHandlers() {
+  document.querySelectorAll('[data-mid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.mid, opt = parseInt(btn.dataset.opt);
+      if (state.midAnswers[key] !== undefined) return;
+      state.midAnswers[key] = opt;
+      renderSlide();
+    });
+  });
+}
+
+function renderQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  document.getElementById('quiz-instructions').textContent = quiz.length + ' questions. ' + (CONTENT.meta.pass_mark_pct || 70) + '% to pass (' + passN + '/' + quiz.length + ').';
+  document.getElementById('quiz-questions').innerHTML = quiz.map((q, i) => {
+    return '<div class="quiz-q"><div><span style="font-size:11px;font-weight:700;color:var(--brand-primary);">Q' + (i + 1) + '.</span> <span style="font-weight:600;">' + escapeHtml(q.q) + '</span></div><div class="q-options" style="margin-top:14px;">' +
+      q.options.map((opt, j) => {
+        let cls = 'q-option';
+        if (state.quizSubmitted) { if (j === q.correct) cls += ' correct'; else if (state.quizAnswers[i] === j) cls += ' incorrect'; }
+        else if (state.quizAnswers[i] === j) cls += ' selected';
+        return '<button class="' + cls + '" data-q="' + i + '" data-opt="' + j + '" ' + (state.quizSubmitted ? 'disabled' : '') + '><span class="letter">' + String.fromCharCode(65 + j) + '.</span><span style="flex:1;">' + escapeHtml(opt) + '</span></button>';
+      }).join('') + '</div>' +
+      (state.quizSubmitted && q.why ? '<div class="feedback ' + (state.quizAnswers[i] === q.correct ? 'right' : 'wrong') + '" style="margin-top:12px;"><strong>' + (state.quizAnswers[i] === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+  }).join('');
+  document.querySelectorAll('#quiz-questions [data-q]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.quizSubmitted) return;
+      state.quizAnswers[parseInt(btn.dataset.q)] = parseInt(btn.dataset.opt);
+      renderQuiz();
+      checkQuizComplete();
+    });
+  });
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  const all = (CONTENT.quiz || []).every((_, i) => state.quizAnswers[i] !== undefined);
+  document.getElementById('btn-submit-quiz').disabled = !all;
+}
+
+function submitQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  let s = 0;
+  quiz.forEach((q, i) => { if (state.quizAnswers[i] === q.correct) s++; });
+  state.score = s; state.passed = s >= passN; state.quizSubmitted = true;
+  renderResult(); showScreen('result');
+  if (trackingEnabled()) sendCompletion();
+}
+
+function renderResult() {
+  const passed = state.passed, quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  const pct = Math.round((state.score / quiz.length) * 100);
+  document.querySelector('#screen-result .result-bg').className = 'result-bg ' + (passed ? 'passed' : 'failed');
+  document.getElementById('result-icon').className = 'result-icon ' + (passed ? 'pass' : 'fail');
+  document.getElementById('result-icon').innerHTML = passed ? svg(ICONS.award) : svg('<path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15A9 9 0 0018.36 18.36L23 14"/>');
+  document.getElementById('result-title').textContent = passed ? 'Module complete' : 'Not quite there';
+  document.getElementById('result-subtitle').textContent = passed ? 'You have successfully completed this training module.' : 'You need ' + passN + ' out of ' + quiz.length + ' correct to pass. Review and try again.';
+  document.getElementById('r-name').textContent = state.learnerName;
+  document.getElementById('r-employer').textContent = state.employer;
+  document.getElementById('r-score').textContent = state.score + ' / ' + quiz.length + ' (' + pct + '%)';
+  const rResult = document.getElementById('r-result');
+  rResult.textContent = passed ? 'PASSED' : 'FAILED';
+  rResult.style.color = passed ? ACCENTS.green : ACCENTS.amber;
+  document.getElementById('r-date').textContent = new Date().toLocaleString('en-CA');
+  document.getElementById('btn-retry').style.display = passed ? 'none' : 'inline-flex';
+}
+
+function setTrackingStatus(status, msg) {
+  const el = document.getElementById('tracking-status');
+  el.className = 'tracking-status ' + status; el.textContent = msg;
+}
+// Tracking is "enabled" only when real config is present — placeholders (containing "__")
+// leave it disabled so the module still works and just shows the print-certificate note.
+function trackingEnabled() {
+  const t = CONTENT.tracking || {};
+  if (t.provider === 'supabase') {
+    return /^https?:\/\//.test(t.supabase_url || '') && !!t.anon_key && !!t.token &&
+           (t.supabase_url.indexOf('__') === -1) && (String(t.token).indexOf('__') === -1);
+  }
+  return !!t.endpoint && t.endpoint.indexOf('__') === -1;
+}
+function sendCompletion() {
+  const t = CONTENT.tracking || {};
+  const total = (CONTENT.quiz || []).length;
+  const pct = total ? Math.round((state.score / total) * 100) : 0;
+  setTrackingStatus('pending', '⟳ Saving completion record...');
+  if (t.provider === 'supabase') {
+    // Strawboss-compatible path: call a SECURITY DEFINER RPC. The anon key is public by
+    // design; the per-course token scopes what can be written (company + course).
+    const url = t.supabase_url.replace(/\/+$/, '') + '/rest/v1/rpc/submit_course_completion';
+    fetch(url, {
+      method: 'POST',
+      headers: { 'apikey': t.anon_key, 'Authorization': 'Bearer ' + t.anon_key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        p_token: t.token,
+        p_worker_name: state.learnerName,
+        p_worker_email: state.workerEmail || null,
+        p_employer: state.employer,
+        p_score: state.score, p_total: total, p_pct: pct, p_passed: state.passed
+      })
+    }).then(res => {
+      if (res.ok) setTrackingStatus('ok', '✓ Completion recorded.');
+      else setTrackingStatus('fail', '⚠ Could not save record (' + res.status + '). Screenshot this page for your supervisor.');
+    }).catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  } else {
+    // Legacy path: generic endpoint (e.g. Google Apps Script), fire-and-forget.
+    const payload = {
+      module: t.module_id || ((CONTENT.meta.code || '') + ' ' + (CONTENT.meta.version || '')),
+      name: state.learnerName, employer: state.employer,
+      score: state.score, total: total, pct: pct,
+      passed: state.passed, timestamp: new Date().toISOString()
+    };
+    fetch(t.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload), mode: 'no-cors' })
+      .then(() => setTrackingStatus('ok', '✓ Completion record saved.'))
+      .catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  }
+}
+
+// Wire up
+function refreshStartButton() {
+  const name = document.getElementById('learner-name').value.trim();
+  const emp = document.getElementById('employer').value.trim();
+  document.getElementById('btn-start').disabled = !(name && emp);
+}
+document.getElementById('learner-name').addEventListener('input', refreshStartButton);
+document.getElementById('employer').addEventListener('input', refreshStartButton);
+document.getElementById('btn-start').addEventListener('click', () => {
+  state.learnerName = document.getElementById('learner-name').value.trim();
+  state.employer = document.getElementById('employer').value.trim();
+  state.slideIdx = 0;
+  showScreen('learn'); renderSlide();
+});
+document.getElementById('btn-prev').addEventListener('click', () => { if (state.slideIdx > 0) { state.slideIdx--; renderSlide(); } });
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (state.slideIdx < SLIDES.length - 1) { state.slideIdx++; renderSlide(); }
+  else { showScreen('quiz'); renderQuiz(); }
+});
+document.getElementById('btn-submit-quiz').addEventListener('click', submitQuiz);
+document.getElementById('btn-retry').addEventListener('click', () => { state.quizAnswers = {}; state.quizSubmitted = false; state.score = 0; showScreen('quiz'); renderQuiz(); });
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+document.getElementById('btn-restart').addEventListener('click', () => {
+  state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+  document.getElementById('learner-name').value = '';
+  document.getElementById('employer').value = '';
+  refreshStartButton(); showScreen('intro');
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (state.screen !== 'learn') return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); document.getElementById('btn-next').click(); }
+  else if (e.key === 'ArrowLeft') { document.getElementById('btn-prev').click(); }
+});
+
+renderIntroMeta();
+</script>
+</body>
+</html>

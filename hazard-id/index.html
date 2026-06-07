@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Safety Training</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #F8FAFC; color: #0F172A; line-height: 1.5; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+button { font-family: inherit; cursor: pointer; border: none; }
+a { color: var(--brand-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* INTRO screen — full viewport, centered */
+.intro-bg { flex: 1; padding: 16px; background: linear-gradient(135deg, var(--brand-darkblue) 0%, var(--brand-navy) 50%, var(--brand-darkblue) 100%); display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.intro-card { max-width: 600px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 28px; }
+.intro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.brand-shield { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-shrink: 0; }
+.brand-shield svg { width: 24px; height: 24px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.brand-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary); }
+.brand-sub { font-size: 11px; color: #64748B; margin-top: 2px; }
+.intro-title { font-size: 36px; font-weight: 700; margin-bottom: 4px; letter-spacing: -1px; }
+.intro-subtitle { font-size: 15px; color: #475569; margin-bottom: 20px; }
+.meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+.meta-pill { display: flex; align-items: center; gap: 8px; padding: 10px; background: #F1F5F9; border-radius: 10px; }
+.meta-pill .icon { width: 28px; height: 28px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.meta-pill .icon svg { width: 12px; height: 12px; color: var(--brand-primary); fill: none; stroke: currentColor; stroke-width: 2; }
+.meta-pill .label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #64748B; }
+.meta-pill .value { font-size: 12px; font-weight: 700; color: #0F172A; }
+.intro-info { background: #EFF6FB; border: 1px solid #C5DEEC; border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+.intro-info .info-title { font-size: 12px; font-weight: 700; color: var(--brand-darkblue); margin-bottom: 8px; }
+.intro-info ul { list-style: none; }
+.intro-info li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; }
+.intro-info li::before { content: "✓"; color: var(--brand-primary); font-weight: 700; flex-shrink: 0; }
+.input-row { margin-bottom: 12px; }
+.input-row label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.input-row input { width: 100%; padding: 10px 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-family: inherit; transition: border-color 150ms; }
+.input-row input:focus { outline: none; border-color: var(--brand-primary); }
+.btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dark)); color: #fff; border-radius: 12px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: all 150ms; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.intro-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E8F0; font-size: 11px; color: #64748B; text-align: center; }
+
+/* SLIDE screens — one slide visible at a time, fixed viewport */
+.slide-wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; background: #F8FAFC; }
+.top-bar { background: #fff; border-bottom: 1px solid #E2E8F0; padding: 10px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0; }
+.top-bar-inner { max-width: 900px; margin: 0 auto; }
+.top-bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+.top-bar-left { display: flex; align-items: center; gap: 8px; font-size: 12px; min-width: 0; }
+.top-bar-shield { width: 24px; height: 24px; border-radius: 6px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.top-bar-shield svg { width: 12px; height: 12px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.top-bar-brand { font-weight: 700; letter-spacing: 1px; color: var(--brand-primary); white-space: nowrap; }
+.top-bar-context { color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progress-bar { height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-primary), var(--brand-primary-dark)); transition: width 500ms; }
+
+.slide-content { flex: 1; overflow-y: auto; padding: 24px 16px; display: flex; align-items: flex-start; justify-content: center; }
+.slide-inner { max-width: 760px; width: 100%; }
+
+/* SLIDE — section announcement */
+.section-intro { text-align: center; padding: 32px 16px; }
+.section-intro .icon-big { width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.section-intro .icon-big svg { width: 40px; height: 40px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.section-intro .eyebrow-text { font-size: 12px; font-weight: 700; letter-spacing: 3px; margin-bottom: 8px; }
+.section-intro h2 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.section-intro .subtitle { font-size: 16px; color: #64748B; max-width: 540px; margin: 0 auto; }
+
+/* SLIDE — content block */
+.block-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 32px; }
+.block-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; }
+.block-heading { font-size: 26px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; display: flex; gap: 12px; align-items: flex-start; }
+.block-accent { display: block; width: 5px; min-height: 28px; border-radius: 3px; margin-top: 4px; flex-shrink: 0; }
+.block-body { color: #475569; margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
+.block-bullets { list-style: none; }
+.block-bullets li { display: flex; gap: 12px; padding: 7px 0; font-size: 15px; color: #334155; line-height: 1.55; }
+.block-bullets li svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — pictograms grid (one per slide; or one slide showing the grid) */
+.picto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.picto-cell { text-align: center; padding: 16px; border: 2px solid #F1F5F9; border-radius: 12px; }
+.picto-cell img { width: 64px; height: 64px; margin-bottom: 8px; }
+.picto-label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.picto-sub { font-size: 11px; color: #64748B; line-height: 1.4; }
+
+/* SLIDE — video card */
+.video-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.video-thumb { background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); padding: 40px 24px; text-align: center; color: #fff; }
+.video-play-btn { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; margin-bottom: 12px; cursor: pointer; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+.video-play-btn svg { width: 28px; height: 28px; color: var(--brand-red); fill: currentColor; }
+.video-thumb h3 { font-size: 18px; margin-bottom: 4px; }
+.video-thumb p { font-size: 12px; color: #B0CADE; }
+.video-action { padding: 14px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.video-action-info strong { display: block; font-weight: 600; font-size: 13px; }
+.video-action-info span { color: #64748B; font-size: 12px; }
+.btn-yt { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: var(--brand-red); color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; }
+.btn-yt:hover { background: #A60D26; text-decoration: none; }
+.btn-yt svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — chemical card */
+.chem-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.chem-card-header { padding: 18px 24px; border-bottom: 1px solid #F1F5F9; }
+.chem-pictos-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.chem-pictos-row img { width: 40px; height: 40px; }
+.signal-badge { display: inline-block; padding: 5px 10px; border-radius: 6px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.chem-card-name { font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+.chem-card-full { font-size: 11px; color: #64748B; font-style: italic; margin-bottom: 10px; }
+.chem-haz { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #475569; }
+.chem-row { display: grid; grid-template-columns: 140px 1fr; border-top: 1px solid #F1F5F9; }
+.chem-row-label { padding: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; }
+.chem-row-items { padding: 12px 14px; }
+.chem-row-items ul { list-style: none; }
+.chem-row-items li { display: flex; gap: 8px; padding: 2px 0; font-size: 12px; color: #334155; align-items: flex-start; }
+
+/* SLIDE — scenario */
+.scenario { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.scenario-title { padding: 12px 18px; color: #fff; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); }
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.scenario-side { padding: 20px; }
+.scenario-situation { border-right: 1px solid #F1F5F9; }
+.scenario-answer { background: #EAF7EE; }
+.scenario-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; display: flex; gap: 6px; align-items: center; }
+.scenario-eyebrow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+.scenario-text { font-size: 12px; color: #334155; margin-bottom: 12px; line-height: 1.6; }
+.scenario-question { font-size: 16px; font-weight: 700; }
+.scenario-headline { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.scenario-bullets { list-style: none; }
+.scenario-bullets li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; line-height: 1.55; }
+.scenario-bullets li::before { content: "✓"; color: var(--brand-green); font-weight: 700; flex-shrink: 0; }
+
+/* SLIDE — knowledge check */
+.kc-banner { background: #EAF7EE; border: 2px solid #9DD8AC; border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+.kc-banner svg { width: 18px; height: 18px; color: var(--brand-green); flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+.kc-banner p { font-size: 12px; color: #334155; }
+.q-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; }
+.q-card .q-num { font-size: 11px; font-weight: 700; color: var(--brand-primary); margin-right: 6px; }
+.q-card .q-text { font-weight: 600; margin-bottom: 12px; line-height: 1.5; font-size: 16px; }
+.q-options { display: flex; flex-direction: column; gap: 6px; }
+.q-option { padding: 10px 14px; border: 2px solid #E2E8F0; border-radius: 8px; background: #fff; text-align: left; font-size: 14px; color: #334155; display: flex; align-items: center; gap: 8px; transition: all 120ms; }
+.q-option:hover { border-color: #94A3B8; }
+.q-option .letter { font-weight: 700; min-width: 20px; }
+.q-option.selected { background: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
+.q-option.correct { background: #EAF7EE; border-color: var(--brand-green); color: #1F6B33; }
+.q-option.incorrect { background: #FBE9EC; border-color: var(--brand-red); color: #8B1A2B; }
+.q-option svg { width: 16px; height: 16px; flex-shrink: 0; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; }
+.feedback { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+.feedback.right { background: #EAF7EE; color: #1F6B33; }
+.feedback.wrong { background: #FFF7E5; color: #8B5500; }
+
+/* QUIZ screen — scrollable, doesn't fit single screen */
+.quiz-screen { flex: 1; overflow-y: auto; padding: 24px 16px; }
+.quiz-inner { max-width: 760px; margin: 0 auto; }
+.quiz-q { border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fff; }
+
+/* RESULT screen */
+.result-bg { flex: 1; padding: 24px 16px; display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.result-bg.passed { background: linear-gradient(135deg, var(--brand-green), #1E8038); }
+.result-bg.failed { background: linear-gradient(135deg, var(--brand-accent), #D08000); }
+.result-card { max-width: 540px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 36px; text-align: center; }
+.result-icon { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.result-icon.pass { background: #EAF7EE; }
+.result-icon.fail { background: #FFF7E5; }
+.result-icon svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+.result-icon.pass svg { color: var(--brand-green); }
+.result-icon.fail svg { color: var(--brand-accent); }
+.result-title { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.result-subtitle { color: #475569; margin-bottom: 20px; font-size: 14px; }
+.result-record { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: left; }
+.result-record .row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 13px; }
+.result-record .row .label { color: #64748B; }
+.result-record .row .value { font-weight: 600; text-align: right; }
+.tracking-status { font-size: 12px; margin: 12px 0; padding: 8px 12px; border-radius: 8px; }
+.tracking-status.ok { background: #EAF7EE; color: #1F6B33; }
+.tracking-status.pending { background: #FFF7E5; color: #8B5500; }
+.tracking-status.fail { background: #FBE9EC; color: #8B1A2B; }
+.result-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.result-buttons button { flex: 1; min-width: 110px; }
+
+/* BOTTOM BAR — audio player + nav, fixed */
+.bottom-bar { background: #fff; border-top: 1px solid #E2E8F0; padding: 10px 16px; flex-shrink: 0; box-shadow: 0 -1px 3px rgba(0,0,0,0.04); }
+.bottom-bar-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.audio-player { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #F1F5F9; border-radius: 10px; }
+.audio-player audio { flex: 1; min-width: 0; height: 32px; }
+.audio-player audio::-webkit-media-controls-panel { background: #F1F5F9; }
+.audio-player.empty { display: none; }
+.btn-nav { padding: 10px 14px; background: #fff; color: #475569; border: 1px solid #CBD5E1; border-radius: 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.btn-nav.next { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
+.btn-nav.next:hover { background: var(--brand-primary-dark); }
+.btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+@media (max-width: 700px) {
+  .scenario-grid { grid-template-columns: 1fr; }
+  .scenario-situation { border-right: none; border-bottom: 1px solid #F1F5F9; }
+  .chem-row { grid-template-columns: 1fr; }
+  .meta-grid { grid-template-columns: 1fr; }
+  .block-card { padding: 24px 20px; }
+  .section-intro h2 { font-size: 28px; }
+  .block-heading { font-size: 22px; }
+  .top-bar-context { display: none; }
+  .btn-nav { padding: 10px 12px; }
+  .btn-nav span { display: none; }
+}
+
+.screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
+.screen.active { display: flex; }
+
+@media print {
+  html, body { overflow: visible; height: auto; }
+  .screen:not(.active), .bottom-bar, .top-bar { display: none !important; }
+  body { background: #fff; display: block; }
+  .result-card { box-shadow: none; border: 2px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div id="screen-intro" class="screen active">
+  <div class="intro-bg">
+    <div class="intro-card">
+      <div class="intro-header">
+        <div class="brand-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <div class="brand-eyebrow" id="brand-eyebrow"></div>
+          <div class="brand-sub" id="module-code"></div>
+        </div>
+      </div>
+      <h1 class="intro-title" id="intro-topic"></h1>
+      <p class="intro-subtitle" id="intro-subtitle"></p>
+      <div class="meta-grid" id="meta-grid"></div>
+      <div class="intro-info">
+        <div class="info-title">What you will learn</div>
+        <ul id="learning-objectives"></ul>
+      </div>
+      <div class="input-row">
+        <label for="learner-name">Your full name</label>
+        <input type="text" id="learner-name" placeholder="e.g. Casey Singh">
+      </div>
+      <div class="input-row">
+        <label for="employer">Employer / Organization</label>
+        <input type="text" id="employer" placeholder="e.g. Refresh Resources">
+      </div>
+      <button id="btn-start" class="btn-primary" disabled>Begin module <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <div class="intro-footer" id="footer-tracking-note"></div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-learn" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="topbar-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span class="top-bar-context" id="slide-counter"></span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600;" id="progress-pct"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div></div>
+  <div class="slide-content"><div class="slide-inner" id="slide-body"></div></div>
+  <div class="bottom-bar"><div class="bottom-bar-inner">
+    <button id="btn-prev" class="btn-nav"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> <span>Previous</span></button>
+    <div id="audio-container" class="audio-player empty">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#64748B" stroke-width="2" style="flex-shrink:0"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+      <audio id="slide-audio" controls preload="none"></audio>
+    </div>
+    <button id="btn-next" class="btn-nav next">Continue <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div></div>
+</div>
+
+<div id="screen-quiz" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="quiz-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span style="color: #475569;">Final quiz</span>
+      </div>
+    </div>
+  </div></div>
+  <div class="quiz-screen"><div class="quiz-inner">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary);">FINAL KNOWLEDGE CHECK</div>
+      <h2 style="font-size: 28px; font-weight: 700; margin: 8px 0;">Quiz</h2>
+      <p style="color: #475569; font-size: 14px;" id="quiz-instructions"></p>
+    </div>
+    <div id="quiz-questions"></div>
+    <button id="btn-submit-quiz" class="btn-primary" style="margin-top: 24px;" disabled>Submit answers</button>
+  </div></div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="result-bg">
+    <div class="result-card">
+      <div class="result-icon" id="result-icon"></div>
+      <h2 class="result-title" id="result-title"></h2>
+      <p class="result-subtitle" id="result-subtitle"></p>
+      <div class="result-record">
+        <div class="row"><div class="label">Name</div><div class="value" id="r-name"></div></div>
+        <div class="row"><div class="label">Employer</div><div class="value" id="r-employer"></div></div>
+        <div class="row"><div class="label">Module</div><div class="value" id="r-module"></div></div>
+        <div class="row"><div class="label">Score</div><div class="value" id="r-score"></div></div>
+        <div class="row"><div class="label">Result</div><div class="value" id="r-result"></div></div>
+        <div class="row"><div class="label">Completed</div><div class="value" id="r-date"></div></div>
+      </div>
+      <div id="tracking-status"></div>
+      <div class="result-buttons">
+        <button id="btn-retry" class="btn-primary" style="display: none;">Retry quiz</button>
+        <button id="btn-print" class="btn-nav" style="justify-content: center;">Print certificate</button>
+        <button id="btn-restart" class="btn-nav" style="justify-content: center;">New learner</button>
+      </div>
+      <p style="font-size: 11px; color: #94A3B8; margin-top: 16px;" id="result-footer"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {"meta": {"topic": "Hazard Identification & Risk Assessment", "subtitle": "Spot it, assess it, control it", "code": "REF-TR-08", "version": "v1.0", "duration": "~30 min", "pass_mark_pct": 70, "regulation_alignment": "WorkSafeBC OHS Regulation Part 3 (Rights & Responsibilities) + the hierarchy of controls", "publication_basis": "Refresh hazard-ID approach; slips/trips/falls toolbox talk as example", "client": "refresh", "audience_summary": "All Refresh Resources field & shop workers", "what_you_will_learn": ["Recognize hazards before you start \u2014 walk the job and look for what could hurt you", "Assess the risk of a hazard by weighing how likely it is against how badly it could hurt someone", "Choose controls using the hierarchy: Elimination, Substitution, Engineering, Administrative, then PPE last", "Reassess after you make a change, and report hazards you can't fix yourself", "Use your three rights as a worker \u2014 Know, Participate, and Refuse unsafe work"]}, "sections": [{"type": "content", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "blocks": [{"heading": "Most injuries are predictable \u2014 and preventable", "body": "Almost every injury starts with a hazard that someone could have spotted first. Slips, trips and falls are the number one source of lost-time injuries in BC industry, and most happen on the same level \u2014 not from height. The skill that prevents them is the same skill for every job: see the hazard, size up the risk, and deal with it before you start."}, {"heading": "The four steps you'll use every shift", "bullets": ["RECOGNIZE \u2014 walk the job and find what could hurt you", "ASSESS \u2014 how likely is it, and how bad could it be?", "CONTROL \u2014 fix it using the hierarchy of controls", "REASSESS & REPORT \u2014 check your fix worked, and flag what you can't fix"]}, {"heading": "Your three rights as a worker", "bullets": ["Right to KNOW the hazards of your job and how to work safely", "Right to PARTICIPATE in finding and fixing hazards", "Right to REFUSE unsafe work \u2014 protected by OHS Regulation s. 3.12"]}]}, {"type": "content", "title": "What is a hazard?", "eyebrow": "Section 2 \u2014 Recognize", "icon": "book", "accent": "blue", "blocks": [{"heading": "Hazard vs. risk", "body": "A hazard is anything that could cause harm \u2014 a spilled chemical, a hose across a walkway, ice on a step. The risk is the chance that the hazard actually hurts someone, and how badly. The hazard is the icy step; the risk is you falling on it and breaking a wrist."}, {"heading": "The main types of hazard to look for", "bullets": ["Physical \u2014 slips, trips, falls, noise, moving equipment, weather, poor lighting", "Chemical \u2014 product splashes, fumes, spills from totes and injection lines", "Biological \u2014 contaminated water, sewage, animal waste at remote sites", "Ergonomic \u2014 heavy lifting, awkward reaching, repetitive work", "Psychosocial \u2014 working alone, fatigue, time pressure"]}, {"heading": "Worked example \u2014 slips, trips and falls", "body": "We'll use slips, trips and falls as our running example through this course. It's a physical hazard you face on almost every Refresh job \u2014 on tank tops, loading areas, FSR pull-outs, and climbing on and off trucks and totes."}]}, {"type": "content", "title": "Step 1 \u2014 Recognize the hazard", "eyebrow": "Section 3 \u2014 Recognize", "icon": "clipboard", "accent": "blue", "blocks": [{"heading": "Walk the job before you start", "body": "The single most effective habit is to walk the route and the work area before you carry anything or start the task. You are looking for what could go wrong while it's still easy to fix."}, {"heading": "Common slip, trip and fall hazards at Refresh", "bullets": ["Hoses, cables, and chemical injection lines run across walkways", "Spilled product, ice, mud, or condensate on tank tops, decks, and loading areas", "Poor lighting at dawn and dusk shifts and inside dark vaults or skids", "Climbing on or off trucks, totes, and tank decks with hands full", "Snow and ice on FSR pull-outs, well-pad gravel, and equipment steps"]}, {"heading": "How to actually see them", "bullets": ["Look down and ahead along your whole travel path, not just your feet", "Ask what changes through the shift \u2014 light fading, ice forming, spills building up", "Talk to the crew \u2014 someone may have noticed a hazard you can't see yet", "Trust a gut feeling that something is off, and check it out"]}]}, {"type": "content", "title": "Step 2 \u2014 Assess the risk", "eyebrow": "Section 4 \u2014 Assess", "icon": "beaker", "accent": "purple", "blocks": [{"heading": "Risk = Likelihood \u00d7 Severity", "body": "Once you've found a hazard, size up the risk by asking two questions: how LIKELY is it to happen, and how SEVERE could the harm be? A hazard that is both likely and serious is your top priority."}, {"heading": "Likelihood \u2014 how likely is it to happen?", "bullets": ["Low \u2014 would need things to line up just wrong; rare", "Medium \u2014 could reasonably happen on a job like this", "High \u2014 likely to happen, maybe even today, if nothing changes"]}, {"heading": "Severity \u2014 how bad could it be?", "bullets": ["Low \u2014 a minor scrape or bruise, first aid at most", "Medium \u2014 a sprain, a cut needing stitches, a few days off", "High \u2014 a broken bone, a serious injury, or worse"]}, {"heading": "Worked example \u2014 ice on a tank-deck step", "body": "Ice on the step you climb every refill: likelihood is HIGH (you use it many times a shift in winter) and severity is HIGH (a fall from the deck could break a bone). High times high means this is a top-priority risk \u2014 control it before you climb."}]}, {"type": "midcheck", "title": "Quick check \u2014 Recognize & assess", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "What is the difference between a hazard and a risk?", "options": ["They mean the same thing", "A hazard is anything that could cause harm; the risk is the chance it actually does and how badly", "A hazard only applies to chemicals; a risk only applies to falls"], "correct": 1, "why": "A hazard is the source of harm (the icy step). The risk is the chance someone gets hurt by it, and how serious that harm would be."}, {"q": "What two things do you weigh to assess a risk?", "options": ["Cost and time", "Likelihood and severity", "Who is watching and what day it is"], "correct": 1, "why": "Risk = Likelihood \u00d7 Severity. How likely is it to happen, and how bad could the harm be?"}, {"q": "What is the most effective habit for recognizing hazards on a job?", "options": ["Start work fast and watch for problems as they come up", "Walk the route and work area before you start, looking for what could go wrong", "Wait for your supervisor to point hazards out"], "correct": 1, "why": "Walking the job first lets you find hazards while they're still easy to fix \u2014 before you're committed and carrying a load."}]}, {"type": "content", "title": "Step 3 \u2014 Control the hazard", "eyebrow": "Section 5 \u2014 Control", "icon": "shield", "accent": "green", "blocks": [{"heading": "Use the hierarchy of controls \u2014 top down", "body": "Not all controls are equal. Always start at the top of the hierarchy and work down. The controls at the top remove the hazard for everyone; the ones at the bottom depend on a worker doing the right thing every single time."}, {"heading": "The hierarchy, strongest first", "bullets": ["ELIMINATION \u2014 remove the hazard completely (re-route the hose so nothing crosses the walkway)", "SUBSTITUTION \u2014 swap it for something less hazardous (a less slippery deck coating, a milder product)", "ENGINEERING \u2014 build a control into the work (handrails, anti-slip grating, better fixed lighting)", "ADMINISTRATIVE \u2014 change how people work (salt the steps, a walk-the-route rule, training, signs)", "PPE \u2014 protect the worker last (ice cleats, slip-resistant boots, a headlamp)"]}, {"heading": "Why PPE is last, not first", "body": "PPE only protects the one person wearing it, only if they wear it correctly, and only if it doesn't fail. It does nothing to remove the hazard. Use it \u2014 but never as your only control when a stronger one is possible."}, {"heading": "Worked example \u2014 hose across the walkway", "bullets": ["ELIMINATION \u2014 re-route the hose along the edge so nothing crosses the path", "ENGINEERING \u2014 run it through a cable ramp or overhead so people can't trip on it", "ADMINISTRATIVE \u2014 mark the route, brief the crew, keep the path clear", "PPE \u2014 slip-resistant boots help your footing, but they don't remove the trip hazard"]}]}, {"type": "content", "title": "Step 4 \u2014 Reassess and report", "eyebrow": "Section 6 \u2014 Reassess & report", "icon": "wrench", "accent": "darkblue", "blocks": [{"heading": "Check that your control actually worked", "body": "After you put a control in place, look again. Did it remove or lower the risk? Did it create a new hazard? Salting a step helps \u2014 but a bag of salt left on the deck is now a trip hazard itself. Reassessing closes the loop."}, {"heading": "Report what you can't fix yourself", "bullets": ["A pothole, a missing handrail, a broken step \u2014 tell the supervisor right away", "Report hazards and near-misses even when no one got hurt", "Reporting an unsafe condition is your responsibility under OHS Regulation s. 3.10", "A near-miss is a free warning \u2014 it's the same event without the injury"]}, {"heading": "Your right to refuse unsafe work (s. 3.12)", "bullets": ["If you have reasonable cause to believe work is unsafe, you can refuse it", "Report the refusal to your supervisor right away", "The hazard gets investigated and fixed before anyone is asked to do the work", "You cannot be punished for a good-faith refusal \u2014 this right is protected"]}]}, {"type": "midcheck", "title": "Quick check \u2014 Controls & reporting", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "Put the hierarchy of controls in order from strongest to weakest.", "options": ["PPE, Administrative, Engineering, Substitution, Elimination", "Elimination, Substitution, Engineering, Administrative, PPE", "Administrative, PPE, Elimination, Engineering, Substitution"], "correct": 1, "why": "Strongest first: Elimination, Substitution, Engineering, Administrative, PPE. The top removes the hazard; the bottom only protects one worker."}, {"q": "Why is PPE the LAST line of defence, not the first?", "options": ["It is too expensive to use first", "It only protects the one person wearing it, only if worn correctly, and doesn't remove the hazard", "It is uncomfortable"], "correct": 1, "why": "PPE depends on a worker wearing it right every time and can fail. It does nothing to remove the hazard, so it's the weakest control."}, {"q": "You salt an icy step. What should you do next?", "options": ["Nothing \u2014 the job is done", "Reassess: check the step is safe now and make sure you didn't create a new hazard, like a salt bag left on the deck", "Tell everyone the site is now hazard-free"], "correct": 1, "why": "Always reassess after a control. Confirm the risk is lowered and that your fix didn't introduce a new hazard."}]}, {"type": "scenarios", "title": "Spot it, assess it, control it", "eyebrow": "Section 7 \u2014 Put it together", "icon": "alert", "accent": "amber", "intro": "For each one: spot the hazard, assess the risk (likelihood \u00d7 severity), then pick the strongest practical control. Read it, think it through, then check.", "items": [{"title": "Scenario 1 \u2014 Injection lines across the walkway", "situation": "You set up at a well-pad and run two chemical injection lines from the skid to the tank. The shortest path takes them straight across the walkway the crew uses all shift.", "question": "Spot the hazard, assess it, and control it. What do you do?", "answer_headline": "Trip hazard \u2014 re-route the lines (eliminate it).", "bullets": ["RECOGNIZE \u2014 lines across a travel path are a classic trip hazard", "ASSESS \u2014 likelihood HIGH (crew crosses it all shift), severity MEDIUM to HIGH (a fall onto equipment)", "CONTROL \u2014 eliminate it: route the lines along the edge so nothing crosses the path", "If they must cross, use a cable ramp or run them overhead (engineering), then mark the route", "Boots help your footing but don't remove the hazard \u2014 don't rely on PPE alone"]}, {"title": "Scenario 2 \u2014 Ice on the tank-deck steps", "situation": "It's a dark winter morning. You arrive to refill a tote on a tank deck. The steps up to the deck have a glaze of ice, and you'll be climbing them many times carrying gear.", "question": "Spot the hazard, assess it, and control it. What do you do?", "answer_headline": "High-priority fall risk \u2014 make the steps safe before you climb.", "bullets": ["RECOGNIZE \u2014 ice on steps you climb repeatedly, in poor light", "ASSESS \u2014 likelihood HIGH and severity HIGH (a fall from the deck can break bones) \u2014 top priority", "CONTROL \u2014 salt or sand the steps (administrative), use ice cleats over your boots (PPE)", "Use 3-point contact climbing on and off, and keep a hand free \u2014 carry gear in a pouch or make a second trip", "Add light with a headlamp so you can see the next hazard"]}, {"title": "Scenario 3 \u2014 Spill on the loading area", "situation": "While loading, a small amount of product drips and spreads into a slick patch on the loading-area surface where you and the driver are walking.", "question": "Spot the hazard, assess it, and control it. What do you do?", "answer_headline": "Slip hazard \u2014 clean it up now, don't step over it.", "bullets": ["RECOGNIZE \u2014 a slick spill in a walking area is an immediate slip hazard", "ASSESS \u2014 likelihood HIGH (right where you walk) and severity MEDIUM to HIGH (fall, plus it's product)", "CONTROL \u2014 stop and clean it up at the source (eliminate); check the SDS for the right cleanup and PPE", "Don't step over a small spill \u2014 a small spill becomes a fall", "If it keeps recurring, fix the cause (a drip tray or better connection \u2014 engineering)"]}, {"title": "Scenario 4 \u2014 The hazard you can't fix", "situation": "Walking the job you find the handrail on the access stairs is missing \u2014 sheared off at the base. You don't have the parts or authority to repair it, and the stairs are the only way up.", "question": "Spot the hazard, assess it, and decide what to do.", "answer_headline": "Report it and don't use the unsafe access \u2014 refuse if needed.", "bullets": ["RECOGNIZE \u2014 a missing handrail on stairs is a serious fall hazard", "ASSESS \u2014 likelihood MEDIUM to HIGH and severity HIGH (a fall from stairs)", "CONTROL \u2014 you can't fix it yourself, so report it to your supervisor right away (s. 3.10)", "If you have reasonable cause to believe using the stairs is unsafe, you can refuse the work (s. 3.12)", "Use safe alternate access if there is one, and don't let the next worker walk into it"]}]}], "quiz": [{"q": "What is the correct order of the four steps in this course?", "options": ["Control, recognize, report, assess", "Recognize, assess, control, reassess and report", "Assess, control, recognize, reassess", "Report, recognize, assess, control"], "correct": 1, "why": "The method is: recognize the hazard, assess the risk, control it using the hierarchy, then reassess and report."}, {"q": "Which statement correctly describes a hazard versus a risk?", "options": ["A hazard is the chance of harm; a risk is the source of harm", "A hazard is anything that could cause harm; a risk is the chance it does and how badly", "They are two words for the same thing", "A hazard applies only outdoors; a risk applies only indoors"], "correct": 1, "why": "The hazard is the source of harm (an icy step). The risk is the likelihood it hurts someone and how serious that harm would be."}, {"q": "You assess risk by combining which two factors?", "options": ["Cost and schedule", "Likelihood and severity", "Distance and time", "Temperature and lighting"], "correct": 1, "why": "Risk = Likelihood \u00d7 Severity. How likely is the harm, and how bad could it be?"}, {"q": "A step you use many times a shift is iced over, and a fall from it could break a bone. How should you rate this risk?", "options": ["Low likelihood, low severity", "High likelihood, high severity \u2014 top priority", "Low likelihood, high severity", "It can't be rated until someone falls"], "correct": 1, "why": "You use it often (high likelihood) and a fall could break a bone (high severity). High times high makes it a top-priority risk to control first."}, {"q": "What is the correct order of the hierarchy of controls, strongest first?", "options": ["PPE, Administrative, Engineering, Substitution, Elimination", "Elimination, Substitution, Engineering, Administrative, PPE", "Engineering, Elimination, PPE, Substitution, Administrative", "Substitution, Elimination, Administrative, PPE, Engineering"], "correct": 1, "why": "Elimination, Substitution, Engineering, Administrative, PPE. The top removes the hazard for everyone; the bottom only protects one worker."}, {"q": "Which control is the MOST effective way to deal with a hose running across a walkway?", "options": ["Tell the crew to wear slip-resistant boots", "Put up a sign that says watch your step", "Re-route the hose along the edge so nothing crosses the path", "Tell everyone to step over it carefully"], "correct": 2, "why": "Re-routing eliminates the hazard \u2014 the strongest control. Boots, signs and care are weaker controls that still leave the trip hazard there."}, {"q": "Why is PPE considered the LAST line of defence?", "options": ["It costs too much", "It only protects the wearer, only if used correctly, and it doesn't remove the hazard", "It is always uncomfortable", "WorkSafeBC bans it as a first control"], "correct": 1, "why": "PPE depends on one worker using it correctly every time and can fail. It never removes the hazard, so it is the weakest control."}, {"q": "After you put a control in place, what should you always do?", "options": ["Move on \u2014 the hazard is handled", "Reassess: check the risk is lower and confirm you didn't create a new hazard", "Remove all the other controls", "Wait for the next inspection"], "correct": 1, "why": "Reassessing closes the loop. Confirm the control worked and that it didn't introduce a new hazard, like a salt bag left on the deck."}, {"q": "You find a broken step you can't repair yourself. What is the right action?", "options": ["Use it carefully and say nothing", "Report it to your supervisor right away", "Wait to see if anyone else notices", "Only mention it if someone gets hurt"], "correct": 1, "why": "Reporting unsafe conditions you can't fix is your responsibility under OHS Regulation s. 3.10. Flag it so it gets repaired before someone is hurt."}, {"q": "A near-miss happens when no one is hurt. Should you report it?", "options": ["No \u2014 nothing happened", "Yes \u2014 a near-miss is a free warning of the same event without the injury", "Only if your supervisor asks", "Only if it happens twice"], "correct": 1, "why": "A near-miss is the same event without the injury. Reporting it lets the hazard get fixed before it hurts someone next time."}, {"q": "What are a worker's three rights under WorkSafeBC?", "options": ["The right to know, the right to participate, and the right to refuse unsafe work", "The right to overtime, the right to breaks, and the right to a raise", "The right to choose your shifts, your PPE, and your truck", "The right to know, to inspect, and to discipline"], "correct": 0, "why": "Your three rights are to KNOW the hazards, to PARTICIPATE in finding and fixing them, and to REFUSE unsafe work."}, {"q": "Which regulation protects your right to refuse unsafe work?", "options": ["OHS Regulation s. 4.39", "OHS Regulation s. 3.12", "OHS Regulation s. 8.22", "OHS Regulation s. 13.5"], "correct": 1, "why": "Section 3.12 protects your right to refuse work you have reasonable cause to believe is unsafe \u2014 and you cannot be punished for a good-faith refusal."}, {"q": "You have reasonable cause to believe a task is unsafe. What does the right to refuse require you to do?", "options": ["Quietly walk off the site", "Report the refusal to your supervisor right away so the hazard is investigated and fixed", "Do the task anyway and report it later", "Wait until the end of the shift to mention it"], "correct": 1, "why": "Refuse and report it immediately. The hazard then gets investigated and fixed before anyone is asked to do the work."}], "tracking": {"provider": "supabase", "supabase_url": "https://muftkbpnedufsyiyuwhk.supabase.co", "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11ZnRrYnBuZWR1ZnN5aXl1d2hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjIzMzEsImV4cCI6MjA5NjI5ODMzMX0.OjnNDsjVizKn12GndFfRrD15JDmfqc4NKXFlnabbtxY", "token": "c3447214-4c26-4a63-b9a8-f8045d8150ef", "course_id": "hazard-id", "module_id": "hazard-id-v1.0"}};
+const BRAND = {"client_id": "refresh", "client_name": "Refresh Resources", "client_short": "REFRESH", "tagline": "REFRESH RESOURCES TRAINING", "logo_text_primary": "REFRESH", "logo_text_secondary": "RESOURCES", "colors": {"primary": "#0098DA", "primary_dark": "#007FB8", "navy": "#114F69", "accent": "#F0A500", "red": "#C8102E", "green": "#2BA84A", "purple": "#8A4FBE", "darkblue": "#0A3447"}};
+const SLIDES = [{"kind": "section_intro", "section_idx": 0, "section_title": "Why this matters", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "subtitle": "", "audio_text": "Why this matters.", "id": "why-this-matters", "audio": "audio/why-this-matters.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "Most injuries are predictable \u2014 and preventable", "body": "Almost every injury starts with a hazard that someone could have spotted first. Slips, trips and falls are the number one source of lost-time injuries in BC industry, and most happen on the same level \u2014 not from height. The skill that prevents them is the same skill for every job: see the hazard, size up the risk, and deal with it before you start.", "bullets": null, "audio_text": "Most injuries are predictable \u2014 and preventable Almost every injury starts with a hazard that someone could have spotted first. Slips, trips and falls are the number one source of lost-time injuries in BC industry, and most happen on the same level \u2014 not from height. The skill that prevents them is the same skill for every job: see the hazard, size up the risk, and deal with it before you start.", "id": "most-injuries-are-predictable-and-preventable-almost-every-i", "audio": "audio/most-injuries-are-predictable-and-preventable-almost-every-i.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "The four steps you'll use every shift", "body": "", "bullets": ["RECOGNIZE \u2014 walk the job and find what could hurt you", "ASSESS \u2014 how likely is it, and how bad could it be?", "CONTROL \u2014 fix it using the hierarchy of controls", "REASSESS & REPORT \u2014 check your fix worked, and flag what you can't fix"], "audio_text": "The four steps you'll use every shift RECOGNIZE \u2014 walk the job and find what could hurt you ASSESS \u2014 how likely is it, and how bad could it be? CONTROL \u2014 fix it using the hierarchy of controls REASSESS & REPORT \u2014 check your fix worked, and flag what you can't fix", "id": "the-four-steps-you-ll-use-every-shift-recognize-walk-the-job", "audio": "audio/the-four-steps-you-ll-use-every-shift-recognize-walk-the-job.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "Your three rights as a worker", "body": "", "bullets": ["Right to KNOW the hazards of your job and how to work safely", "Right to PARTICIPATE in finding and fixing hazards", "Right to REFUSE unsafe work \u2014 protected by OHS Regulation s. 3.12"], "audio_text": "Your three rights as a worker Right to KNOW the hazards of your job and how to work safely Right to PARTICIPATE in finding and fixing hazards Right to REFUSE unsafe work \u2014 protected by OHS Regulation s. 3.12", "id": "your-three-rights-as-a-worker-right-to-know-the-hazards-of-y", "audio": "audio/your-three-rights-as-a-worker-right-to-know-the-hazards-of-y.mp3"}, {"kind": "section_intro", "section_idx": 1, "section_title": "What is a hazard?", "title": "What is a hazard?", "eyebrow": "Section 2 \u2014 Recognize", "icon": "book", "accent": "blue", "subtitle": "", "audio_text": "What is a hazard?.", "id": "what-is-a-hazard", "audio": "audio/what-is-a-hazard.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "What is a hazard?", "eyebrow": "Section 2 \u2014 Recognize", "accent": "blue", "heading": "Hazard vs. risk", "body": "A hazard is anything that could cause harm \u2014 a spilled chemical, a hose across a walkway, ice on a step. The risk is the chance that the hazard actually hurts someone, and how badly. The hazard is the icy step; the risk is you falling on it and breaking a wrist.", "bullets": null, "audio_text": "Hazard vs. risk A hazard is anything that could cause harm \u2014 a spilled chemical, a hose across a walkway, ice on a step. The risk is the chance that the hazard actually hurts someone, and how badly. The hazard is the icy step; the risk is you falling on it and breaking a wrist.", "id": "hazard-vs-risk-a-hazard-is-anything-that-could-cause-harm-a-", "audio": "audio/hazard-vs-risk-a-hazard-is-anything-that-could-cause-harm-a-.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "What is a hazard?", "eyebrow": "Section 2 \u2014 Recognize", "accent": "blue", "heading": "The main types of hazard to look for", "body": "", "bullets": ["Physical \u2014 slips, trips, falls, noise, moving equipment, weather, poor lighting", "Chemical \u2014 product splashes, fumes, spills from totes and injection lines", "Biological \u2014 contaminated water, sewage, animal waste at remote sites", "Ergonomic \u2014 heavy lifting, awkward reaching, repetitive work", "Psychosocial \u2014 working alone, fatigue, time pressure"], "audio_text": "The main types of hazard to look for Physical \u2014 slips, trips, falls, noise, moving equipment, weather, poor lighting Chemical \u2014 product splashes, fumes, spills from totes and injection lines Biological \u2014 contaminated water, sewage, animal waste at remote sites Ergonomic \u2014 heavy lifting, awkward reaching, repetitive work Psychosocial \u2014 working alone, fatigue, time pressure", "id": "the-main-types-of-hazard-to-look-for-physical-slips-trips-fa", "audio": "audio/the-main-types-of-hazard-to-look-for-physical-slips-trips-fa.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "What is a hazard?", "eyebrow": "Section 2 \u2014 Recognize", "accent": "blue", "heading": "Worked example \u2014 slips, trips and falls", "body": "We'll use slips, trips and falls as our running example through this course. It's a physical hazard you face on almost every Refresh job \u2014 on tank tops, loading areas, FSR pull-outs, and climbing on and off trucks and totes.", "bullets": null, "audio_text": "Worked example \u2014 slips, trips and falls We'll use slips, trips and falls as our running example through this course. It's a physical hazard you face on almost every Refresh job \u2014 on tank tops, loading areas, FSR pull-outs, and climbing on and off trucks and totes.", "id": "worked-example-slips-trips-and-falls-we-ll-use-slips-trips-a", "audio": "audio/worked-example-slips-trips-and-falls-we-ll-use-slips-trips-a.mp3"}, {"kind": "section_intro", "section_idx": 2, "section_title": "Step 1 \u2014 Recognize the hazard", "title": "Step 1 \u2014 Recognize the hazard", "eyebrow": "Section 3 \u2014 Recognize", "icon": "clipboard", "accent": "blue", "subtitle": "", "audio_text": "Step 1 \u2014 Recognize the hazard.", "id": "step-1-recognize-the-hazard", "audio": "audio/step-1-recognize-the-hazard.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Step 1 \u2014 Recognize the hazard", "eyebrow": "Section 3 \u2014 Recognize", "accent": "blue", "heading": "Walk the job before you start", "body": "The single most effective habit is to walk the route and the work area before you carry anything or start the task. You are looking for what could go wrong while it's still easy to fix.", "bullets": null, "audio_text": "Walk the job before you start The single most effective habit is to walk the route and the work area before you carry anything or start the task. You are looking for what could go wrong while it's still easy to fix.", "id": "walk-the-job-before-you-start-the-single-most-effective-habi", "audio": "audio/walk-the-job-before-you-start-the-single-most-effective-habi.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Step 1 \u2014 Recognize the hazard", "eyebrow": "Section 3 \u2014 Recognize", "accent": "blue", "heading": "Common slip, trip and fall hazards at Refresh", "body": "", "bullets": ["Hoses, cables, and chemical injection lines run across walkways", "Spilled product, ice, mud, or condensate on tank tops, decks, and loading areas", "Poor lighting at dawn and dusk shifts and inside dark vaults or skids", "Climbing on or off trucks, totes, and tank decks with hands full", "Snow and ice on FSR pull-outs, well-pad gravel, and equipment steps"], "audio_text": "Common slip, trip and fall hazards at Refresh Hoses, cables, and chemical injection lines run across walkways Spilled product, ice, mud, or condensate on tank tops, decks, and loading areas Poor lighting at dawn and dusk shifts and inside dark vaults or skids Climbing on or off trucks, totes, and tank decks with hands full Snow and ice on FSR pull-outs, well-pad gravel, and equipment steps", "id": "common-slip-trip-and-fall-hazards-at-refresh-hoses-cables-an", "audio": "audio/common-slip-trip-and-fall-hazards-at-refresh-hoses-cables-an.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Step 1 \u2014 Recognize the hazard", "eyebrow": "Section 3 \u2014 Recognize", "accent": "blue", "heading": "How to actually see them", "body": "", "bullets": ["Look down and ahead along your whole travel path, not just your feet", "Ask what changes through the shift \u2014 light fading, ice forming, spills building up", "Talk to the crew \u2014 someone may have noticed a hazard you can't see yet", "Trust a gut feeling that something is off, and check it out"], "audio_text": "How to actually see them Look down and ahead along your whole travel path, not just your feet Ask what changes through the shift \u2014 light fading, ice forming, spills building up Talk to the crew \u2014 someone may have noticed a hazard you can't see yet Trust a gut feeling that something is off, and check it out", "id": "how-to-actually-see-them-look-down-and-ahead-along-your-whol", "audio": "audio/how-to-actually-see-them-look-down-and-ahead-along-your-whol.mp3"}, {"kind": "section_intro", "section_idx": 3, "section_title": "Step 2 \u2014 Assess the risk", "title": "Step 2 \u2014 Assess the risk", "eyebrow": "Section 4 \u2014 Assess", "icon": "beaker", "accent": "purple", "subtitle": "", "audio_text": "Step 2 \u2014 Assess the risk.", "id": "step-2-assess-the-risk", "audio": "audio/step-2-assess-the-risk.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Step 2 \u2014 Assess the risk", "eyebrow": "Section 4 \u2014 Assess", "accent": "purple", "heading": "Risk = Likelihood \u00d7 Severity", "body": "Once you've found a hazard, size up the risk by asking two questions: how LIKELY is it to happen, and how SEVERE could the harm be? A hazard that is both likely and serious is your top priority.", "bullets": null, "audio_text": "Risk = Likelihood \u00d7 Severity Once you've found a hazard, size up the risk by asking two questions: how LIKELY is it to happen, and how SEVERE could the harm be? A hazard that is both likely and serious is your top priority.", "id": "risk-likelihood-severity-once-you-ve-found-a-hazard-size-up-", "audio": "audio/risk-likelihood-severity-once-you-ve-found-a-hazard-size-up-.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Step 2 \u2014 Assess the risk", "eyebrow": "Section 4 \u2014 Assess", "accent": "purple", "heading": "Likelihood \u2014 how likely is it to happen?", "body": "", "bullets": ["Low \u2014 would need things to line up just wrong; rare", "Medium \u2014 could reasonably happen on a job like this", "High \u2014 likely to happen, maybe even today, if nothing changes"], "audio_text": "Likelihood \u2014 how likely is it to happen? Low \u2014 would need things to line up just wrong; rare Medium \u2014 could reasonably happen on a job like this High \u2014 likely to happen, maybe even today, if nothing changes", "id": "likelihood-how-likely-is-it-to-happen-low-would-need-things-", "audio": "audio/likelihood-how-likely-is-it-to-happen-low-would-need-things-.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Step 2 \u2014 Assess the risk", "eyebrow": "Section 4 \u2014 Assess", "accent": "purple", "heading": "Severity \u2014 how bad could it be?", "body": "", "bullets": ["Low \u2014 a minor scrape or bruise, first aid at most", "Medium \u2014 a sprain, a cut needing stitches, a few days off", "High \u2014 a broken bone, a serious injury, or worse"], "audio_text": "Severity \u2014 how bad could it be? Low \u2014 a minor scrape or bruise, first aid at most Medium \u2014 a sprain, a cut needing stitches, a few days off High \u2014 a broken bone, a serious injury, or worse", "id": "severity-how-bad-could-it-be-low-a-minor-scrape-or-bruise-fi", "audio": "audio/severity-how-bad-could-it-be-low-a-minor-scrape-or-bruise-fi.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Step 2 \u2014 Assess the risk", "eyebrow": "Section 4 \u2014 Assess", "accent": "purple", "heading": "Worked example \u2014 ice on a tank-deck step", "body": "Ice on the step you climb every refill: likelihood is HIGH (you use it many times a shift in winter) and severity is HIGH (a fall from the deck could break a bone). High times high means this is a top-priority risk \u2014 control it before you climb.", "bullets": null, "audio_text": "Worked example \u2014 ice on a tank-deck step Ice on the step you climb every refill: likelihood is HIGH (you use it many times a shift in winter) and severity is HIGH (a fall from the deck could break a bone). High times high means this is a top-priority risk \u2014 control it before you climb.", "id": "worked-example-ice-on-a-tank-deck-step-ice-on-the-step-you-c", "audio": "audio/worked-example-ice-on-a-tank-deck-step-ice-on-the-step-you-c.mp3"}, {"kind": "section_intro", "section_idx": 4, "section_title": "Quick check \u2014 Recognize & assess", "title": "Quick check \u2014 Recognize & assess", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Recognize & assess.", "id": "quick-check-recognize-assess", "audio": "audio/quick-check-recognize-assess.mp3"}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 Recognize & assess", "key": "4-0", "q": {"q": "What is the difference between a hazard and a risk?", "options": ["They mean the same thing", "A hazard is anything that could cause harm; the risk is the chance it actually does and how badly", "A hazard only applies to chemicals; a risk only applies to falls"], "correct": 1, "why": "A hazard is the source of harm (the icy step). The risk is the chance someone gets hurt by it, and how serious that harm would be."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 Recognize & assess", "key": "4-1", "q": {"q": "What two things do you weigh to assess a risk?", "options": ["Cost and time", "Likelihood and severity", "Who is watching and what day it is"], "correct": 1, "why": "Risk = Likelihood \u00d7 Severity. How likely is it to happen, and how bad could the harm be?"}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 Recognize & assess", "key": "4-2", "q": {"q": "What is the most effective habit for recognizing hazards on a job?", "options": ["Start work fast and watch for problems as they come up", "Walk the route and work area before you start, looking for what could go wrong", "Wait for your supervisor to point hazards out"], "correct": 1, "why": "Walking the job first lets you find hazards while they're still easy to fix \u2014 before you're committed and carrying a load."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 5, "section_title": "Step 3 \u2014 Control the hazard", "title": "Step 3 \u2014 Control the hazard", "eyebrow": "Section 5 \u2014 Control", "icon": "shield", "accent": "green", "subtitle": "", "audio_text": "Step 3 \u2014 Control the hazard.", "id": "step-3-control-the-hazard", "audio": "audio/step-3-control-the-hazard.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Step 3 \u2014 Control the hazard", "eyebrow": "Section 5 \u2014 Control", "accent": "green", "heading": "Use the hierarchy of controls \u2014 top down", "body": "Not all controls are equal. Always start at the top of the hierarchy and work down. The controls at the top remove the hazard for everyone; the ones at the bottom depend on a worker doing the right thing every single time.", "bullets": null, "audio_text": "Use the hierarchy of controls \u2014 top down Not all controls are equal. Always start at the top of the hierarchy and work down. The controls at the top remove the hazard for everyone; the ones at the bottom depend on a worker doing the right thing every single time.", "id": "use-the-hierarchy-of-controls-top-down-not-all-controls-are-", "audio": "audio/use-the-hierarchy-of-controls-top-down-not-all-controls-are-.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Step 3 \u2014 Control the hazard", "eyebrow": "Section 5 \u2014 Control", "accent": "green", "heading": "The hierarchy, strongest first", "body": "", "bullets": ["ELIMINATION \u2014 remove the hazard completely (re-route the hose so nothing crosses the walkway)", "SUBSTITUTION \u2014 swap it for something less hazardous (a less slippery deck coating, a milder product)", "ENGINEERING \u2014 build a control into the work (handrails, anti-slip grating, better fixed lighting)", "ADMINISTRATIVE \u2014 change how people work (salt the steps, a walk-the-route rule, training, signs)", "PPE \u2014 protect the worker last (ice cleats, slip-resistant boots, a headlamp)"], "audio_text": "The hierarchy, strongest first ELIMINATION \u2014 remove the hazard completely (re-route the hose so nothing crosses the walkway) SUBSTITUTION \u2014 swap it for something less hazardous (a less slippery deck coating, a milder product) ENGINEERING \u2014 build a control into the work (handrails, anti-slip grating, better fixed lighting) ADMINISTRATIVE \u2014 change how people work (salt the steps, a walk-the-route rule, training, signs) PPE \u2014 protect the worker last (ice cleats, slip-resistant boots, a headlamp)", "id": "the-hierarchy-strongest-first-elimination-remove-the-hazard-", "audio": "audio/the-hierarchy-strongest-first-elimination-remove-the-hazard-.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Step 3 \u2014 Control the hazard", "eyebrow": "Section 5 \u2014 Control", "accent": "green", "heading": "Why PPE is last, not first", "body": "PPE only protects the one person wearing it, only if they wear it correctly, and only if it doesn't fail. It does nothing to remove the hazard. Use it \u2014 but never as your only control when a stronger one is possible.", "bullets": null, "audio_text": "Why PPE is last, not first PPE only protects the one person wearing it, only if they wear it correctly, and only if it doesn't fail. It does nothing to remove the hazard. Use it \u2014 but never as your only control when a stronger one is possible.", "id": "why-ppe-is-last-not-first-ppe-only-protects-the-one-person-w", "audio": "audio/why-ppe-is-last-not-first-ppe-only-protects-the-one-person-w.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Step 3 \u2014 Control the hazard", "eyebrow": "Section 5 \u2014 Control", "accent": "green", "heading": "Worked example \u2014 hose across the walkway", "body": "", "bullets": ["ELIMINATION \u2014 re-route the hose along the edge so nothing crosses the path", "ENGINEERING \u2014 run it through a cable ramp or overhead so people can't trip on it", "ADMINISTRATIVE \u2014 mark the route, brief the crew, keep the path clear", "PPE \u2014 slip-resistant boots help your footing, but they don't remove the trip hazard"], "audio_text": "Worked example \u2014 hose across the walkway ELIMINATION \u2014 re-route the hose along the edge so nothing crosses the path ENGINEERING \u2014 run it through a cable ramp or overhead so people can't trip on it ADMINISTRATIVE \u2014 mark the route, brief the crew, keep the path clear PPE \u2014 slip-resistant boots help your footing, but they don't remove the trip hazard", "id": "worked-example-hose-across-the-walkway-elimination-re-route-", "audio": "audio/worked-example-hose-across-the-walkway-elimination-re-route-.mp3"}, {"kind": "section_intro", "section_idx": 6, "section_title": "Step 4 \u2014 Reassess and report", "title": "Step 4 \u2014 Reassess and report", "eyebrow": "Section 6 \u2014 Reassess & report", "icon": "wrench", "accent": "darkblue", "subtitle": "", "audio_text": "Step 4 \u2014 Reassess and report.", "id": "step-4-reassess-and-report", "audio": "audio/step-4-reassess-and-report.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Step 4 \u2014 Reassess and report", "eyebrow": "Section 6 \u2014 Reassess & report", "accent": "darkblue", "heading": "Check that your control actually worked", "body": "After you put a control in place, look again. Did it remove or lower the risk? Did it create a new hazard? Salting a step helps \u2014 but a bag of salt left on the deck is now a trip hazard itself. Reassessing closes the loop.", "bullets": null, "audio_text": "Check that your control actually worked After you put a control in place, look again. Did it remove or lower the risk? Did it create a new hazard? Salting a step helps \u2014 but a bag of salt left on the deck is now a trip hazard itself. Reassessing closes the loop.", "id": "check-that-your-control-actually-worked-after-you-put-a-cont", "audio": "audio/check-that-your-control-actually-worked-after-you-put-a-cont.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Step 4 \u2014 Reassess and report", "eyebrow": "Section 6 \u2014 Reassess & report", "accent": "darkblue", "heading": "Report what you can't fix yourself", "body": "", "bullets": ["A pothole, a missing handrail, a broken step \u2014 tell the supervisor right away", "Report hazards and near-misses even when no one got hurt", "Reporting an unsafe condition is your responsibility under OHS Regulation s. 3.10", "A near-miss is a free warning \u2014 it's the same event without the injury"], "audio_text": "Report what you can't fix yourself A pothole, a missing handrail, a broken step \u2014 tell the supervisor right away Report hazards and near-misses even when no one got hurt Reporting an unsafe condition is your responsibility under OHS Regulation s. 3.10 A near-miss is a free warning \u2014 it's the same event without the injury", "id": "report-what-you-can-t-fix-yourself-a-pothole-a-missing-handr", "audio": "audio/report-what-you-can-t-fix-yourself-a-pothole-a-missing-handr.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Step 4 \u2014 Reassess and report", "eyebrow": "Section 6 \u2014 Reassess & report", "accent": "darkblue", "heading": "Your right to refuse unsafe work (s. 3.12)", "body": "", "bullets": ["If you have reasonable cause to believe work is unsafe, you can refuse it", "Report the refusal to your supervisor right away", "The hazard gets investigated and fixed before anyone is asked to do the work", "You cannot be punished for a good-faith refusal \u2014 this right is protected"], "audio_text": "Your right to refuse unsafe work (s. 3.12) If you have reasonable cause to believe work is unsafe, you can refuse it Report the refusal to your supervisor right away The hazard gets investigated and fixed before anyone is asked to do the work You cannot be punished for a good-faith refusal \u2014 this right is protected", "id": "your-right-to-refuse-unsafe-work-s-3-12-if-you-have-reasonab", "audio": "audio/your-right-to-refuse-unsafe-work-s-3-12-if-you-have-reasonab.mp3"}, {"kind": "section_intro", "section_idx": 7, "section_title": "Quick check \u2014 Controls & reporting", "title": "Quick check \u2014 Controls & reporting", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Controls & reporting.", "id": "quick-check-controls-reporting", "audio": "audio/quick-check-controls-reporting.mp3"}, {"kind": "midcheck_q", "section_idx": 7, "section_title": "Quick check \u2014 Controls & reporting", "key": "7-0", "q": {"q": "Put the hierarchy of controls in order from strongest to weakest.", "options": ["PPE, Administrative, Engineering, Substitution, Elimination", "Elimination, Substitution, Engineering, Administrative, PPE", "Administrative, PPE, Elimination, Engineering, Substitution"], "correct": 1, "why": "Strongest first: Elimination, Substitution, Engineering, Administrative, PPE. The top removes the hazard; the bottom only protects one worker."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 7, "section_title": "Quick check \u2014 Controls & reporting", "key": "7-1", "q": {"q": "Why is PPE the LAST line of defence, not the first?", "options": ["It is too expensive to use first", "It only protects the one person wearing it, only if worn correctly, and doesn't remove the hazard", "It is uncomfortable"], "correct": 1, "why": "PPE depends on a worker wearing it right every time and can fail. It does nothing to remove the hazard, so it's the weakest control."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 7, "section_title": "Quick check \u2014 Controls & reporting", "key": "7-2", "q": {"q": "You salt an icy step. What should you do next?", "options": ["Nothing \u2014 the job is done", "Reassess: check the step is safe now and make sure you didn't create a new hazard, like a salt bag left on the deck", "Tell everyone the site is now hazard-free"], "correct": 1, "why": "Always reassess after a control. Confirm the risk is lowered and that your fix didn't introduce a new hazard."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 8, "section_title": "Spot it, assess it, control it", "title": "Spot it, assess it, control it", "eyebrow": "Section 7 \u2014 Put it together", "icon": "alert", "accent": "amber", "subtitle": "For each one: spot the hazard, assess the risk (likelihood \u00d7 severity), then pick the strongest practical control. Read it, think it through, then check.", "audio_text": "Spot it, assess it, control it. For each one: spot the hazard, assess the risk (likelihood \u00d7 severity), then pick the strongest practical control. Read it, think it through, then check.", "id": "spot-it-assess-it-control-it-for-each-one-spot-the-hazard-as", "audio": "audio/spot-it-assess-it-control-it-for-each-one-spot-the-hazard-as.mp3"}, {"kind": "scenario", "section_idx": 8, "section_title": "Spot it, assess it, control it", "scenario": {"title": "Scenario 1 \u2014 Injection lines across the walkway", "situation": "You set up at a well-pad and run two chemical injection lines from the skid to the tank. The shortest path takes them straight across the walkway the crew uses all shift.", "question": "Spot the hazard, assess it, and control it. What do you do?", "answer_headline": "Trip hazard \u2014 re-route the lines (eliminate it).", "bullets": ["RECOGNIZE \u2014 lines across a travel path are a classic trip hazard", "ASSESS \u2014 likelihood HIGH (crew crosses it all shift), severity MEDIUM to HIGH (a fall onto equipment)", "CONTROL \u2014 eliminate it: route the lines along the edge so nothing crosses the path", "If they must cross, use a cable ramp or run them overhead (engineering), then mark the route", "Boots help your footing but don't remove the hazard \u2014 don't rely on PPE alone"]}, "audio_text": "Scenario 1 \u2014 Injection lines across the walkway. You set up at a well-pad and run two chemical injection lines from the skid to the tank. The shortest path takes them straight across the walkway the crew uses all shift. Spot the hazard, assess it, and control it. What do you do? The right answer: Trip hazard \u2014 re-route the lines (eliminate it).", "id": "scenario-1-injection-lines-across-the-walkway-you-set-up-at-", "audio": "audio/scenario-1-injection-lines-across-the-walkway-you-set-up-at-.mp3"}, {"kind": "scenario", "section_idx": 8, "section_title": "Spot it, assess it, control it", "scenario": {"title": "Scenario 2 \u2014 Ice on the tank-deck steps", "situation": "It's a dark winter morning. You arrive to refill a tote on a tank deck. The steps up to the deck have a glaze of ice, and you'll be climbing them many times carrying gear.", "question": "Spot the hazard, assess it, and control it. What do you do?", "answer_headline": "High-priority fall risk \u2014 make the steps safe before you climb.", "bullets": ["RECOGNIZE \u2014 ice on steps you climb repeatedly, in poor light", "ASSESS \u2014 likelihood HIGH and severity HIGH (a fall from the deck can break bones) \u2014 top priority", "CONTROL \u2014 salt or sand the steps (administrative), use ice cleats over your boots (PPE)", "Use 3-point contact climbing on and off, and keep a hand free \u2014 carry gear in a pouch or make a second trip", "Add light with a headlamp so you can see the next hazard"]}, "audio_text": "Scenario 2 \u2014 Ice on the tank-deck steps. It's a dark winter morning. You arrive to refill a tote on a tank deck. The steps up to the deck have a glaze of ice, and you'll be climbing them many times carrying gear. Spot the hazard, assess it, and control it. What do you do? The right answer: High-priority fall risk \u2014 make the steps safe before you climb.", "id": "scenario-2-ice-on-the-tank-deck-steps-it-s-a-dark-winter-mor", "audio": "audio/scenario-2-ice-on-the-tank-deck-steps-it-s-a-dark-winter-mor.mp3"}, {"kind": "scenario", "section_idx": 8, "section_title": "Spot it, assess it, control it", "scenario": {"title": "Scenario 3 \u2014 Spill on the loading area", "situation": "While loading, a small amount of product drips and spreads into a slick patch on the loading-area surface where you and the driver are walking.", "question": "Spot the hazard, assess it, and control it. What do you do?", "answer_headline": "Slip hazard \u2014 clean it up now, don't step over it.", "bullets": ["RECOGNIZE \u2014 a slick spill in a walking area is an immediate slip hazard", "ASSESS \u2014 likelihood HIGH (right where you walk) and severity MEDIUM to HIGH (fall, plus it's product)", "CONTROL \u2014 stop and clean it up at the source (eliminate); check the SDS for the right cleanup and PPE", "Don't step over a small spill \u2014 a small spill becomes a fall", "If it keeps recurring, fix the cause (a drip tray or better connection \u2014 engineering)"]}, "audio_text": "Scenario 3 \u2014 Spill on the loading area. While loading, a small amount of product drips and spreads into a slick patch on the loading-area surface where you and the driver are walking. Spot the hazard, assess it, and control it. What do you do? The right answer: Slip hazard \u2014 clean it up now, don't step over it.", "id": "scenario-3-spill-on-the-loading-area-while-loading-a-small-a", "audio": "audio/scenario-3-spill-on-the-loading-area-while-loading-a-small-a.mp3"}, {"kind": "scenario", "section_idx": 8, "section_title": "Spot it, assess it, control it", "scenario": {"title": "Scenario 4 \u2014 The hazard you can't fix", "situation": "Walking the job you find the handrail on the access stairs is missing \u2014 sheared off at the base. You don't have the parts or authority to repair it, and the stairs are the only way up.", "question": "Spot the hazard, assess it, and decide what to do.", "answer_headline": "Report it and don't use the unsafe access \u2014 refuse if needed.", "bullets": ["RECOGNIZE \u2014 a missing handrail on stairs is a serious fall hazard", "ASSESS \u2014 likelihood MEDIUM to HIGH and severity HIGH (a fall from stairs)", "CONTROL \u2014 you can't fix it yourself, so report it to your supervisor right away (s. 3.10)", "If you have reasonable cause to believe using the stairs is unsafe, you can refuse the work (s. 3.12)", "Use safe alternate access if there is one, and don't let the next worker walk into it"]}, "audio_text": "Scenario 4 \u2014 The hazard you can't fix. Walking the job you find the handrail on the access stairs is missing \u2014 sheared off at the base. You don't have the parts or authority to repair it, and the stairs are the only way up. Spot the hazard, assess it, and decide what to do. The right answer: Report it and don't use the unsafe access \u2014 refuse if needed.", "id": "scenario-4-the-hazard-you-can-t-fix-walking-the-job-you-find", "audio": "audio/scenario-4-the-hazard-you-can-t-fix-walking-the-job-you-find.mp3"}];  // expanded list of slides — one entry per visible slide
+
+// Apply brand CSS variables
+const r = document.documentElement;
+r.style.setProperty('--brand-primary', BRAND.colors.primary);
+r.style.setProperty('--brand-primary-dark', BRAND.colors.primary_dark);
+r.style.setProperty('--brand-navy', BRAND.colors.navy);
+r.style.setProperty('--brand-darkblue', BRAND.colors.darkblue);
+r.style.setProperty('--brand-accent', BRAND.colors.accent);
+r.style.setProperty('--brand-red', BRAND.colors.red);
+r.style.setProperty('--brand-green', BRAND.colors.green);
+r.style.setProperty('--brand-purple', BRAND.colors.purple);
+document.title = (CONTENT.meta.topic || 'Training') + ' — ' + BRAND.client_name;
+
+const ACCENTS = { blue: BRAND.colors.primary, amber: BRAND.colors.accent, red: BRAND.colors.red, green: BRAND.colors.green, purple: BRAND.colors.purple, darkblue: BRAND.colors.darkblue };
+const ICONS = {
+  alert: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-20H6.5A2.5 2.5 0 004 4.5v15z"/>',
+  users: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/>',
+  video: '<path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/>',
+  flask: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>',
+  file: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/>',
+  beaker: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6M6 14h12"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+  clipboard: '<path d="M9 2h6a2 2 0 012 2v2H7V4a2 2 0 012-2zM5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  award: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>',
+  shieldcheck: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'
+};
+
+let state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+
+function svg(path, color) { return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
+function escapeHtml(s) { if (s == null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  state.screen = name;
+  // Pause any playing audio when changing screens
+  const aud = document.getElementById('slide-audio');
+  if (aud) { aud.pause(); aud.currentTime = 0; }
+}
+
+function renderIntroMeta() {
+  document.getElementById('brand-eyebrow').textContent = BRAND.tagline || (BRAND.client_name + ' E-LEARNING');
+  document.getElementById('module-code').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' · ' + CONTENT.meta.version : '');
+  document.getElementById('intro-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('intro-subtitle').textContent = CONTENT.meta.subtitle || '';
+  document.getElementById('topbar-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('quiz-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('r-module').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' ' + CONTENT.meta.version : '');
+  document.getElementById('result-footer').textContent = CONTENT.meta.regulation_alignment ? 'Aligned with ' + CONTENT.meta.regulation_alignment : '';
+
+  const pills = [
+    { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', label: 'Duration', value: CONTENT.meta.duration || '~30 min' },
+    { icon: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>', label: 'Pass mark', value: (CONTENT.meta.pass_mark_pct || 70) + '%' },
+    { icon: '<path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>', label: 'Slides', value: SLIDES.length },
+    { icon: '<path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14"/>', label: 'Audio', value: SLIDES.some(s => s.audio) ? 'Voiceover' : 'Read-only' }
+  ];
+  document.getElementById('meta-grid').innerHTML = pills.map(p => '<div class="meta-pill"><div class="icon">' + svg(p.icon) + '</div><div><div class="label">' + escapeHtml(p.label) + '</div><div class="value">' + escapeHtml(p.value) + '</div></div></div>').join('');
+
+  document.getElementById('learning-objectives').innerHTML = (CONTENT.meta.what_you_will_learn || []).map(o => '<li>' + escapeHtml(o) + '</li>').join('');
+  document.getElementById('footer-tracking-note').textContent = trackingEnabled() ? 'Your completion will be recorded with ' + BRAND.client_short + '.' : 'Print or save your certificate when you finish.';
+}
+
+function renderSlide() {
+  const slide = SLIDES[state.slideIdx];
+  if (!slide) return;
+  const total = SLIDES.length, progress = ((state.slideIdx + 1) / (total + 1)) * 100;
+
+  document.getElementById('slide-counter').textContent = slide.section_title || '';
+  document.getElementById('progress-pct').textContent = (state.slideIdx + 1) + ' / ' + total;
+  document.getElementById('progress-fill').style.width = progress + '%';
+
+  let html = '';
+  const slideKind = slide.kind;
+  if (slideKind === 'section_intro') html = renderSectionIntro(slide);
+  else if (slideKind === 'block') html = renderBlockSlide(slide);
+  else if (slideKind === 'video') html = renderVideoSlide(slide);
+  else if (slideKind === 'pictograms') html = renderPictogramsSlide(slide);
+  else if (slideKind === 'chemcard') html = renderChemCardSlide(slide);
+  else if (slideKind === 'scenario') html = renderScenarioSlide(slide);
+  else if (slideKind === 'midcheck_q') html = renderMidCheckQSlide(slide);
+
+  document.getElementById('slide-body').innerHTML = html;
+  attachMidCheckHandlers();
+
+  // Audio — autoplay each slide's narration. Browsers permit this after the learner's
+  // first interaction (Begin / Continue clicks); if blocked, the visible Play control still works.
+  const audioEl = document.getElementById('slide-audio');
+  const audioContainer = document.getElementById('audio-container');
+  if (slide.audio) {
+    audioEl.src = slide.audio;
+    audioContainer.classList.remove('empty');
+    audioEl.currentTime = 0;
+    const _p = audioEl.play();
+    if (_p && _p.catch) _p.catch(() => {});
+  } else {
+    audioEl.removeAttribute('src');
+    audioContainer.classList.add('empty');
+  }
+
+  // Nav
+  document.getElementById('btn-prev').disabled = state.slideIdx === 0;
+  const isLast = state.slideIdx === total - 1;
+  document.getElementById('btn-next').innerHTML = (isLast ? 'Final quiz' : 'Continue') + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+
+  // Scroll the slide content area to top
+  const sc = document.querySelector('#screen-learn .slide-content');
+  if (sc) sc.scrollTop = 0;
+}
+
+function renderSectionIntro(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="section-intro"><div class="icon-big" style="background:' + ac + '">' + svg(ICONS[slide.icon] || ICONS.book, '#fff') + '</div>' +
+    '<div class="eyebrow-text" style="color:' + ac + '">' + escapeHtml(slide.eyebrow || '') + '</div>' +
+    '<h2>' + escapeHtml(slide.title) + '</h2>' +
+    (slide.subtitle ? '<p class="subtitle">' + escapeHtml(slide.subtitle) + '</p>' : '') + '</div>';
+}
+
+function renderBlockSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    (slide.eyebrow ? '<div class="block-eyebrow" style="color:' + ac + '">' + escapeHtml(slide.eyebrow) + '</div>' : '') +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading) + '</h3>' +
+    (slide.body ? '<p class="block-body">' + escapeHtml(slide.body) + '</p>' : '') +
+    (slide.bullets ? '<ul class="block-bullets">' + slide.bullets.map(bl => '<li><svg viewBox="0 0 24 24" style="color:' + ac + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>' + escapeHtml(bl) + '</span></li>').join('') + '</ul>' : '') + '</div>';
+}
+
+function renderVideoSlide(slide) {
+  const url = slide.video_url || '#';
+  return '<div class="video-card"><div class="video-thumb"><div class="video-play-btn" onclick="window.open(' + JSON.stringify(url) + ', \'_blank\', \'noopener\')"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><h3>' + escapeHtml(slide.video_title || '') + '</h3><p>' + escapeHtml(slide.video_source || '') + ' · ' + escapeHtml(slide.video_duration || '') + '</p></div><div class="video-action"><div class="video-action-info"><strong>Click to watch</strong><span>Opens in a new tab</span></div><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener" class="btn-yt">Watch on YouTube <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a></div></div>';
+}
+
+function renderPictogramsSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading || 'Pictograms') + '</h3>' +
+    (slide.intro ? '<p class="block-body">' + escapeHtml(slide.intro) + '</p>' : '') +
+    '<div class="picto-grid">' + slide.items.map(p => '<div class="picto-cell"><img src="' + (p.image_data || p.image || '') + '" alt="' + escapeHtml(p.label) + '"><div class="picto-label">' + escapeHtml(p.label) + '</div><div class="picto-sub">' + escapeHtml(p.sub || '') + '</div></div>').join('') + '</div></div>';
+}
+
+function renderChemCardSlide(slide) {
+  const c = slide.card;
+  const sigColor = c.signal === 'DANGER' ? ACCENTS.red : ACCENTS.amber;
+  const rowColors = { 'EXPOSURE LIMITS': ACCENTS.amber, 'PPE': ACCENTS.blue, 'FIRST AID': ACCENTS.green, 'SPILL': ACCENTS.purple, 'STORAGE': ACCENTS.darkblue };
+  return '<div class="chem-card"><div class="chem-card-header"><div class="chem-pictos-row">' +
+    (c.pictogram_data || []).map(p => '<img src="' + p + '" alt="">').join('') +
+    '<span class="signal-badge" style="background:' + sigColor + '">' + escapeHtml(c.signal || '') + '</span></div>' +
+    '<div class="chem-card-name">' + escapeHtml(c.name) + '</div><div class="chem-card-full">' + escapeHtml(c.full_name || '') + (c.supplier ? ' · ' + escapeHtml(c.supplier) : '') + '</div>' +
+    '<div class="chem-haz">' + escapeHtml(c.hazard_summary || '') + '</div></div>' +
+    (c.rows || []).map(row => {
+      const rc = rowColors[row.label] || ACCENTS.blue;
+      return '<div class="chem-row"><div class="chem-row-label" style="background:' + rc + '">' + escapeHtml(row.label) + '</div><div class="chem-row-items"><ul>' +
+        row.items.map(it => '<li><span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:' + rc + ';margin-top:7px;margin-right:6px;flex-shrink:0;"></span>' + escapeHtml(it) + '</li>').join('') + '</ul></div></div>';
+    }).join('') + '</div>';
+}
+
+function renderScenarioSlide(slide) {
+  const sc = slide.scenario;
+  return '<div class="scenario"><div class="scenario-title">' + escapeHtml(sc.title) + '</div><div class="scenario-grid">' +
+    '<div class="scenario-side scenario-situation"><div class="scenario-eyebrow" style="color:' + ACCENTS.blue + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.blue + '"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Situation</div><p class="scenario-text">' + escapeHtml(sc.situation) + '</p><p class="scenario-question">' + escapeHtml(sc.question) + '</p></div>' +
+    '<div class="scenario-side scenario-answer"><div class="scenario-eyebrow" style="color:' + ACCENTS.green + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.green + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Right answer</div><p class="scenario-headline">' + escapeHtml(sc.answer_headline) + '</p><ul class="scenario-bullets">' + (sc.bullets || []).map(b => '<li>' + escapeHtml(b) + '</li>').join('') + '</ul></div></div></div>';
+}
+
+function renderMidCheckQSlide(slide) {
+  const q = slide.q, key = slide.key;
+  const ans = state.midAnswers[key], answered = ans !== undefined;
+  return '<div class="kc-banner"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><p><strong>Quick check.</strong> You\'ll see the answer right away — won\'t count against your final quiz.</p></div>' +
+    '<div class="q-card"><div class="q-text">' + escapeHtml(q.q) + '</div><div class="q-options">' +
+    q.options.map((opt, oi) => {
+      let cls = 'q-option';
+      if (answered) { if (oi === q.correct) cls += ' correct'; else if (ans === oi) cls += ' incorrect'; }
+      const checkSvg = answered && oi === q.correct ? '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>' : '';
+      return '<button class="' + cls + '" data-mid="' + key + '" data-opt="' + oi + '" ' + (answered ? 'disabled' : '') + '><span>' + escapeHtml(opt) + '</span>' + checkSvg + '</button>';
+    }).join('') + '</div>' +
+    (answered ? '<div class="feedback ' + (ans === q.correct ? 'right' : 'wrong') + '"><strong>' + (ans === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+}
+
+function attachMidCheckHandlers() {
+  document.querySelectorAll('[data-mid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.mid, opt = parseInt(btn.dataset.opt);
+      if (state.midAnswers[key] !== undefined) return;
+      state.midAnswers[key] = opt;
+      renderSlide();
+    });
+  });
+}
+
+function renderQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  document.getElementById('quiz-instructions').textContent = quiz.length + ' questions. ' + (CONTENT.meta.pass_mark_pct || 70) + '% to pass (' + passN + '/' + quiz.length + ').';
+  document.getElementById('quiz-questions').innerHTML = quiz.map((q, i) => {
+    return '<div class="quiz-q"><div><span style="font-size:11px;font-weight:700;color:var(--brand-primary);">Q' + (i + 1) + '.</span> <span style="font-weight:600;">' + escapeHtml(q.q) + '</span></div><div class="q-options" style="margin-top:14px;">' +
+      q.options.map((opt, j) => {
+        let cls = 'q-option';
+        if (state.quizSubmitted) { if (j === q.correct) cls += ' correct'; else if (state.quizAnswers[i] === j) cls += ' incorrect'; }
+        else if (state.quizAnswers[i] === j) cls += ' selected';
+        return '<button class="' + cls + '" data-q="' + i + '" data-opt="' + j + '" ' + (state.quizSubmitted ? 'disabled' : '') + '><span class="letter">' + String.fromCharCode(65 + j) + '.</span><span style="flex:1;">' + escapeHtml(opt) + '</span></button>';
+      }).join('') + '</div>' +
+      (state.quizSubmitted && q.why ? '<div class="feedback ' + (state.quizAnswers[i] === q.correct ? 'right' : 'wrong') + '" style="margin-top:12px;"><strong>' + (state.quizAnswers[i] === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+  }).join('');
+  document.querySelectorAll('#quiz-questions [data-q]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.quizSubmitted) return;
+      state.quizAnswers[parseInt(btn.dataset.q)] = parseInt(btn.dataset.opt);
+      renderQuiz();
+      checkQuizComplete();
+    });
+  });
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  const all = (CONTENT.quiz || []).every((_, i) => state.quizAnswers[i] !== undefined);
+  document.getElementById('btn-submit-quiz').disabled = !all;
+}
+
+function submitQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  let s = 0;
+  quiz.forEach((q, i) => { if (state.quizAnswers[i] === q.correct) s++; });
+  state.score = s; state.passed = s >= passN; state.quizSubmitted = true;
+  renderResult(); showScreen('result');
+  if (trackingEnabled()) sendCompletion();
+}
+
+function renderResult() {
+  const passed = state.passed, quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  const pct = Math.round((state.score / quiz.length) * 100);
+  document.querySelector('#screen-result .result-bg').className = 'result-bg ' + (passed ? 'passed' : 'failed');
+  document.getElementById('result-icon').className = 'result-icon ' + (passed ? 'pass' : 'fail');
+  document.getElementById('result-icon').innerHTML = passed ? svg(ICONS.award) : svg('<path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15A9 9 0 0018.36 18.36L23 14"/>');
+  document.getElementById('result-title').textContent = passed ? 'Module complete' : 'Not quite there';
+  document.getElementById('result-subtitle').textContent = passed ? 'You have successfully completed this training module.' : 'You need ' + passN + ' out of ' + quiz.length + ' correct to pass. Review and try again.';
+  document.getElementById('r-name').textContent = state.learnerName;
+  document.getElementById('r-employer').textContent = state.employer;
+  document.getElementById('r-score').textContent = state.score + ' / ' + quiz.length + ' (' + pct + '%)';
+  const rResult = document.getElementById('r-result');
+  rResult.textContent = passed ? 'PASSED' : 'FAILED';
+  rResult.style.color = passed ? ACCENTS.green : ACCENTS.amber;
+  document.getElementById('r-date').textContent = new Date().toLocaleString('en-CA');
+  document.getElementById('btn-retry').style.display = passed ? 'none' : 'inline-flex';
+}
+
+function setTrackingStatus(status, msg) {
+  const el = document.getElementById('tracking-status');
+  el.className = 'tracking-status ' + status; el.textContent = msg;
+}
+// Tracking is "enabled" only when real config is present — placeholders (containing "__")
+// leave it disabled so the module still works and just shows the print-certificate note.
+function trackingEnabled() {
+  const t = CONTENT.tracking || {};
+  if (t.provider === 'supabase') {
+    return /^https?:\/\//.test(t.supabase_url || '') && !!t.anon_key && !!t.token &&
+           (t.supabase_url.indexOf('__') === -1) && (String(t.token).indexOf('__') === -1);
+  }
+  return !!t.endpoint && t.endpoint.indexOf('__') === -1;
+}
+function sendCompletion() {
+  const t = CONTENT.tracking || {};
+  const total = (CONTENT.quiz || []).length;
+  const pct = total ? Math.round((state.score / total) * 100) : 0;
+  setTrackingStatus('pending', '⟳ Saving completion record...');
+  if (t.provider === 'supabase') {
+    // Strawboss-compatible path: call a SECURITY DEFINER RPC. The anon key is public by
+    // design; the per-course token scopes what can be written (company + course).
+    const url = t.supabase_url.replace(/\/+$/, '') + '/rest/v1/rpc/submit_course_completion';
+    fetch(url, {
+      method: 'POST',
+      headers: { 'apikey': t.anon_key, 'Authorization': 'Bearer ' + t.anon_key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        p_token: t.token,
+        p_worker_name: state.learnerName,
+        p_worker_email: state.workerEmail || null,
+        p_employer: state.employer,
+        p_score: state.score, p_total: total, p_pct: pct, p_passed: state.passed
+      })
+    }).then(res => {
+      if (res.ok) setTrackingStatus('ok', '✓ Completion recorded.');
+      else setTrackingStatus('fail', '⚠ Could not save record (' + res.status + '). Screenshot this page for your supervisor.');
+    }).catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  } else {
+    // Legacy path: generic endpoint (e.g. Google Apps Script), fire-and-forget.
+    const payload = {
+      module: t.module_id || ((CONTENT.meta.code || '') + ' ' + (CONTENT.meta.version || '')),
+      name: state.learnerName, employer: state.employer,
+      score: state.score, total: total, pct: pct,
+      passed: state.passed, timestamp: new Date().toISOString()
+    };
+    fetch(t.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload), mode: 'no-cors' })
+      .then(() => setTrackingStatus('ok', '✓ Completion record saved.'))
+      .catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  }
+}
+
+// Wire up
+function refreshStartButton() {
+  const name = document.getElementById('learner-name').value.trim();
+  const emp = document.getElementById('employer').value.trim();
+  document.getElementById('btn-start').disabled = !(name && emp);
+}
+document.getElementById('learner-name').addEventListener('input', refreshStartButton);
+document.getElementById('employer').addEventListener('input', refreshStartButton);
+document.getElementById('btn-start').addEventListener('click', () => {
+  state.learnerName = document.getElementById('learner-name').value.trim();
+  state.employer = document.getElementById('employer').value.trim();
+  state.slideIdx = 0;
+  showScreen('learn'); renderSlide();
+});
+document.getElementById('btn-prev').addEventListener('click', () => { if (state.slideIdx > 0) { state.slideIdx--; renderSlide(); } });
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (state.slideIdx < SLIDES.length - 1) { state.slideIdx++; renderSlide(); }
+  else { showScreen('quiz'); renderQuiz(); }
+});
+document.getElementById('btn-submit-quiz').addEventListener('click', submitQuiz);
+document.getElementById('btn-retry').addEventListener('click', () => { state.quizAnswers = {}; state.quizSubmitted = false; state.score = 0; showScreen('quiz'); renderQuiz(); });
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+document.getElementById('btn-restart').addEventListener('click', () => {
+  state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+  document.getElementById('learner-name').value = '';
+  document.getElementById('employer').value = '';
+  refreshStartButton(); showScreen('intro');
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (state.screen !== 'learn') return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); document.getElementById('btn-next').click(); }
+  else if (e.key === 'ArrowLeft') { document.getElementById('btn-prev').click(); }
+});
+
+renderIntroMeta();
+</script>
+</body>
+</html>

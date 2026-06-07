@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Safety Training</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #F8FAFC; color: #0F172A; line-height: 1.5; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+button { font-family: inherit; cursor: pointer; border: none; }
+a { color: var(--brand-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* INTRO screen — full viewport, centered */
+.intro-bg { flex: 1; padding: 16px; background: linear-gradient(135deg, var(--brand-darkblue) 0%, var(--brand-navy) 50%, var(--brand-darkblue) 100%); display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.intro-card { max-width: 600px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 28px; }
+.intro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.brand-shield { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-shrink: 0; }
+.brand-shield svg { width: 24px; height: 24px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.brand-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary); }
+.brand-sub { font-size: 11px; color: #64748B; margin-top: 2px; }
+.intro-title { font-size: 36px; font-weight: 700; margin-bottom: 4px; letter-spacing: -1px; }
+.intro-subtitle { font-size: 15px; color: #475569; margin-bottom: 20px; }
+.meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+.meta-pill { display: flex; align-items: center; gap: 8px; padding: 10px; background: #F1F5F9; border-radius: 10px; }
+.meta-pill .icon { width: 28px; height: 28px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.meta-pill .icon svg { width: 12px; height: 12px; color: var(--brand-primary); fill: none; stroke: currentColor; stroke-width: 2; }
+.meta-pill .label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #64748B; }
+.meta-pill .value { font-size: 12px; font-weight: 700; color: #0F172A; }
+.intro-info { background: #EFF6FB; border: 1px solid #C5DEEC; border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+.intro-info .info-title { font-size: 12px; font-weight: 700; color: var(--brand-darkblue); margin-bottom: 8px; }
+.intro-info ul { list-style: none; }
+.intro-info li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; }
+.intro-info li::before { content: "✓"; color: var(--brand-primary); font-weight: 700; flex-shrink: 0; }
+.input-row { margin-bottom: 12px; }
+.input-row label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.input-row input { width: 100%; padding: 10px 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-family: inherit; transition: border-color 150ms; }
+.input-row input:focus { outline: none; border-color: var(--brand-primary); }
+.btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dark)); color: #fff; border-radius: 12px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: all 150ms; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.intro-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E8F0; font-size: 11px; color: #64748B; text-align: center; }
+
+/* SLIDE screens — one slide visible at a time, fixed viewport */
+.slide-wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; background: #F8FAFC; }
+.top-bar { background: #fff; border-bottom: 1px solid #E2E8F0; padding: 10px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0; }
+.top-bar-inner { max-width: 900px; margin: 0 auto; }
+.top-bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+.top-bar-left { display: flex; align-items: center; gap: 8px; font-size: 12px; min-width: 0; }
+.top-bar-shield { width: 24px; height: 24px; border-radius: 6px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.top-bar-shield svg { width: 12px; height: 12px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.top-bar-brand { font-weight: 700; letter-spacing: 1px; color: var(--brand-primary); white-space: nowrap; }
+.top-bar-context { color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progress-bar { height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-primary), var(--brand-primary-dark)); transition: width 500ms; }
+
+.slide-content { flex: 1; overflow-y: auto; padding: 24px 16px; display: flex; align-items: flex-start; justify-content: center; }
+.slide-inner { max-width: 760px; width: 100%; }
+
+/* SLIDE — section announcement */
+.section-intro { text-align: center; padding: 32px 16px; }
+.section-intro .icon-big { width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.section-intro .icon-big svg { width: 40px; height: 40px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.section-intro .eyebrow-text { font-size: 12px; font-weight: 700; letter-spacing: 3px; margin-bottom: 8px; }
+.section-intro h2 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.section-intro .subtitle { font-size: 16px; color: #64748B; max-width: 540px; margin: 0 auto; }
+
+/* SLIDE — content block */
+.block-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 32px; }
+.block-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; }
+.block-heading { font-size: 26px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; display: flex; gap: 12px; align-items: flex-start; }
+.block-accent { display: block; width: 5px; min-height: 28px; border-radius: 3px; margin-top: 4px; flex-shrink: 0; }
+.block-body { color: #475569; margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
+.block-bullets { list-style: none; }
+.block-bullets li { display: flex; gap: 12px; padding: 7px 0; font-size: 15px; color: #334155; line-height: 1.55; }
+.block-bullets li svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — pictograms grid (one per slide; or one slide showing the grid) */
+.picto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.picto-cell { text-align: center; padding: 16px; border: 2px solid #F1F5F9; border-radius: 12px; }
+.picto-cell img { width: 64px; height: 64px; margin-bottom: 8px; }
+.picto-label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.picto-sub { font-size: 11px; color: #64748B; line-height: 1.4; }
+
+/* SLIDE — video card */
+.video-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.video-thumb { background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); padding: 40px 24px; text-align: center; color: #fff; }
+.video-play-btn { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; margin-bottom: 12px; cursor: pointer; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+.video-play-btn svg { width: 28px; height: 28px; color: var(--brand-red); fill: currentColor; }
+.video-thumb h3 { font-size: 18px; margin-bottom: 4px; }
+.video-thumb p { font-size: 12px; color: #B0CADE; }
+.video-action { padding: 14px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.video-action-info strong { display: block; font-weight: 600; font-size: 13px; }
+.video-action-info span { color: #64748B; font-size: 12px; }
+.btn-yt { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: var(--brand-red); color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; }
+.btn-yt:hover { background: #A60D26; text-decoration: none; }
+.btn-yt svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — chemical card */
+.chem-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.chem-card-header { padding: 18px 24px; border-bottom: 1px solid #F1F5F9; }
+.chem-pictos-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.chem-pictos-row img { width: 40px; height: 40px; }
+.signal-badge { display: inline-block; padding: 5px 10px; border-radius: 6px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.chem-card-name { font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+.chem-card-full { font-size: 11px; color: #64748B; font-style: italic; margin-bottom: 10px; }
+.chem-haz { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #475569; }
+.chem-row { display: grid; grid-template-columns: 140px 1fr; border-top: 1px solid #F1F5F9; }
+.chem-row-label { padding: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; }
+.chem-row-items { padding: 12px 14px; }
+.chem-row-items ul { list-style: none; }
+.chem-row-items li { display: flex; gap: 8px; padding: 2px 0; font-size: 12px; color: #334155; align-items: flex-start; }
+
+/* SLIDE — scenario */
+.scenario { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.scenario-title { padding: 12px 18px; color: #fff; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); }
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.scenario-side { padding: 20px; }
+.scenario-situation { border-right: 1px solid #F1F5F9; }
+.scenario-answer { background: #EAF7EE; }
+.scenario-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; display: flex; gap: 6px; align-items: center; }
+.scenario-eyebrow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+.scenario-text { font-size: 12px; color: #334155; margin-bottom: 12px; line-height: 1.6; }
+.scenario-question { font-size: 16px; font-weight: 700; }
+.scenario-headline { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.scenario-bullets { list-style: none; }
+.scenario-bullets li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; line-height: 1.55; }
+.scenario-bullets li::before { content: "✓"; color: var(--brand-green); font-weight: 700; flex-shrink: 0; }
+
+/* SLIDE — knowledge check */
+.kc-banner { background: #EAF7EE; border: 2px solid #9DD8AC; border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+.kc-banner svg { width: 18px; height: 18px; color: var(--brand-green); flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+.kc-banner p { font-size: 12px; color: #334155; }
+.q-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; }
+.q-card .q-num { font-size: 11px; font-weight: 700; color: var(--brand-primary); margin-right: 6px; }
+.q-card .q-text { font-weight: 600; margin-bottom: 12px; line-height: 1.5; font-size: 16px; }
+.q-options { display: flex; flex-direction: column; gap: 6px; }
+.q-option { padding: 10px 14px; border: 2px solid #E2E8F0; border-radius: 8px; background: #fff; text-align: left; font-size: 14px; color: #334155; display: flex; align-items: center; gap: 8px; transition: all 120ms; }
+.q-option:hover { border-color: #94A3B8; }
+.q-option .letter { font-weight: 700; min-width: 20px; }
+.q-option.selected { background: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
+.q-option.correct { background: #EAF7EE; border-color: var(--brand-green); color: #1F6B33; }
+.q-option.incorrect { background: #FBE9EC; border-color: var(--brand-red); color: #8B1A2B; }
+.q-option svg { width: 16px; height: 16px; flex-shrink: 0; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; }
+.feedback { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+.feedback.right { background: #EAF7EE; color: #1F6B33; }
+.feedback.wrong { background: #FFF7E5; color: #8B5500; }
+
+/* QUIZ screen — scrollable, doesn't fit single screen */
+.quiz-screen { flex: 1; overflow-y: auto; padding: 24px 16px; }
+.quiz-inner { max-width: 760px; margin: 0 auto; }
+.quiz-q { border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fff; }
+
+/* RESULT screen */
+.result-bg { flex: 1; padding: 24px 16px; display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.result-bg.passed { background: linear-gradient(135deg, var(--brand-green), #1E8038); }
+.result-bg.failed { background: linear-gradient(135deg, var(--brand-accent), #D08000); }
+.result-card { max-width: 540px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 36px; text-align: center; }
+.result-icon { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.result-icon.pass { background: #EAF7EE; }
+.result-icon.fail { background: #FFF7E5; }
+.result-icon svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+.result-icon.pass svg { color: var(--brand-green); }
+.result-icon.fail svg { color: var(--brand-accent); }
+.result-title { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.result-subtitle { color: #475569; margin-bottom: 20px; font-size: 14px; }
+.result-record { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: left; }
+.result-record .row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 13px; }
+.result-record .row .label { color: #64748B; }
+.result-record .row .value { font-weight: 600; text-align: right; }
+.tracking-status { font-size: 12px; margin: 12px 0; padding: 8px 12px; border-radius: 8px; }
+.tracking-status.ok { background: #EAF7EE; color: #1F6B33; }
+.tracking-status.pending { background: #FFF7E5; color: #8B5500; }
+.tracking-status.fail { background: #FBE9EC; color: #8B1A2B; }
+.result-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.result-buttons button { flex: 1; min-width: 110px; }
+
+/* BOTTOM BAR — audio player + nav, fixed */
+.bottom-bar { background: #fff; border-top: 1px solid #E2E8F0; padding: 10px 16px; flex-shrink: 0; box-shadow: 0 -1px 3px rgba(0,0,0,0.04); }
+.bottom-bar-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.audio-player { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #F1F5F9; border-radius: 10px; }
+.audio-player audio { flex: 1; min-width: 0; height: 32px; }
+.audio-player audio::-webkit-media-controls-panel { background: #F1F5F9; }
+.audio-player.empty { display: none; }
+.btn-nav { padding: 10px 14px; background: #fff; color: #475569; border: 1px solid #CBD5E1; border-radius: 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.btn-nav.next { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
+.btn-nav.next:hover { background: var(--brand-primary-dark); }
+.btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+@media (max-width: 700px) {
+  .scenario-grid { grid-template-columns: 1fr; }
+  .scenario-situation { border-right: none; border-bottom: 1px solid #F1F5F9; }
+  .chem-row { grid-template-columns: 1fr; }
+  .meta-grid { grid-template-columns: 1fr; }
+  .block-card { padding: 24px 20px; }
+  .section-intro h2 { font-size: 28px; }
+  .block-heading { font-size: 22px; }
+  .top-bar-context { display: none; }
+  .btn-nav { padding: 10px 12px; }
+  .btn-nav span { display: none; }
+}
+
+.screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
+.screen.active { display: flex; }
+
+@media print {
+  html, body { overflow: visible; height: auto; }
+  .screen:not(.active), .bottom-bar, .top-bar { display: none !important; }
+  body { background: #fff; display: block; }
+  .result-card { box-shadow: none; border: 2px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div id="screen-intro" class="screen active">
+  <div class="intro-bg">
+    <div class="intro-card">
+      <div class="intro-header">
+        <div class="brand-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <div class="brand-eyebrow" id="brand-eyebrow"></div>
+          <div class="brand-sub" id="module-code"></div>
+        </div>
+      </div>
+      <h1 class="intro-title" id="intro-topic"></h1>
+      <p class="intro-subtitle" id="intro-subtitle"></p>
+      <div class="meta-grid" id="meta-grid"></div>
+      <div class="intro-info">
+        <div class="info-title">What you will learn</div>
+        <ul id="learning-objectives"></ul>
+      </div>
+      <div class="input-row">
+        <label for="learner-name">Your full name</label>
+        <input type="text" id="learner-name" placeholder="e.g. Casey Singh">
+      </div>
+      <div class="input-row">
+        <label for="employer">Employer / Organization</label>
+        <input type="text" id="employer" placeholder="e.g. Refresh Resources">
+      </div>
+      <button id="btn-start" class="btn-primary" disabled>Begin module <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <div class="intro-footer" id="footer-tracking-note"></div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-learn" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="topbar-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span class="top-bar-context" id="slide-counter"></span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600;" id="progress-pct"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div></div>
+  <div class="slide-content"><div class="slide-inner" id="slide-body"></div></div>
+  <div class="bottom-bar"><div class="bottom-bar-inner">
+    <button id="btn-prev" class="btn-nav"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> <span>Previous</span></button>
+    <div id="audio-container" class="audio-player empty">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#64748B" stroke-width="2" style="flex-shrink:0"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+      <audio id="slide-audio" controls preload="none"></audio>
+    </div>
+    <button id="btn-next" class="btn-nav next">Continue <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div></div>
+</div>
+
+<div id="screen-quiz" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="quiz-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span style="color: #475569;">Final quiz</span>
+      </div>
+    </div>
+  </div></div>
+  <div class="quiz-screen"><div class="quiz-inner">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary);">FINAL KNOWLEDGE CHECK</div>
+      <h2 style="font-size: 28px; font-weight: 700; margin: 8px 0;">Quiz</h2>
+      <p style="color: #475569; font-size: 14px;" id="quiz-instructions"></p>
+    </div>
+    <div id="quiz-questions"></div>
+    <button id="btn-submit-quiz" class="btn-primary" style="margin-top: 24px;" disabled>Submit answers</button>
+  </div></div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="result-bg">
+    <div class="result-card">
+      <div class="result-icon" id="result-icon"></div>
+      <h2 class="result-title" id="result-title"></h2>
+      <p class="result-subtitle" id="result-subtitle"></p>
+      <div class="result-record">
+        <div class="row"><div class="label">Name</div><div class="value" id="r-name"></div></div>
+        <div class="row"><div class="label">Employer</div><div class="value" id="r-employer"></div></div>
+        <div class="row"><div class="label">Module</div><div class="value" id="r-module"></div></div>
+        <div class="row"><div class="label">Score</div><div class="value" id="r-score"></div></div>
+        <div class="row"><div class="label">Result</div><div class="value" id="r-result"></div></div>
+        <div class="row"><div class="label">Completed</div><div class="value" id="r-date"></div></div>
+      </div>
+      <div id="tracking-status"></div>
+      <div class="result-buttons">
+        <button id="btn-retry" class="btn-primary" style="display: none;">Retry quiz</button>
+        <button id="btn-print" class="btn-nav" style="justify-content: center;">Print certificate</button>
+        <button id="btn-restart" class="btn-nav" style="justify-content: center;">New learner</button>
+      </div>
+      <p style="font-size: 11px; color: #94A3B8; margin-top: 16px;" id="result-footer"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {"meta": {"topic": "Emergency Preparedness & Response", "subtitle": "Knowing your role when something goes wrong", "code": "REF-TR-05", "version": "v1.0", "duration": "~30 min", "pass_mark_pct": 70, "regulation_alignment": "WorkSafeBC OHS Regulation Part 4 (Emergency Preparedness & Response)", "publication_basis": "Refresh small-spill-response toolbox talk", "client": "refresh", "audience_summary": "All Refresh Resources field & shop workers", "what_you_will_learn": ["Why emergency preparedness matters and what counts as an emergency at Refresh", "Your role when an alarm sounds \u2014 what to do, where to go, and who to tell", "How to evacuate and account for everyone at a muster point", "How to respond to a small chemical spill in the first 5 minutes", "When and how to report a spill, including the BC spill line"]}, "sections": [{"type": "content", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "blocks": [{"heading": "The first few minutes decide the outcome", "body": "Most emergencies start small. A spill, a fire, an injury, a gas release \u2014 how the first person reacts in the first few minutes usually decides whether it stays small or turns into something serious."}, {"heading": "What counts as an emergency at Refresh", "bullets": ["A chemical spill or release that you can't immediately control", "A fire, or smoke and heat building up", "An injury, sudden illness, or someone overcome by fumes", "A gas release or alarm at a sour gas or process site", "Any situation where you feel unsafe and need help fast"]}, {"heading": "Preparedness means you already know", "body": "You don't rise to the occasion in an emergency \u2014 you fall back on what you already know. Knowing your role, the alarms, the way out, and who to call before anything happens is what keeps you and your crew safe."}]}, {"type": "content", "title": "Know your role before it happens", "eyebrow": "Section 2 \u2014 Your role", "icon": "users", "accent": "blue", "blocks": [{"heading": "Most workers have one job in an emergency", "body": "Unless you are trained and assigned to a response role, your job in most emergencies is simple: protect yourself, raise the alarm, and get to safety. Leave the hands-on response to trained responders and emergency services."}, {"heading": "Know these before you start work", "bullets": ["The site emergency procedure for where you are working today", "Where the alarms, exits, and muster point are", "Where the spill kit, fire extinguisher, and wash station are", "Who you call first \u2014 supervisor, site contact, or emergency services", "How you will communicate if cell coverage is poor"]}, {"heading": "When you are unsure", "bullets": ["Treat the situation as serious until you know otherwise", "Raise the alarm \u2014 it is never wrong to warn others", "Move to a safe position and call your supervisor", "Do not go back into danger to retrieve tools or equipment"]}]}, {"type": "content", "title": "Alarms and raising the alarm", "eyebrow": "Section 2 \u2014 Your role", "icon": "alert", "accent": "red", "blocks": [{"heading": "If you see it, you own the first step", "body": "Whoever notices the emergency first is responsible for raising the alarm. That can be an alarm button, an air horn, a radio call, or simply shouting to warn the people nearest the hazard."}, {"heading": "When you hear an alarm", "bullets": ["Stop what you are doing and treat it as real", "Make equipment safe only if you can do it in seconds without risk", "Move away from the hazard along a known route", "Warn anyone nearby who may not have heard it", "Go to the muster point \u2014 do not wander off on your own"]}, {"heading": "Tell people what they need to know", "bullets": ["What happened and where", "What spilled or what is burning, if you know", "Whether anyone is hurt or missing", "Keep it short \u2014 get the message out, then move to safety"]}]}, {"type": "content", "title": "Evacuation and muster", "eyebrow": "Section 2 \u2014 Your role", "icon": "shield", "accent": "green", "blocks": [{"heading": "Get out, then get counted", "body": "Evacuation has two parts that both matter: getting yourself to a safe place, and being accounted for so no one goes looking for someone who is already out."}, {"heading": "Evacuating safely", "bullets": ["Move calmly along a known route, away from the hazard", "Stay upwind and uphill of a chemical or gas release where you can", "Help others who need it, but do not put yourself in danger", "Leave your vehicle out of the way so responders can get in"]}, {"heading": "At the muster point", "bullets": ["Report in so the person doing the head count knows you are out", "Tell them if you know someone is still inside or missing", "Stay there until you are told it is safe \u2014 do not go back", "Wait for the all-clear from the person in charge"]}]}, {"type": "midcheck", "title": "Quick check \u2014 Roles, alarms, and muster", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "You are the first to notice a problem. What is your first step?", "options": ["Start cleaning it up yourself", "Raise the alarm and warn the people nearest the hazard", "Finish your current task, then mention it"], "correct": 1, "why": "Whoever notices first is responsible for raising the alarm and warning others. Response comes after people are warned and safe."}, {"q": "Why does a muster point head count matter?", "options": ["So the company can track hours", "So no one goes back into danger looking for someone who is already out", "It is just paperwork"], "correct": 1, "why": "Being accounted for means responders are not risking themselves searching for people who already evacuated safely."}, {"q": "An alarm sounds and you are not sure if it is a real emergency. What do you do?", "options": ["Ignore it until someone confirms", "Treat it as real \u2014 make equipment safe only if it takes seconds, then move to the muster point", "Keep working and watch to see what others do"], "correct": 1, "why": "Always treat an alarm as real. It is never wrong to move to safety; waiting to confirm wastes the minutes that matter most."}]}, {"type": "content", "title": "A spill in the first 5 minutes \u2014 STOP first", "eyebrow": "Section 3 \u2014 Small spill response", "icon": "beaker", "accent": "purple", "blocks": [{"heading": "A small spill is not an emergency \u2014 until you handle it wrong", "body": "Drips at hose connections, splashes during tote dispensing, a knocked-over jug on a tank deck \u2014 these happen. The first 5 minutes decide whether it stays a small spill or becomes an injury, an environmental incident, or a reportable release."}, {"heading": "STOP before you act", "bullets": ["Do not rush in \u2014 take a moment to size it up", "Identify what spilled and roughly how much", "Check your PPE against what the SDS calls for", "If it is too big, too hazardous, or unknown \u2014 treat it as an emergency and raise the alarm"]}, {"heading": "Refresh products each need a different response", "body": "Refresh handles peroxide / PAA, sulfide scavengers (with methanol), foam controls, pH stabilizers, and emulsion breakers. Pull the SDS for the product on hand \u2014 the right response depends on the product."}]}, {"type": "content", "title": "Contain, notify, clean up, decontaminate", "eyebrow": "Section 3 \u2014 Small spill response", "icon": "wrench", "accent": "blue", "blocks": [{"heading": "Stop the source and contain it", "bullets": ["Stop the source only if you can do it safely", "Surround the spill with absorbent boom, sock, or sand", "Keep it away from drains, ditches, and waterways"]}, {"heading": "Choose the right absorbent for the product", "bullets": ["Peroxide / PAA: NO organic absorbent like sawdust or cat litter \u2014 fire risk", "Peroxide / PAA: use sand or vermiculite, and dilute with plenty of water if the SDS allows", "Methanol-containing products: eliminate ignition sources \u2014 no smoking, hot work, or open flames in the spill area"]}, {"heading": "Notify your supervisor \u2014 every time", "bullets": ["Tell your supervisor immediately, even for a small spill", "Reportable spills (thresholds in your ERP) must be called to the BC spill line 1-800-663-3456", "When in doubt, report it \u2014 do not guess on a release"]}, {"heading": "Clean up, decontaminate, and document", "bullets": ["Used absorbent is hazardous waste \u2014 bag it, label it, store it for proper disposal", "Skin or eye contact: flush at the wash station for at least 15 minutes, even if you feel fine", "Record photo, volume, root cause, and corrective action \u2014 file the spill report before end of shift"]}]}, {"type": "content", "title": "Who to call and when", "eyebrow": "Section 4 \u2014 Reporting", "icon": "file", "accent": "darkblue", "blocks": [{"heading": "Start with your supervisor", "body": "For any emergency, injury, or spill, your supervisor or site contact is your first call. They coordinate the response and make sure the right outside parties are notified."}, {"heading": "Call 911 when", "bullets": ["Someone is seriously hurt or unresponsive", "There is a fire that is not immediately controllable", "There is a gas release or anyone is overcome by fumes", "You are in immediate danger \u2014 that is never over-reacting"]}, {"heading": "The BC spill line \u2014 1-800-663-3456", "bullets": ["Used for reportable spills that meet the thresholds in your ERP", "Your supervisor or designated person usually makes this call", "Know the number exists so you can prompt it if needed"]}, {"heading": "Always write it down", "body": "Every emergency, near-miss, and spill gets documented. The report captures what happened, what was done, and how to stop it happening again."}]}, {"type": "midcheck", "title": "Quick check \u2014 Spill response and reporting", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "A peroxide / PAA product spills on a tank deck. Which absorbent do you use?", "options": ["Sawdust or cat litter \u2014 they soak it up fast", "Sand or vermiculite", "Any absorbent will do for a small spill"], "correct": 1, "why": "Organic absorbents like sawdust or cat litter create a fire risk with peroxide / PAA. Use an inorganic absorbent \u2014 sand or vermiculite."}, {"q": "Product splashes in your eyes. How long do you flush at the wash station?", "options": ["Until it stops stinging", "At least 15 minutes, even if you feel fine", "About a minute, then drive to first aid"], "correct": 1, "why": "Skin or eye contact needs at least 15 minutes of flushing \u2014 even if you feel fine \u2014 to remove the chemical and limit injury."}, {"q": "It is a small spill and you cleaned it up quickly. Do you still tell your supervisor?", "options": ["No \u2014 small spills are not worth mentioning", "Yes \u2014 notify your supervisor every time, even for a small spill", "Only if someone else saw it"], "correct": 1, "why": "Every spill gets reported to your supervisor. They decide whether it meets the thresholds that require a call to the BC spill line."}]}, {"type": "scenarios", "title": "Four real Refresh scenarios", "eyebrow": "Section 5 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "intro": "One right answer for each. Read the situation, think it through, then check.", "items": [{"title": "Scenario 1 \u2014 A peroxide / PAA spill at a tote transfer", "situation": "During a tote transfer, a hose end fails and about 10 litres of a peroxide / PAA product pools on the deck. You have your PPE on and the spill kit is nearby. A co-worker grabs a bag of cat litter to soak it up.", "question": "What do you do?", "answer_headline": "Stop the cat litter. Use sand or vermiculite.", "bullets": ["Organic absorbents like cat litter or sawdust create a fire risk with peroxide / PAA", "Use sand or vermiculite, and dilute with plenty of water if the SDS allows", "Contain it away from drains and waterways, then notify your supervisor", "Bag and label the used absorbent as hazardous waste"]}, {"title": "Scenario 2 \u2014 Product splashes in your eyes", "situation": "While topping up a measured cup, product splashes back and some gets in your eyes. It stings, but after a quick rinse you feel mostly fine and want to get back to the job.", "question": "What is the right move?", "answer_headline": "Get to the wash station and flush for at least 15 minutes.", "bullets": ["Skin or eye contact means at least 15 minutes of flushing \u2014 even if you feel fine", "Have someone notify your supervisor while you flush", "Get assessed for first aid after flushing \u2014 do not just go back to work", "Document the exposure and the root cause"]}, {"title": "Scenario 3 \u2014 Alarm at the site", "situation": "You are working at a process site when the site alarm sounds. You are not assigned to any response role and you are not sure exactly what triggered it.", "question": "What do you do?", "answer_headline": "Treat it as real and go to the muster point.", "bullets": ["Make your equipment safe only if it takes seconds without risk", "Move away from the hazard, staying upwind and uphill if it could be a release", "Warn anyone nearby, then go to the muster point", "Report in for the head count and wait for the all-clear"]}, {"title": "Scenario 4 \u2014 A reportable spill reaches a ditch", "situation": "A failed gasket lets a larger volume of product escape before you can stop it, and some has reached a roadside ditch heading toward a culvert. This is beyond what you can quietly clean up.", "question": "What do you do?", "answer_headline": "Treat it as an emergency \u2014 raise the alarm and notify.", "bullets": ["Stop the source if you can do it safely, and try to contain what is left", "Notify your supervisor immediately \u2014 this is now a reportable release", "The BC spill line is 1-800-663-3456 for reportable spills per your ERP", "Keep people back, protect the waterway, and document everything"]}]}], "quiz": [{"q": "What is the main reason emergency preparedness matters?", "options": ["It is required for insurance", "The first few minutes usually decide whether an emergency stays small or turns serious", "It looks good on a site audit", "It gives workers something to read"], "correct": 1, "why": "Most emergencies start small. How the first person reacts in the first few minutes usually decides the outcome \u2014 that is why knowing your role ahead of time matters."}, {"q": "For most workers who are not assigned a response role, what is the job in an emergency?", "options": ["Take charge of the whole response", "Protect yourself, raise the alarm, and get to safety", "Find the cause before doing anything", "Wait to be told what to do"], "correct": 1, "why": "Unless you are trained and assigned to a response role, your job is to protect yourself, raise the alarm, and get to safety. Leave hands-on response to trained responders."}, {"q": "You are the first person to notice an emergency. What is your first step?", "options": ["Quietly fix it yourself", "Raise the alarm and warn the people nearest the hazard", "Take photos for the report", "Go find your supervisor before doing anything else"], "correct": 1, "why": "Whoever notices first is responsible for raising the alarm. Warning others comes before response, photos, or anything else."}, {"q": "An alarm sounds and you are not sure if it is real. What do you do?", "options": ["Keep working until someone confirms it", "Treat it as real, make equipment safe only if it takes seconds, then move to the muster point", "Watch what other people do first", "Go back to your truck and wait"], "correct": 1, "why": "Always treat an alarm as real. It is never wrong to move to safety, and waiting to confirm wastes the minutes that matter most."}, {"q": "When evacuating from a possible chemical or gas release, where should you try to move?", "options": ["Downwind so the wind is at your back", "Upwind and uphill of the release", "Toward the source to see what happened", "Into the nearest enclosed building"], "correct": 1, "why": "Staying upwind and uphill keeps you out of the path of vapours and liquid that can travel with the wind and downhill."}, {"q": "Why is reporting in at the muster point so important?", "options": ["It records your hours for payroll", "So no one goes back into danger searching for someone who is already out", "It is required before you can leave", "So the company knows who to discipline"], "correct": 1, "why": "Being accounted for means responders are not risking themselves looking for people who already evacuated safely."}, {"q": "What is the very first thing to do when you find a small spill?", "options": ["Grab the nearest absorbent and start soaking it up", "STOP \u2014 size it up, identify what spilled and how much, and check your PPE", "Hose it down with water right away", "Take a photo before anything moves"], "correct": 1, "why": "STOP first. Identify what spilled and roughly how much, and check your PPE against the SDS before you act. Rushing in is how a small spill becomes an injury."}, {"q": "A peroxide / PAA product has spilled. Which absorbent is safe to use?", "options": ["Sawdust", "Cat litter", "Sand or vermiculite", "Any absorbent on the truck"], "correct": 2, "why": "Organic absorbents like sawdust and cat litter create a fire risk with peroxide / PAA. Use an inorganic absorbent \u2014 sand or vermiculite \u2014 and dilute with water if the SDS allows."}, {"q": "You are responding to a methanol-containing product spill. What must you control?", "options": ["The temperature of the product", "Ignition sources \u2014 no smoking, hot work, or open flames in the spill area", "The colour of the absorbent", "Nothing special is needed for a small spill"], "correct": 1, "why": "Methanol-containing products are flammable. Eliminate ignition sources \u2014 no smoking, hot work, or open flames within the spill area."}, {"q": "Product gets in your eyes. How long do you flush at the wash station?", "options": ["Until the stinging stops", "About 2 minutes, then drive to first aid", "At least 15 minutes, even if you feel fine", "Only if your vision is affected"], "correct": 2, "why": "Skin or eye contact needs at least 15 minutes of flushing \u2014 even if you feel fine \u2014 to remove the chemical and limit the injury."}, {"q": "You cleaned up a small spill quickly and on your own. What still has to happen?", "options": ["Nothing \u2014 it is handled", "Notify your supervisor and document it; used absorbent is hazardous waste", "Just throw the absorbent in the regular trash", "Mention it only if someone asks"], "correct": 1, "why": "Every spill is reported to your supervisor and documented. Used absorbent is hazardous waste \u2014 bag it, label it, and store it for proper disposal."}, {"q": "What is the BC spill line number, used for reportable spills?", "options": ["911", "1-800-663-3456", "1-888-621-7233", "Your supervisor's cell"], "correct": 1, "why": "The BC spill line is 1-800-663-3456. Reportable spills that meet the thresholds in your ERP must be called in \u2014 usually by your supervisor or designated person."}, {"q": "A failed gasket releases product that reaches a roadside ditch heading for a culvert. How should you treat it?", "options": ["As a routine cleanup \u2014 handle it yourself before anyone notices", "As an emergency \u2014 stop the source if safe, contain it, notify your supervisor, and report it", "Wait to see if it evaporates", "Rinse it into the ditch with water to dilute it"], "correct": 1, "why": "Once a spill is beyond what you can safely control or reaches a waterway, treat it as an emergency: stop the source if safe, contain it, notify your supervisor, and report the reportable release."}], "tracking": {"provider": "supabase", "supabase_url": "https://muftkbpnedufsyiyuwhk.supabase.co", "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11ZnRrYnBuZWR1ZnN5aXl1d2hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjIzMzEsImV4cCI6MjA5NjI5ODMzMX0.OjnNDsjVizKn12GndFfRrD15JDmfqc4NKXFlnabbtxY", "token": "eaa33b22-babe-47af-a524-c16da8e33bd3", "course_id": "emergency-preparedness", "module_id": "emergency-preparedness-v1.0"}};
+const BRAND = {"client_id": "refresh", "client_name": "Refresh Resources", "client_short": "REFRESH", "tagline": "REFRESH RESOURCES TRAINING", "logo_text_primary": "REFRESH", "logo_text_secondary": "RESOURCES", "colors": {"primary": "#0098DA", "primary_dark": "#007FB8", "navy": "#114F69", "accent": "#F0A500", "red": "#C8102E", "green": "#2BA84A", "purple": "#8A4FBE", "darkblue": "#0A3447"}};
+const SLIDES = [{"kind": "section_intro", "section_idx": 0, "section_title": "Why this matters", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "subtitle": "", "audio_text": "Why this matters.", "id": "why-this-matters", "audio": "audio/why-this-matters.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "The first few minutes decide the outcome", "body": "Most emergencies start small. A spill, a fire, an injury, a gas release \u2014 how the first person reacts in the first few minutes usually decides whether it stays small or turns into something serious.", "bullets": null, "audio_text": "The first few minutes decide the outcome Most emergencies start small. A spill, a fire, an injury, a gas release \u2014 how the first person reacts in the first few minutes usually decides whether it stays small or turns into something serious.", "id": "the-first-few-minutes-decide-the-outcome-most-emergencies-st", "audio": "audio/the-first-few-minutes-decide-the-outcome-most-emergencies-st.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "What counts as an emergency at Refresh", "body": "", "bullets": ["A chemical spill or release that you can't immediately control", "A fire, or smoke and heat building up", "An injury, sudden illness, or someone overcome by fumes", "A gas release or alarm at a sour gas or process site", "Any situation where you feel unsafe and need help fast"], "audio_text": "What counts as an emergency at Refresh A chemical spill or release that you can't immediately control A fire, or smoke and heat building up An injury, sudden illness, or someone overcome by fumes A gas release or alarm at a sour gas or process site Any situation where you feel unsafe and need help fast", "id": "what-counts-as-an-emergency-at-refresh-a-chemical-spill-or-r", "audio": "audio/what-counts-as-an-emergency-at-refresh-a-chemical-spill-or-r.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "Preparedness means you already know", "body": "You don't rise to the occasion in an emergency \u2014 you fall back on what you already know. Knowing your role, the alarms, the way out, and who to call before anything happens is what keeps you and your crew safe.", "bullets": null, "audio_text": "Preparedness means you already know You don't rise to the occasion in an emergency \u2014 you fall back on what you already know. Knowing your role, the alarms, the way out, and who to call before anything happens is what keeps you and your crew safe.", "id": "preparedness-means-you-already-know-you-don-t-rise-to-the-oc", "audio": "audio/preparedness-means-you-already-know-you-don-t-rise-to-the-oc.mp3"}, {"kind": "section_intro", "section_idx": 1, "section_title": "Know your role before it happens", "title": "Know your role before it happens", "eyebrow": "Section 2 \u2014 Your role", "icon": "users", "accent": "blue", "subtitle": "", "audio_text": "Know your role before it happens.", "id": "know-your-role-before-it-happens", "audio": "audio/know-your-role-before-it-happens.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "Know your role before it happens", "eyebrow": "Section 2 \u2014 Your role", "accent": "blue", "heading": "Most workers have one job in an emergency", "body": "Unless you are trained and assigned to a response role, your job in most emergencies is simple: protect yourself, raise the alarm, and get to safety. Leave the hands-on response to trained responders and emergency services.", "bullets": null, "audio_text": "Most workers have one job in an emergency Unless you are trained and assigned to a response role, your job in most emergencies is simple: protect yourself, raise the alarm, and get to safety. Leave the hands-on response to trained responders and emergency services.", "id": "most-workers-have-one-job-in-an-emergency-unless-you-are-tra", "audio": "audio/most-workers-have-one-job-in-an-emergency-unless-you-are-tra.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "Know your role before it happens", "eyebrow": "Section 2 \u2014 Your role", "accent": "blue", "heading": "Know these before you start work", "body": "", "bullets": ["The site emergency procedure for where you are working today", "Where the alarms, exits, and muster point are", "Where the spill kit, fire extinguisher, and wash station are", "Who you call first \u2014 supervisor, site contact, or emergency services", "How you will communicate if cell coverage is poor"], "audio_text": "Know these before you start work The site emergency procedure for where you are working today Where the alarms, exits, and muster point are Where the spill kit, fire extinguisher, and wash station are Who you call first \u2014 supervisor, site contact, or emergency services How you will communicate if cell coverage is poor", "id": "know-these-before-you-start-work-the-site-emergency-procedur", "audio": "audio/know-these-before-you-start-work-the-site-emergency-procedur.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "Know your role before it happens", "eyebrow": "Section 2 \u2014 Your role", "accent": "blue", "heading": "When you are unsure", "body": "", "bullets": ["Treat the situation as serious until you know otherwise", "Raise the alarm \u2014 it is never wrong to warn others", "Move to a safe position and call your supervisor", "Do not go back into danger to retrieve tools or equipment"], "audio_text": "When you are unsure Treat the situation as serious until you know otherwise Raise the alarm \u2014 it is never wrong to warn others Move to a safe position and call your supervisor Do not go back into danger to retrieve tools or equipment", "id": "when-you-are-unsure-treat-the-situation-as-serious-until-you", "audio": "audio/when-you-are-unsure-treat-the-situation-as-serious-until-you.mp3"}, {"kind": "section_intro", "section_idx": 2, "section_title": "Alarms and raising the alarm", "title": "Alarms and raising the alarm", "eyebrow": "Section 2 \u2014 Your role", "icon": "alert", "accent": "red", "subtitle": "", "audio_text": "Alarms and raising the alarm.", "id": "alarms-and-raising-the-alarm", "audio": "audio/alarms-and-raising-the-alarm.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Alarms and raising the alarm", "eyebrow": "Section 2 \u2014 Your role", "accent": "red", "heading": "If you see it, you own the first step", "body": "Whoever notices the emergency first is responsible for raising the alarm. That can be an alarm button, an air horn, a radio call, or simply shouting to warn the people nearest the hazard.", "bullets": null, "audio_text": "If you see it, you own the first step Whoever notices the emergency first is responsible for raising the alarm. That can be an alarm button, an air horn, a radio call, or simply shouting to warn the people nearest the hazard.", "id": "if-you-see-it-you-own-the-first-step-whoever-notices-the-eme", "audio": "audio/if-you-see-it-you-own-the-first-step-whoever-notices-the-eme.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Alarms and raising the alarm", "eyebrow": "Section 2 \u2014 Your role", "accent": "red", "heading": "When you hear an alarm", "body": "", "bullets": ["Stop what you are doing and treat it as real", "Make equipment safe only if you can do it in seconds without risk", "Move away from the hazard along a known route", "Warn anyone nearby who may not have heard it", "Go to the muster point \u2014 do not wander off on your own"], "audio_text": "When you hear an alarm Stop what you are doing and treat it as real Make equipment safe only if you can do it in seconds without risk Move away from the hazard along a known route Warn anyone nearby who may not have heard it Go to the muster point \u2014 do not wander off on your own", "id": "when-you-hear-an-alarm-stop-what-you-are-doing-and-treat-it-", "audio": "audio/when-you-hear-an-alarm-stop-what-you-are-doing-and-treat-it-.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Alarms and raising the alarm", "eyebrow": "Section 2 \u2014 Your role", "accent": "red", "heading": "Tell people what they need to know", "body": "", "bullets": ["What happened and where", "What spilled or what is burning, if you know", "Whether anyone is hurt or missing", "Keep it short \u2014 get the message out, then move to safety"], "audio_text": "Tell people what they need to know What happened and where What spilled or what is burning, if you know Whether anyone is hurt or missing Keep it short \u2014 get the message out, then move to safety", "id": "tell-people-what-they-need-to-know-what-happened-and-where-w", "audio": "audio/tell-people-what-they-need-to-know-what-happened-and-where-w.mp3"}, {"kind": "section_intro", "section_idx": 3, "section_title": "Evacuation and muster", "title": "Evacuation and muster", "eyebrow": "Section 2 \u2014 Your role", "icon": "shield", "accent": "green", "subtitle": "", "audio_text": "Evacuation and muster.", "id": "evacuation-and-muster", "audio": "audio/evacuation-and-muster.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Evacuation and muster", "eyebrow": "Section 2 \u2014 Your role", "accent": "green", "heading": "Get out, then get counted", "body": "Evacuation has two parts that both matter: getting yourself to a safe place, and being accounted for so no one goes looking for someone who is already out.", "bullets": null, "audio_text": "Get out, then get counted Evacuation has two parts that both matter: getting yourself to a safe place, and being accounted for so no one goes looking for someone who is already out.", "id": "get-out-then-get-counted-evacuation-has-two-parts-that-both-", "audio": "audio/get-out-then-get-counted-evacuation-has-two-parts-that-both-.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Evacuation and muster", "eyebrow": "Section 2 \u2014 Your role", "accent": "green", "heading": "Evacuating safely", "body": "", "bullets": ["Move calmly along a known route, away from the hazard", "Stay upwind and uphill of a chemical or gas release where you can", "Help others who need it, but do not put yourself in danger", "Leave your vehicle out of the way so responders can get in"], "audio_text": "Evacuating safely Move calmly along a known route, away from the hazard Stay upwind and uphill of a chemical or gas release where you can Help others who need it, but do not put yourself in danger Leave your vehicle out of the way so responders can get in", "id": "evacuating-safely-move-calmly-along-a-known-route-away-from-", "audio": "audio/evacuating-safely-move-calmly-along-a-known-route-away-from-.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Evacuation and muster", "eyebrow": "Section 2 \u2014 Your role", "accent": "green", "heading": "At the muster point", "body": "", "bullets": ["Report in so the person doing the head count knows you are out", "Tell them if you know someone is still inside or missing", "Stay there until you are told it is safe \u2014 do not go back", "Wait for the all-clear from the person in charge"], "audio_text": "At the muster point Report in so the person doing the head count knows you are out Tell them if you know someone is still inside or missing Stay there until you are told it is safe \u2014 do not go back Wait for the all-clear from the person in charge", "id": "at-the-muster-point-report-in-so-the-person-doing-the-head-c", "audio": "audio/at-the-muster-point-report-in-so-the-person-doing-the-head-c.mp3"}, {"kind": "section_intro", "section_idx": 4, "section_title": "Quick check \u2014 Roles, alarms, and muster", "title": "Quick check \u2014 Roles, alarms, and muster", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Roles, alarms, and muster.", "id": "quick-check-roles-alarms-and-muster", "audio": "audio/quick-check-roles-alarms-and-muster.mp3"}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 Roles, alarms, and muster", "key": "4-0", "q": {"q": "You are the first to notice a problem. What is your first step?", "options": ["Start cleaning it up yourself", "Raise the alarm and warn the people nearest the hazard", "Finish your current task, then mention it"], "correct": 1, "why": "Whoever notices first is responsible for raising the alarm and warning others. Response comes after people are warned and safe."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 Roles, alarms, and muster", "key": "4-1", "q": {"q": "Why does a muster point head count matter?", "options": ["So the company can track hours", "So no one goes back into danger looking for someone who is already out", "It is just paperwork"], "correct": 1, "why": "Being accounted for means responders are not risking themselves searching for people who already evacuated safely."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 Roles, alarms, and muster", "key": "4-2", "q": {"q": "An alarm sounds and you are not sure if it is a real emergency. What do you do?", "options": ["Ignore it until someone confirms", "Treat it as real \u2014 make equipment safe only if it takes seconds, then move to the muster point", "Keep working and watch to see what others do"], "correct": 1, "why": "Always treat an alarm as real. It is never wrong to move to safety; waiting to confirm wastes the minutes that matter most."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 5, "section_title": "A spill in the first 5 minutes \u2014 STOP first", "title": "A spill in the first 5 minutes \u2014 STOP first", "eyebrow": "Section 3 \u2014 Small spill response", "icon": "beaker", "accent": "purple", "subtitle": "", "audio_text": "A spill in the first 5 minutes \u2014 STOP first.", "id": "a-spill-in-the-first-5-minutes-stop-first", "audio": "audio/a-spill-in-the-first-5-minutes-stop-first.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "A spill in the first 5 minutes \u2014 STOP first", "eyebrow": "Section 3 \u2014 Small spill response", "accent": "purple", "heading": "A small spill is not an emergency \u2014 until you handle it wrong", "body": "Drips at hose connections, splashes during tote dispensing, a knocked-over jug on a tank deck \u2014 these happen. The first 5 minutes decide whether it stays a small spill or becomes an injury, an environmental incident, or a reportable release.", "bullets": null, "audio_text": "A small spill is not an emergency \u2014 until you handle it wrong Drips at hose connections, splashes during tote dispensing, a knocked-over jug on a tank deck \u2014 these happen. The first 5 minutes decide whether it stays a small spill or becomes an injury, an environmental incident, or a reportable release.", "id": "a-small-spill-is-not-an-emergency-until-you-handle-it-wrong-", "audio": "audio/a-small-spill-is-not-an-emergency-until-you-handle-it-wrong-.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "A spill in the first 5 minutes \u2014 STOP first", "eyebrow": "Section 3 \u2014 Small spill response", "accent": "purple", "heading": "STOP before you act", "body": "", "bullets": ["Do not rush in \u2014 take a moment to size it up", "Identify what spilled and roughly how much", "Check your PPE against what the SDS calls for", "If it is too big, too hazardous, or unknown \u2014 treat it as an emergency and raise the alarm"], "audio_text": "STOP before you act Do not rush in \u2014 take a moment to size it up Identify what spilled and roughly how much Check your PPE against what the SDS calls for If it is too big, too hazardous, or unknown \u2014 treat it as an emergency and raise the alarm", "id": "stop-before-you-act-do-not-rush-in-take-a-moment-to-size-it-", "audio": "audio/stop-before-you-act-do-not-rush-in-take-a-moment-to-size-it-.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "A spill in the first 5 minutes \u2014 STOP first", "eyebrow": "Section 3 \u2014 Small spill response", "accent": "purple", "heading": "Refresh products each need a different response", "body": "Refresh handles peroxide / PAA, sulfide scavengers (with methanol), foam controls, pH stabilizers, and emulsion breakers. Pull the SDS for the product on hand \u2014 the right response depends on the product.", "bullets": null, "audio_text": "Refresh products each need a different response Refresh handles peroxide / PAA, sulfide scavengers (with methanol), foam controls, pH stabilizers, and emulsion breakers. Pull the SDS for the product on hand \u2014 the right response depends on the product.", "id": "refresh-products-each-need-a-different-response-refresh-hand", "audio": "audio/refresh-products-each-need-a-different-response-refresh-hand.mp3"}, {"kind": "section_intro", "section_idx": 6, "section_title": "Contain, notify, clean up, decontaminate", "title": "Contain, notify, clean up, decontaminate", "eyebrow": "Section 3 \u2014 Small spill response", "icon": "wrench", "accent": "blue", "subtitle": "", "audio_text": "Contain, notify, clean up, decontaminate.", "id": "contain-notify-clean-up-decontaminate", "audio": "audio/contain-notify-clean-up-decontaminate.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Contain, notify, clean up, decontaminate", "eyebrow": "Section 3 \u2014 Small spill response", "accent": "blue", "heading": "Stop the source and contain it", "body": "", "bullets": ["Stop the source only if you can do it safely", "Surround the spill with absorbent boom, sock, or sand", "Keep it away from drains, ditches, and waterways"], "audio_text": "Stop the source and contain it Stop the source only if you can do it safely Surround the spill with absorbent boom, sock, or sand Keep it away from drains, ditches, and waterways", "id": "stop-the-source-and-contain-it-stop-the-source-only-if-you-c", "audio": "audio/stop-the-source-and-contain-it-stop-the-source-only-if-you-c.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Contain, notify, clean up, decontaminate", "eyebrow": "Section 3 \u2014 Small spill response", "accent": "blue", "heading": "Choose the right absorbent for the product", "body": "", "bullets": ["Peroxide / PAA: NO organic absorbent like sawdust or cat litter \u2014 fire risk", "Peroxide / PAA: use sand or vermiculite, and dilute with plenty of water if the SDS allows", "Methanol-containing products: eliminate ignition sources \u2014 no smoking, hot work, or open flames in the spill area"], "audio_text": "Choose the right absorbent for the product Peroxide / PAA: NO organic absorbent like sawdust or cat litter \u2014 fire risk Peroxide / PAA: use sand or vermiculite, and dilute with plenty of water if the SDS allows Methanol-containing products: eliminate ignition sources \u2014 no smoking, hot work, or open flames in the spill area", "id": "choose-the-right-absorbent-for-the-product-peroxide-paa-no-o", "audio": "audio/choose-the-right-absorbent-for-the-product-peroxide-paa-no-o.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Contain, notify, clean up, decontaminate", "eyebrow": "Section 3 \u2014 Small spill response", "accent": "blue", "heading": "Notify your supervisor \u2014 every time", "body": "", "bullets": ["Tell your supervisor immediately, even for a small spill", "Reportable spills (thresholds in your ERP) must be called to the BC spill line 1-800-663-3456", "When in doubt, report it \u2014 do not guess on a release"], "audio_text": "Notify your supervisor \u2014 every time Tell your supervisor immediately, even for a small spill Reportable spills (thresholds in your ERP) must be called to the BC spill line 1-800-663-3456 When in doubt, report it \u2014 do not guess on a release", "id": "notify-your-supervisor-every-time-tell-your-supervisor-immed", "audio": "audio/notify-your-supervisor-every-time-tell-your-supervisor-immed.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Contain, notify, clean up, decontaminate", "eyebrow": "Section 3 \u2014 Small spill response", "accent": "blue", "heading": "Clean up, decontaminate, and document", "body": "", "bullets": ["Used absorbent is hazardous waste \u2014 bag it, label it, store it for proper disposal", "Skin or eye contact: flush at the wash station for at least 15 minutes, even if you feel fine", "Record photo, volume, root cause, and corrective action \u2014 file the spill report before end of shift"], "audio_text": "Clean up, decontaminate, and document Used absorbent is hazardous waste \u2014 bag it, label it, store it for proper disposal Skin or eye contact: flush at the wash station for at least 15 minutes, even if you feel fine Record photo, volume, root cause, and corrective action \u2014 file the spill report before end of shift", "id": "clean-up-decontaminate-and-document-used-absorbent-is-hazard", "audio": "audio/clean-up-decontaminate-and-document-used-absorbent-is-hazard.mp3"}, {"kind": "section_intro", "section_idx": 7, "section_title": "Who to call and when", "title": "Who to call and when", "eyebrow": "Section 4 \u2014 Reporting", "icon": "file", "accent": "darkblue", "subtitle": "", "audio_text": "Who to call and when.", "id": "who-to-call-and-when", "audio": "audio/who-to-call-and-when.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Who to call and when", "eyebrow": "Section 4 \u2014 Reporting", "accent": "darkblue", "heading": "Start with your supervisor", "body": "For any emergency, injury, or spill, your supervisor or site contact is your first call. They coordinate the response and make sure the right outside parties are notified.", "bullets": null, "audio_text": "Start with your supervisor For any emergency, injury, or spill, your supervisor or site contact is your first call. They coordinate the response and make sure the right outside parties are notified.", "id": "start-with-your-supervisor-for-any-emergency-injury-or-spill", "audio": "audio/start-with-your-supervisor-for-any-emergency-injury-or-spill.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Who to call and when", "eyebrow": "Section 4 \u2014 Reporting", "accent": "darkblue", "heading": "Call 911 when", "body": "", "bullets": ["Someone is seriously hurt or unresponsive", "There is a fire that is not immediately controllable", "There is a gas release or anyone is overcome by fumes", "You are in immediate danger \u2014 that is never over-reacting"], "audio_text": "Call 911 when Someone is seriously hurt or unresponsive There is a fire that is not immediately controllable There is a gas release or anyone is overcome by fumes You are in immediate danger \u2014 that is never over-reacting", "id": "call-911-when-someone-is-seriously-hurt-or-unresponsive-ther", "audio": "audio/call-911-when-someone-is-seriously-hurt-or-unresponsive-ther.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Who to call and when", "eyebrow": "Section 4 \u2014 Reporting", "accent": "darkblue", "heading": "The BC spill line \u2014 1-800-663-3456", "body": "", "bullets": ["Used for reportable spills that meet the thresholds in your ERP", "Your supervisor or designated person usually makes this call", "Know the number exists so you can prompt it if needed"], "audio_text": "The BC spill line \u2014 1-800-663-3456 Used for reportable spills that meet the thresholds in your ERP Your supervisor or designated person usually makes this call Know the number exists so you can prompt it if needed", "id": "the-bc-spill-line-1-800-663-3456-used-for-reportable-spills-", "audio": "audio/the-bc-spill-line-1-800-663-3456-used-for-reportable-spills-.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Who to call and when", "eyebrow": "Section 4 \u2014 Reporting", "accent": "darkblue", "heading": "Always write it down", "body": "Every emergency, near-miss, and spill gets documented. The report captures what happened, what was done, and how to stop it happening again.", "bullets": null, "audio_text": "Always write it down Every emergency, near-miss, and spill gets documented. The report captures what happened, what was done, and how to stop it happening again.", "id": "always-write-it-down-every-emergency-near-miss-and-spill-get", "audio": "audio/always-write-it-down-every-emergency-near-miss-and-spill-get.mp3"}, {"kind": "section_intro", "section_idx": 8, "section_title": "Quick check \u2014 Spill response and reporting", "title": "Quick check \u2014 Spill response and reporting", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Spill response and reporting.", "id": "quick-check-spill-response-and-reporting", "audio": "audio/quick-check-spill-response-and-reporting.mp3"}, {"kind": "midcheck_q", "section_idx": 8, "section_title": "Quick check \u2014 Spill response and reporting", "key": "8-0", "q": {"q": "A peroxide / PAA product spills on a tank deck. Which absorbent do you use?", "options": ["Sawdust or cat litter \u2014 they soak it up fast", "Sand or vermiculite", "Any absorbent will do for a small spill"], "correct": 1, "why": "Organic absorbents like sawdust or cat litter create a fire risk with peroxide / PAA. Use an inorganic absorbent \u2014 sand or vermiculite."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 8, "section_title": "Quick check \u2014 Spill response and reporting", "key": "8-1", "q": {"q": "Product splashes in your eyes. How long do you flush at the wash station?", "options": ["Until it stops stinging", "At least 15 minutes, even if you feel fine", "About a minute, then drive to first aid"], "correct": 1, "why": "Skin or eye contact needs at least 15 minutes of flushing \u2014 even if you feel fine \u2014 to remove the chemical and limit injury."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 8, "section_title": "Quick check \u2014 Spill response and reporting", "key": "8-2", "q": {"q": "It is a small spill and you cleaned it up quickly. Do you still tell your supervisor?", "options": ["No \u2014 small spills are not worth mentioning", "Yes \u2014 notify your supervisor every time, even for a small spill", "Only if someone else saw it"], "correct": 1, "why": "Every spill gets reported to your supervisor. They decide whether it meets the thresholds that require a call to the BC spill line."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 9, "section_title": "Four real Refresh scenarios", "title": "Four real Refresh scenarios", "eyebrow": "Section 5 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "subtitle": "One right answer for each. Read the situation, think it through, then check.", "audio_text": "Four real Refresh scenarios. One right answer for each. Read the situation, think it through, then check.", "id": "four-real-refresh-scenarios-one-right-answer-for-each-read-t", "audio": "audio/four-real-refresh-scenarios-one-right-answer-for-each-read-t.mp3"}, {"kind": "scenario", "section_idx": 9, "section_title": "Four real Refresh scenarios", "scenario": {"title": "Scenario 1 \u2014 A peroxide / PAA spill at a tote transfer", "situation": "During a tote transfer, a hose end fails and about 10 litres of a peroxide / PAA product pools on the deck. You have your PPE on and the spill kit is nearby. A co-worker grabs a bag of cat litter to soak it up.", "question": "What do you do?", "answer_headline": "Stop the cat litter. Use sand or vermiculite.", "bullets": ["Organic absorbents like cat litter or sawdust create a fire risk with peroxide / PAA", "Use sand or vermiculite, and dilute with plenty of water if the SDS allows", "Contain it away from drains and waterways, then notify your supervisor", "Bag and label the used absorbent as hazardous waste"]}, "audio_text": "Scenario 1 \u2014 A peroxide / PAA spill at a tote transfer. During a tote transfer, a hose end fails and about 10 litres of a peroxide / PAA product pools on the deck. You have your PPE on and the spill kit is nearby. A co-worker grabs a bag of cat litter to soak it up. What do you do? The right answer: Stop the cat litter. Use sand or vermiculite.", "id": "scenario-1-a-peroxide-paa-spill-at-a-tote-transfer-during-a-", "audio": "audio/scenario-1-a-peroxide-paa-spill-at-a-tote-transfer-during-a-.mp3"}, {"kind": "scenario", "section_idx": 9, "section_title": "Four real Refresh scenarios", "scenario": {"title": "Scenario 2 \u2014 Product splashes in your eyes", "situation": "While topping up a measured cup, product splashes back and some gets in your eyes. It stings, but after a quick rinse you feel mostly fine and want to get back to the job.", "question": "What is the right move?", "answer_headline": "Get to the wash station and flush for at least 15 minutes.", "bullets": ["Skin or eye contact means at least 15 minutes of flushing \u2014 even if you feel fine", "Have someone notify your supervisor while you flush", "Get assessed for first aid after flushing \u2014 do not just go back to work", "Document the exposure and the root cause"]}, "audio_text": "Scenario 2 \u2014 Product splashes in your eyes. While topping up a measured cup, product splashes back and some gets in your eyes. It stings, but after a quick rinse you feel mostly fine and want to get back to the job. What is the right move? The right answer: Get to the wash station and flush for at least 15 minutes.", "id": "scenario-2-product-splashes-in-your-eyes-while-topping-up-a-", "audio": "audio/scenario-2-product-splashes-in-your-eyes-while-topping-up-a-.mp3"}, {"kind": "scenario", "section_idx": 9, "section_title": "Four real Refresh scenarios", "scenario": {"title": "Scenario 3 \u2014 Alarm at the site", "situation": "You are working at a process site when the site alarm sounds. You are not assigned to any response role and you are not sure exactly what triggered it.", "question": "What do you do?", "answer_headline": "Treat it as real and go to the muster point.", "bullets": ["Make your equipment safe only if it takes seconds without risk", "Move away from the hazard, staying upwind and uphill if it could be a release", "Warn anyone nearby, then go to the muster point", "Report in for the head count and wait for the all-clear"]}, "audio_text": "Scenario 3 \u2014 Alarm at the site. You are working at a process site when the site alarm sounds. You are not assigned to any response role and you are not sure exactly what triggered it. What do you do? The right answer: Treat it as real and go to the muster point.", "id": "scenario-3-alarm-at-the-site-you-are-working-at-a-process-si", "audio": "audio/scenario-3-alarm-at-the-site-you-are-working-at-a-process-si.mp3"}, {"kind": "scenario", "section_idx": 9, "section_title": "Four real Refresh scenarios", "scenario": {"title": "Scenario 4 \u2014 A reportable spill reaches a ditch", "situation": "A failed gasket lets a larger volume of product escape before you can stop it, and some has reached a roadside ditch heading toward a culvert. This is beyond what you can quietly clean up.", "question": "What do you do?", "answer_headline": "Treat it as an emergency \u2014 raise the alarm and notify.", "bullets": ["Stop the source if you can do it safely, and try to contain what is left", "Notify your supervisor immediately \u2014 this is now a reportable release", "The BC spill line is 1-800-663-3456 for reportable spills per your ERP", "Keep people back, protect the waterway, and document everything"]}, "audio_text": "Scenario 4 \u2014 A reportable spill reaches a ditch. A failed gasket lets a larger volume of product escape before you can stop it, and some has reached a roadside ditch heading toward a culvert. This is beyond what you can quietly clean up. What do you do? The right answer: Treat it as an emergency \u2014 raise the alarm and notify.", "id": "scenario-4-a-reportable-spill-reaches-a-ditch-a-failed-gaske", "audio": "audio/scenario-4-a-reportable-spill-reaches-a-ditch-a-failed-gaske.mp3"}];  // expanded list of slides — one entry per visible slide
+
+// Apply brand CSS variables
+const r = document.documentElement;
+r.style.setProperty('--brand-primary', BRAND.colors.primary);
+r.style.setProperty('--brand-primary-dark', BRAND.colors.primary_dark);
+r.style.setProperty('--brand-navy', BRAND.colors.navy);
+r.style.setProperty('--brand-darkblue', BRAND.colors.darkblue);
+r.style.setProperty('--brand-accent', BRAND.colors.accent);
+r.style.setProperty('--brand-red', BRAND.colors.red);
+r.style.setProperty('--brand-green', BRAND.colors.green);
+r.style.setProperty('--brand-purple', BRAND.colors.purple);
+document.title = (CONTENT.meta.topic || 'Training') + ' — ' + BRAND.client_name;
+
+const ACCENTS = { blue: BRAND.colors.primary, amber: BRAND.colors.accent, red: BRAND.colors.red, green: BRAND.colors.green, purple: BRAND.colors.purple, darkblue: BRAND.colors.darkblue };
+const ICONS = {
+  alert: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-20H6.5A2.5 2.5 0 004 4.5v15z"/>',
+  users: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/>',
+  video: '<path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/>',
+  flask: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>',
+  file: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/>',
+  beaker: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6M6 14h12"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+  clipboard: '<path d="M9 2h6a2 2 0 012 2v2H7V4a2 2 0 012-2zM5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  award: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>',
+  shieldcheck: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'
+};
+
+let state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+
+function svg(path, color) { return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
+function escapeHtml(s) { if (s == null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  state.screen = name;
+  // Pause any playing audio when changing screens
+  const aud = document.getElementById('slide-audio');
+  if (aud) { aud.pause(); aud.currentTime = 0; }
+}
+
+function renderIntroMeta() {
+  document.getElementById('brand-eyebrow').textContent = BRAND.tagline || (BRAND.client_name + ' E-LEARNING');
+  document.getElementById('module-code').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' · ' + CONTENT.meta.version : '');
+  document.getElementById('intro-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('intro-subtitle').textContent = CONTENT.meta.subtitle || '';
+  document.getElementById('topbar-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('quiz-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('r-module').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' ' + CONTENT.meta.version : '');
+  document.getElementById('result-footer').textContent = CONTENT.meta.regulation_alignment ? 'Aligned with ' + CONTENT.meta.regulation_alignment : '';
+
+  const pills = [
+    { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', label: 'Duration', value: CONTENT.meta.duration || '~30 min' },
+    { icon: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>', label: 'Pass mark', value: (CONTENT.meta.pass_mark_pct || 70) + '%' },
+    { icon: '<path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>', label: 'Slides', value: SLIDES.length },
+    { icon: '<path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14"/>', label: 'Audio', value: SLIDES.some(s => s.audio) ? 'Voiceover' : 'Read-only' }
+  ];
+  document.getElementById('meta-grid').innerHTML = pills.map(p => '<div class="meta-pill"><div class="icon">' + svg(p.icon) + '</div><div><div class="label">' + escapeHtml(p.label) + '</div><div class="value">' + escapeHtml(p.value) + '</div></div></div>').join('');
+
+  document.getElementById('learning-objectives').innerHTML = (CONTENT.meta.what_you_will_learn || []).map(o => '<li>' + escapeHtml(o) + '</li>').join('');
+  document.getElementById('footer-tracking-note').textContent = trackingEnabled() ? 'Your completion will be recorded with ' + BRAND.client_short + '.' : 'Print or save your certificate when you finish.';
+}
+
+function renderSlide() {
+  const slide = SLIDES[state.slideIdx];
+  if (!slide) return;
+  const total = SLIDES.length, progress = ((state.slideIdx + 1) / (total + 1)) * 100;
+
+  document.getElementById('slide-counter').textContent = slide.section_title || '';
+  document.getElementById('progress-pct').textContent = (state.slideIdx + 1) + ' / ' + total;
+  document.getElementById('progress-fill').style.width = progress + '%';
+
+  let html = '';
+  const slideKind = slide.kind;
+  if (slideKind === 'section_intro') html = renderSectionIntro(slide);
+  else if (slideKind === 'block') html = renderBlockSlide(slide);
+  else if (slideKind === 'video') html = renderVideoSlide(slide);
+  else if (slideKind === 'pictograms') html = renderPictogramsSlide(slide);
+  else if (slideKind === 'chemcard') html = renderChemCardSlide(slide);
+  else if (slideKind === 'scenario') html = renderScenarioSlide(slide);
+  else if (slideKind === 'midcheck_q') html = renderMidCheckQSlide(slide);
+
+  document.getElementById('slide-body').innerHTML = html;
+  attachMidCheckHandlers();
+
+  // Audio — autoplay each slide's narration. Browsers permit this after the learner's
+  // first interaction (Begin / Continue clicks); if blocked, the visible Play control still works.
+  const audioEl = document.getElementById('slide-audio');
+  const audioContainer = document.getElementById('audio-container');
+  if (slide.audio) {
+    audioEl.src = slide.audio;
+    audioContainer.classList.remove('empty');
+    audioEl.currentTime = 0;
+    const _p = audioEl.play();
+    if (_p && _p.catch) _p.catch(() => {});
+  } else {
+    audioEl.removeAttribute('src');
+    audioContainer.classList.add('empty');
+  }
+
+  // Nav
+  document.getElementById('btn-prev').disabled = state.slideIdx === 0;
+  const isLast = state.slideIdx === total - 1;
+  document.getElementById('btn-next').innerHTML = (isLast ? 'Final quiz' : 'Continue') + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+
+  // Scroll the slide content area to top
+  const sc = document.querySelector('#screen-learn .slide-content');
+  if (sc) sc.scrollTop = 0;
+}
+
+function renderSectionIntro(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="section-intro"><div class="icon-big" style="background:' + ac + '">' + svg(ICONS[slide.icon] || ICONS.book, '#fff') + '</div>' +
+    '<div class="eyebrow-text" style="color:' + ac + '">' + escapeHtml(slide.eyebrow || '') + '</div>' +
+    '<h2>' + escapeHtml(slide.title) + '</h2>' +
+    (slide.subtitle ? '<p class="subtitle">' + escapeHtml(slide.subtitle) + '</p>' : '') + '</div>';
+}
+
+function renderBlockSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    (slide.eyebrow ? '<div class="block-eyebrow" style="color:' + ac + '">' + escapeHtml(slide.eyebrow) + '</div>' : '') +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading) + '</h3>' +
+    (slide.body ? '<p class="block-body">' + escapeHtml(slide.body) + '</p>' : '') +
+    (slide.bullets ? '<ul class="block-bullets">' + slide.bullets.map(bl => '<li><svg viewBox="0 0 24 24" style="color:' + ac + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>' + escapeHtml(bl) + '</span></li>').join('') + '</ul>' : '') + '</div>';
+}
+
+function renderVideoSlide(slide) {
+  const url = slide.video_url || '#';
+  return '<div class="video-card"><div class="video-thumb"><div class="video-play-btn" onclick="window.open(' + JSON.stringify(url) + ', \'_blank\', \'noopener\')"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><h3>' + escapeHtml(slide.video_title || '') + '</h3><p>' + escapeHtml(slide.video_source || '') + ' · ' + escapeHtml(slide.video_duration || '') + '</p></div><div class="video-action"><div class="video-action-info"><strong>Click to watch</strong><span>Opens in a new tab</span></div><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener" class="btn-yt">Watch on YouTube <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a></div></div>';
+}
+
+function renderPictogramsSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading || 'Pictograms') + '</h3>' +
+    (slide.intro ? '<p class="block-body">' + escapeHtml(slide.intro) + '</p>' : '') +
+    '<div class="picto-grid">' + slide.items.map(p => '<div class="picto-cell"><img src="' + (p.image_data || p.image || '') + '" alt="' + escapeHtml(p.label) + '"><div class="picto-label">' + escapeHtml(p.label) + '</div><div class="picto-sub">' + escapeHtml(p.sub || '') + '</div></div>').join('') + '</div></div>';
+}
+
+function renderChemCardSlide(slide) {
+  const c = slide.card;
+  const sigColor = c.signal === 'DANGER' ? ACCENTS.red : ACCENTS.amber;
+  const rowColors = { 'EXPOSURE LIMITS': ACCENTS.amber, 'PPE': ACCENTS.blue, 'FIRST AID': ACCENTS.green, 'SPILL': ACCENTS.purple, 'STORAGE': ACCENTS.darkblue };
+  return '<div class="chem-card"><div class="chem-card-header"><div class="chem-pictos-row">' +
+    (c.pictogram_data || []).map(p => '<img src="' + p + '" alt="">').join('') +
+    '<span class="signal-badge" style="background:' + sigColor + '">' + escapeHtml(c.signal || '') + '</span></div>' +
+    '<div class="chem-card-name">' + escapeHtml(c.name) + '</div><div class="chem-card-full">' + escapeHtml(c.full_name || '') + (c.supplier ? ' · ' + escapeHtml(c.supplier) : '') + '</div>' +
+    '<div class="chem-haz">' + escapeHtml(c.hazard_summary || '') + '</div></div>' +
+    (c.rows || []).map(row => {
+      const rc = rowColors[row.label] || ACCENTS.blue;
+      return '<div class="chem-row"><div class="chem-row-label" style="background:' + rc + '">' + escapeHtml(row.label) + '</div><div class="chem-row-items"><ul>' +
+        row.items.map(it => '<li><span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:' + rc + ';margin-top:7px;margin-right:6px;flex-shrink:0;"></span>' + escapeHtml(it) + '</li>').join('') + '</ul></div></div>';
+    }).join('') + '</div>';
+}
+
+function renderScenarioSlide(slide) {
+  const sc = slide.scenario;
+  return '<div class="scenario"><div class="scenario-title">' + escapeHtml(sc.title) + '</div><div class="scenario-grid">' +
+    '<div class="scenario-side scenario-situation"><div class="scenario-eyebrow" style="color:' + ACCENTS.blue + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.blue + '"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Situation</div><p class="scenario-text">' + escapeHtml(sc.situation) + '</p><p class="scenario-question">' + escapeHtml(sc.question) + '</p></div>' +
+    '<div class="scenario-side scenario-answer"><div class="scenario-eyebrow" style="color:' + ACCENTS.green + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.green + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Right answer</div><p class="scenario-headline">' + escapeHtml(sc.answer_headline) + '</p><ul class="scenario-bullets">' + (sc.bullets || []).map(b => '<li>' + escapeHtml(b) + '</li>').join('') + '</ul></div></div></div>';
+}
+
+function renderMidCheckQSlide(slide) {
+  const q = slide.q, key = slide.key;
+  const ans = state.midAnswers[key], answered = ans !== undefined;
+  return '<div class="kc-banner"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><p><strong>Quick check.</strong> You\'ll see the answer right away — won\'t count against your final quiz.</p></div>' +
+    '<div class="q-card"><div class="q-text">' + escapeHtml(q.q) + '</div><div class="q-options">' +
+    q.options.map((opt, oi) => {
+      let cls = 'q-option';
+      if (answered) { if (oi === q.correct) cls += ' correct'; else if (ans === oi) cls += ' incorrect'; }
+      const checkSvg = answered && oi === q.correct ? '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>' : '';
+      return '<button class="' + cls + '" data-mid="' + key + '" data-opt="' + oi + '" ' + (answered ? 'disabled' : '') + '><span>' + escapeHtml(opt) + '</span>' + checkSvg + '</button>';
+    }).join('') + '</div>' +
+    (answered ? '<div class="feedback ' + (ans === q.correct ? 'right' : 'wrong') + '"><strong>' + (ans === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+}
+
+function attachMidCheckHandlers() {
+  document.querySelectorAll('[data-mid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.mid, opt = parseInt(btn.dataset.opt);
+      if (state.midAnswers[key] !== undefined) return;
+      state.midAnswers[key] = opt;
+      renderSlide();
+    });
+  });
+}
+
+function renderQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  document.getElementById('quiz-instructions').textContent = quiz.length + ' questions. ' + (CONTENT.meta.pass_mark_pct || 70) + '% to pass (' + passN + '/' + quiz.length + ').';
+  document.getElementById('quiz-questions').innerHTML = quiz.map((q, i) => {
+    return '<div class="quiz-q"><div><span style="font-size:11px;font-weight:700;color:var(--brand-primary);">Q' + (i + 1) + '.</span> <span style="font-weight:600;">' + escapeHtml(q.q) + '</span></div><div class="q-options" style="margin-top:14px;">' +
+      q.options.map((opt, j) => {
+        let cls = 'q-option';
+        if (state.quizSubmitted) { if (j === q.correct) cls += ' correct'; else if (state.quizAnswers[i] === j) cls += ' incorrect'; }
+        else if (state.quizAnswers[i] === j) cls += ' selected';
+        return '<button class="' + cls + '" data-q="' + i + '" data-opt="' + j + '" ' + (state.quizSubmitted ? 'disabled' : '') + '><span class="letter">' + String.fromCharCode(65 + j) + '.</span><span style="flex:1;">' + escapeHtml(opt) + '</span></button>';
+      }).join('') + '</div>' +
+      (state.quizSubmitted && q.why ? '<div class="feedback ' + (state.quizAnswers[i] === q.correct ? 'right' : 'wrong') + '" style="margin-top:12px;"><strong>' + (state.quizAnswers[i] === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+  }).join('');
+  document.querySelectorAll('#quiz-questions [data-q]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.quizSubmitted) return;
+      state.quizAnswers[parseInt(btn.dataset.q)] = parseInt(btn.dataset.opt);
+      renderQuiz();
+      checkQuizComplete();
+    });
+  });
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  const all = (CONTENT.quiz || []).every((_, i) => state.quizAnswers[i] !== undefined);
+  document.getElementById('btn-submit-quiz').disabled = !all;
+}
+
+function submitQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  let s = 0;
+  quiz.forEach((q, i) => { if (state.quizAnswers[i] === q.correct) s++; });
+  state.score = s; state.passed = s >= passN; state.quizSubmitted = true;
+  renderResult(); showScreen('result');
+  if (trackingEnabled()) sendCompletion();
+}
+
+function renderResult() {
+  const passed = state.passed, quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  const pct = Math.round((state.score / quiz.length) * 100);
+  document.querySelector('#screen-result .result-bg').className = 'result-bg ' + (passed ? 'passed' : 'failed');
+  document.getElementById('result-icon').className = 'result-icon ' + (passed ? 'pass' : 'fail');
+  document.getElementById('result-icon').innerHTML = passed ? svg(ICONS.award) : svg('<path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15A9 9 0 0018.36 18.36L23 14"/>');
+  document.getElementById('result-title').textContent = passed ? 'Module complete' : 'Not quite there';
+  document.getElementById('result-subtitle').textContent = passed ? 'You have successfully completed this training module.' : 'You need ' + passN + ' out of ' + quiz.length + ' correct to pass. Review and try again.';
+  document.getElementById('r-name').textContent = state.learnerName;
+  document.getElementById('r-employer').textContent = state.employer;
+  document.getElementById('r-score').textContent = state.score + ' / ' + quiz.length + ' (' + pct + '%)';
+  const rResult = document.getElementById('r-result');
+  rResult.textContent = passed ? 'PASSED' : 'FAILED';
+  rResult.style.color = passed ? ACCENTS.green : ACCENTS.amber;
+  document.getElementById('r-date').textContent = new Date().toLocaleString('en-CA');
+  document.getElementById('btn-retry').style.display = passed ? 'none' : 'inline-flex';
+}
+
+function setTrackingStatus(status, msg) {
+  const el = document.getElementById('tracking-status');
+  el.className = 'tracking-status ' + status; el.textContent = msg;
+}
+// Tracking is "enabled" only when real config is present — placeholders (containing "__")
+// leave it disabled so the module still works and just shows the print-certificate note.
+function trackingEnabled() {
+  const t = CONTENT.tracking || {};
+  if (t.provider === 'supabase') {
+    return /^https?:\/\//.test(t.supabase_url || '') && !!t.anon_key && !!t.token &&
+           (t.supabase_url.indexOf('__') === -1) && (String(t.token).indexOf('__') === -1);
+  }
+  return !!t.endpoint && t.endpoint.indexOf('__') === -1;
+}
+function sendCompletion() {
+  const t = CONTENT.tracking || {};
+  const total = (CONTENT.quiz || []).length;
+  const pct = total ? Math.round((state.score / total) * 100) : 0;
+  setTrackingStatus('pending', '⟳ Saving completion record...');
+  if (t.provider === 'supabase') {
+    // Strawboss-compatible path: call a SECURITY DEFINER RPC. The anon key is public by
+    // design; the per-course token scopes what can be written (company + course).
+    const url = t.supabase_url.replace(/\/+$/, '') + '/rest/v1/rpc/submit_course_completion';
+    fetch(url, {
+      method: 'POST',
+      headers: { 'apikey': t.anon_key, 'Authorization': 'Bearer ' + t.anon_key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        p_token: t.token,
+        p_worker_name: state.learnerName,
+        p_worker_email: state.workerEmail || null,
+        p_employer: state.employer,
+        p_score: state.score, p_total: total, p_pct: pct, p_passed: state.passed
+      })
+    }).then(res => {
+      if (res.ok) setTrackingStatus('ok', '✓ Completion recorded.');
+      else setTrackingStatus('fail', '⚠ Could not save record (' + res.status + '). Screenshot this page for your supervisor.');
+    }).catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  } else {
+    // Legacy path: generic endpoint (e.g. Google Apps Script), fire-and-forget.
+    const payload = {
+      module: t.module_id || ((CONTENT.meta.code || '') + ' ' + (CONTENT.meta.version || '')),
+      name: state.learnerName, employer: state.employer,
+      score: state.score, total: total, pct: pct,
+      passed: state.passed, timestamp: new Date().toISOString()
+    };
+    fetch(t.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload), mode: 'no-cors' })
+      .then(() => setTrackingStatus('ok', '✓ Completion record saved.'))
+      .catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  }
+}
+
+// Wire up
+function refreshStartButton() {
+  const name = document.getElementById('learner-name').value.trim();
+  const emp = document.getElementById('employer').value.trim();
+  document.getElementById('btn-start').disabled = !(name && emp);
+}
+document.getElementById('learner-name').addEventListener('input', refreshStartButton);
+document.getElementById('employer').addEventListener('input', refreshStartButton);
+document.getElementById('btn-start').addEventListener('click', () => {
+  state.learnerName = document.getElementById('learner-name').value.trim();
+  state.employer = document.getElementById('employer').value.trim();
+  state.slideIdx = 0;
+  showScreen('learn'); renderSlide();
+});
+document.getElementById('btn-prev').addEventListener('click', () => { if (state.slideIdx > 0) { state.slideIdx--; renderSlide(); } });
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (state.slideIdx < SLIDES.length - 1) { state.slideIdx++; renderSlide(); }
+  else { showScreen('quiz'); renderQuiz(); }
+});
+document.getElementById('btn-submit-quiz').addEventListener('click', submitQuiz);
+document.getElementById('btn-retry').addEventListener('click', () => { state.quizAnswers = {}; state.quizSubmitted = false; state.score = 0; showScreen('quiz'); renderQuiz(); });
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+document.getElementById('btn-restart').addEventListener('click', () => {
+  state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+  document.getElementById('learner-name').value = '';
+  document.getElementById('employer').value = '';
+  refreshStartButton(); showScreen('intro');
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (state.screen !== 'learn') return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); document.getElementById('btn-next').click(); }
+  else if (e.key === 'ArrowLeft') { document.getElementById('btn-prev').click(); }
+});
+
+renderIntroMeta();
+</script>
+</body>
+</html>

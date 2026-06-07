@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Safety Training</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #F8FAFC; color: #0F172A; line-height: 1.5; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+button { font-family: inherit; cursor: pointer; border: none; }
+a { color: var(--brand-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* INTRO screen — full viewport, centered */
+.intro-bg { flex: 1; padding: 16px; background: linear-gradient(135deg, var(--brand-darkblue) 0%, var(--brand-navy) 50%, var(--brand-darkblue) 100%); display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.intro-card { max-width: 600px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 28px; }
+.intro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.brand-shield { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-shrink: 0; }
+.brand-shield svg { width: 24px; height: 24px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.brand-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary); }
+.brand-sub { font-size: 11px; color: #64748B; margin-top: 2px; }
+.intro-title { font-size: 36px; font-weight: 700; margin-bottom: 4px; letter-spacing: -1px; }
+.intro-subtitle { font-size: 15px; color: #475569; margin-bottom: 20px; }
+.meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+.meta-pill { display: flex; align-items: center; gap: 8px; padding: 10px; background: #F1F5F9; border-radius: 10px; }
+.meta-pill .icon { width: 28px; height: 28px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.meta-pill .icon svg { width: 12px; height: 12px; color: var(--brand-primary); fill: none; stroke: currentColor; stroke-width: 2; }
+.meta-pill .label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #64748B; }
+.meta-pill .value { font-size: 12px; font-weight: 700; color: #0F172A; }
+.intro-info { background: #EFF6FB; border: 1px solid #C5DEEC; border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+.intro-info .info-title { font-size: 12px; font-weight: 700; color: var(--brand-darkblue); margin-bottom: 8px; }
+.intro-info ul { list-style: none; }
+.intro-info li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; }
+.intro-info li::before { content: "✓"; color: var(--brand-primary); font-weight: 700; flex-shrink: 0; }
+.input-row { margin-bottom: 12px; }
+.input-row label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.input-row input { width: 100%; padding: 10px 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-family: inherit; transition: border-color 150ms; }
+.input-row input:focus { outline: none; border-color: var(--brand-primary); }
+.btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dark)); color: #fff; border-radius: 12px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: all 150ms; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.intro-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E8F0; font-size: 11px; color: #64748B; text-align: center; }
+
+/* SLIDE screens — one slide visible at a time, fixed viewport */
+.slide-wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; background: #F8FAFC; }
+.top-bar { background: #fff; border-bottom: 1px solid #E2E8F0; padding: 10px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0; }
+.top-bar-inner { max-width: 900px; margin: 0 auto; }
+.top-bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+.top-bar-left { display: flex; align-items: center; gap: 8px; font-size: 12px; min-width: 0; }
+.top-bar-shield { width: 24px; height: 24px; border-radius: 6px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.top-bar-shield svg { width: 12px; height: 12px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.top-bar-brand { font-weight: 700; letter-spacing: 1px; color: var(--brand-primary); white-space: nowrap; }
+.top-bar-context { color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progress-bar { height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-primary), var(--brand-primary-dark)); transition: width 500ms; }
+
+.slide-content { flex: 1; overflow-y: auto; padding: 24px 16px; display: flex; align-items: flex-start; justify-content: center; }
+.slide-inner { max-width: 760px; width: 100%; }
+
+/* SLIDE — section announcement */
+.section-intro { text-align: center; padding: 32px 16px; }
+.section-intro .icon-big { width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.section-intro .icon-big svg { width: 40px; height: 40px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.section-intro .eyebrow-text { font-size: 12px; font-weight: 700; letter-spacing: 3px; margin-bottom: 8px; }
+.section-intro h2 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.section-intro .subtitle { font-size: 16px; color: #64748B; max-width: 540px; margin: 0 auto; }
+
+/* SLIDE — content block */
+.block-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 32px; }
+.block-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; }
+.block-heading { font-size: 26px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; display: flex; gap: 12px; align-items: flex-start; }
+.block-accent { display: block; width: 5px; min-height: 28px; border-radius: 3px; margin-top: 4px; flex-shrink: 0; }
+.block-body { color: #475569; margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
+.block-bullets { list-style: none; }
+.block-bullets li { display: flex; gap: 12px; padding: 7px 0; font-size: 15px; color: #334155; line-height: 1.55; }
+.block-bullets li svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — pictograms grid (one per slide; or one slide showing the grid) */
+.picto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.picto-cell { text-align: center; padding: 16px; border: 2px solid #F1F5F9; border-radius: 12px; }
+.picto-cell img { width: 64px; height: 64px; margin-bottom: 8px; }
+.picto-label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.picto-sub { font-size: 11px; color: #64748B; line-height: 1.4; }
+
+/* SLIDE — video card */
+.video-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.video-thumb { background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); padding: 40px 24px; text-align: center; color: #fff; }
+.video-play-btn { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; margin-bottom: 12px; cursor: pointer; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+.video-play-btn svg { width: 28px; height: 28px; color: var(--brand-red); fill: currentColor; }
+.video-thumb h3 { font-size: 18px; margin-bottom: 4px; }
+.video-thumb p { font-size: 12px; color: #B0CADE; }
+.video-action { padding: 14px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.video-action-info strong { display: block; font-weight: 600; font-size: 13px; }
+.video-action-info span { color: #64748B; font-size: 12px; }
+.btn-yt { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: var(--brand-red); color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; }
+.btn-yt:hover { background: #A60D26; text-decoration: none; }
+.btn-yt svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — chemical card */
+.chem-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.chem-card-header { padding: 18px 24px; border-bottom: 1px solid #F1F5F9; }
+.chem-pictos-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.chem-pictos-row img { width: 40px; height: 40px; }
+.signal-badge { display: inline-block; padding: 5px 10px; border-radius: 6px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.chem-card-name { font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+.chem-card-full { font-size: 11px; color: #64748B; font-style: italic; margin-bottom: 10px; }
+.chem-haz { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #475569; }
+.chem-row { display: grid; grid-template-columns: 140px 1fr; border-top: 1px solid #F1F5F9; }
+.chem-row-label { padding: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; }
+.chem-row-items { padding: 12px 14px; }
+.chem-row-items ul { list-style: none; }
+.chem-row-items li { display: flex; gap: 8px; padding: 2px 0; font-size: 12px; color: #334155; align-items: flex-start; }
+
+/* SLIDE — scenario */
+.scenario { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.scenario-title { padding: 12px 18px; color: #fff; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); }
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.scenario-side { padding: 20px; }
+.scenario-situation { border-right: 1px solid #F1F5F9; }
+.scenario-answer { background: #EAF7EE; }
+.scenario-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; display: flex; gap: 6px; align-items: center; }
+.scenario-eyebrow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+.scenario-text { font-size: 12px; color: #334155; margin-bottom: 12px; line-height: 1.6; }
+.scenario-question { font-size: 16px; font-weight: 700; }
+.scenario-headline { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.scenario-bullets { list-style: none; }
+.scenario-bullets li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; line-height: 1.55; }
+.scenario-bullets li::before { content: "✓"; color: var(--brand-green); font-weight: 700; flex-shrink: 0; }
+
+/* SLIDE — knowledge check */
+.kc-banner { background: #EAF7EE; border: 2px solid #9DD8AC; border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+.kc-banner svg { width: 18px; height: 18px; color: var(--brand-green); flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+.kc-banner p { font-size: 12px; color: #334155; }
+.q-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; }
+.q-card .q-num { font-size: 11px; font-weight: 700; color: var(--brand-primary); margin-right: 6px; }
+.q-card .q-text { font-weight: 600; margin-bottom: 12px; line-height: 1.5; font-size: 16px; }
+.q-options { display: flex; flex-direction: column; gap: 6px; }
+.q-option { padding: 10px 14px; border: 2px solid #E2E8F0; border-radius: 8px; background: #fff; text-align: left; font-size: 14px; color: #334155; display: flex; align-items: center; gap: 8px; transition: all 120ms; }
+.q-option:hover { border-color: #94A3B8; }
+.q-option .letter { font-weight: 700; min-width: 20px; }
+.q-option.selected { background: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
+.q-option.correct { background: #EAF7EE; border-color: var(--brand-green); color: #1F6B33; }
+.q-option.incorrect { background: #FBE9EC; border-color: var(--brand-red); color: #8B1A2B; }
+.q-option svg { width: 16px; height: 16px; flex-shrink: 0; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; }
+.feedback { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+.feedback.right { background: #EAF7EE; color: #1F6B33; }
+.feedback.wrong { background: #FFF7E5; color: #8B5500; }
+
+/* QUIZ screen — scrollable, doesn't fit single screen */
+.quiz-screen { flex: 1; overflow-y: auto; padding: 24px 16px; }
+.quiz-inner { max-width: 760px; margin: 0 auto; }
+.quiz-q { border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fff; }
+
+/* RESULT screen */
+.result-bg { flex: 1; padding: 24px 16px; display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.result-bg.passed { background: linear-gradient(135deg, var(--brand-green), #1E8038); }
+.result-bg.failed { background: linear-gradient(135deg, var(--brand-accent), #D08000); }
+.result-card { max-width: 540px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 36px; text-align: center; }
+.result-icon { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.result-icon.pass { background: #EAF7EE; }
+.result-icon.fail { background: #FFF7E5; }
+.result-icon svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+.result-icon.pass svg { color: var(--brand-green); }
+.result-icon.fail svg { color: var(--brand-accent); }
+.result-title { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.result-subtitle { color: #475569; margin-bottom: 20px; font-size: 14px; }
+.result-record { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: left; }
+.result-record .row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 13px; }
+.result-record .row .label { color: #64748B; }
+.result-record .row .value { font-weight: 600; text-align: right; }
+.tracking-status { font-size: 12px; margin: 12px 0; padding: 8px 12px; border-radius: 8px; }
+.tracking-status.ok { background: #EAF7EE; color: #1F6B33; }
+.tracking-status.pending { background: #FFF7E5; color: #8B5500; }
+.tracking-status.fail { background: #FBE9EC; color: #8B1A2B; }
+.result-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.result-buttons button { flex: 1; min-width: 110px; }
+
+/* BOTTOM BAR — audio player + nav, fixed */
+.bottom-bar { background: #fff; border-top: 1px solid #E2E8F0; padding: 10px 16px; flex-shrink: 0; box-shadow: 0 -1px 3px rgba(0,0,0,0.04); }
+.bottom-bar-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.audio-player { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #F1F5F9; border-radius: 10px; }
+.audio-player audio { flex: 1; min-width: 0; height: 32px; }
+.audio-player audio::-webkit-media-controls-panel { background: #F1F5F9; }
+.audio-player.empty { display: none; }
+.btn-nav { padding: 10px 14px; background: #fff; color: #475569; border: 1px solid #CBD5E1; border-radius: 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.btn-nav.next { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
+.btn-nav.next:hover { background: var(--brand-primary-dark); }
+.btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+@media (max-width: 700px) {
+  .scenario-grid { grid-template-columns: 1fr; }
+  .scenario-situation { border-right: none; border-bottom: 1px solid #F1F5F9; }
+  .chem-row { grid-template-columns: 1fr; }
+  .meta-grid { grid-template-columns: 1fr; }
+  .block-card { padding: 24px 20px; }
+  .section-intro h2 { font-size: 28px; }
+  .block-heading { font-size: 22px; }
+  .top-bar-context { display: none; }
+  .btn-nav { padding: 10px 12px; }
+  .btn-nav span { display: none; }
+}
+
+.screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
+.screen.active { display: flex; }
+
+@media print {
+  html, body { overflow: visible; height: auto; }
+  .screen:not(.active), .bottom-bar, .top-bar { display: none !important; }
+  body { background: #fff; display: block; }
+  .result-card { box-shadow: none; border: 2px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div id="screen-intro" class="screen active">
+  <div class="intro-bg">
+    <div class="intro-card">
+      <div class="intro-header">
+        <div class="brand-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <div class="brand-eyebrow" id="brand-eyebrow"></div>
+          <div class="brand-sub" id="module-code"></div>
+        </div>
+      </div>
+      <h1 class="intro-title" id="intro-topic"></h1>
+      <p class="intro-subtitle" id="intro-subtitle"></p>
+      <div class="meta-grid" id="meta-grid"></div>
+      <div class="intro-info">
+        <div class="info-title">What you will learn</div>
+        <ul id="learning-objectives"></ul>
+      </div>
+      <div class="input-row">
+        <label for="learner-name">Your full name</label>
+        <input type="text" id="learner-name" placeholder="e.g. Casey Singh">
+      </div>
+      <div class="input-row">
+        <label for="employer">Employer / Organization</label>
+        <input type="text" id="employer" placeholder="e.g. Refresh Resources">
+      </div>
+      <button id="btn-start" class="btn-primary" disabled>Begin module <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <div class="intro-footer" id="footer-tracking-note"></div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-learn" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="topbar-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span class="top-bar-context" id="slide-counter"></span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600;" id="progress-pct"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div></div>
+  <div class="slide-content"><div class="slide-inner" id="slide-body"></div></div>
+  <div class="bottom-bar"><div class="bottom-bar-inner">
+    <button id="btn-prev" class="btn-nav"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> <span>Previous</span></button>
+    <div id="audio-container" class="audio-player empty">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#64748B" stroke-width="2" style="flex-shrink:0"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+      <audio id="slide-audio" controls preload="none"></audio>
+    </div>
+    <button id="btn-next" class="btn-nav next">Continue <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div></div>
+</div>
+
+<div id="screen-quiz" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="quiz-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span style="color: #475569;">Final quiz</span>
+      </div>
+    </div>
+  </div></div>
+  <div class="quiz-screen"><div class="quiz-inner">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary);">FINAL KNOWLEDGE CHECK</div>
+      <h2 style="font-size: 28px; font-weight: 700; margin: 8px 0;">Quiz</h2>
+      <p style="color: #475569; font-size: 14px;" id="quiz-instructions"></p>
+    </div>
+    <div id="quiz-questions"></div>
+    <button id="btn-submit-quiz" class="btn-primary" style="margin-top: 24px;" disabled>Submit answers</button>
+  </div></div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="result-bg">
+    <div class="result-card">
+      <div class="result-icon" id="result-icon"></div>
+      <h2 class="result-title" id="result-title"></h2>
+      <p class="result-subtitle" id="result-subtitle"></p>
+      <div class="result-record">
+        <div class="row"><div class="label">Name</div><div class="value" id="r-name"></div></div>
+        <div class="row"><div class="label">Employer</div><div class="value" id="r-employer"></div></div>
+        <div class="row"><div class="label">Module</div><div class="value" id="r-module"></div></div>
+        <div class="row"><div class="label">Score</div><div class="value" id="r-score"></div></div>
+        <div class="row"><div class="label">Result</div><div class="value" id="r-result"></div></div>
+        <div class="row"><div class="label">Completed</div><div class="value" id="r-date"></div></div>
+      </div>
+      <div id="tracking-status"></div>
+      <div class="result-buttons">
+        <button id="btn-retry" class="btn-primary" style="display: none;">Retry quiz</button>
+        <button id="btn-print" class="btn-nav" style="justify-content: center;">Print certificate</button>
+        <button id="btn-restart" class="btn-nav" style="justify-content: center;">New learner</button>
+      </div>
+      <p style="font-size: 11px; color: #94A3B8; margin-top: 16px;" id="result-footer"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {"meta": {"topic": "Ladders (Portable)", "subtitle": "Selection, inspection, and safe use", "code": "REF-TR-10", "version": "v1.0", "duration": "~30 min", "pass_mark_pct": 70, "regulation_alignment": "WorkSafeBC OHS Regulation Part 13 (Ladders)", "publication_basis": "Refresh Ladders presentation, inspection card & quiz", "client": "refresh", "audience_summary": "All Refresh Resources field & shop workers", "what_you_will_learn": ["Choose the right ladder type for the task and read its CSA Z11 duty / load rating", "Carry out a pre-use ladder inspection and tag a defective ladder out of service", "Set an extension ladder at the correct 4-to-1 angle (about 75 degrees)", "Climb and work using 3-point contact without overreaching", "Secure the top and base of a ladder on stable, level ground", "Recognize common ladder hazards and when a ladder is the wrong tool"]}, "sections": [{"type": "content", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "blocks": [{"heading": "Falls from ladders hurt people", "body": "Falls from ladders are a leading cause of serious injury in BC industry. Most ladder falls happen from less than 3 m (10 ft) \u2014 not from extreme heights. You do not need to be high up to be badly hurt."}, {"heading": "The most common causes", "bullets": ["Wrong ladder for the job", "Ladder not inspected, or used while defective", "Set up wrong \u2014 too steep, too shallow, or not secured", "Overreaching, so the climber loses balance", "Carrying loads up or down with both hands"]}, {"heading": "This is an awareness module", "body": "This online module builds your knowledge. It does NOT replace the required hands-on ladder training. You must still complete a hands-on competency check with your trainer before you use a ladder unsupervised."}, {"heading": "Your three rights as a worker", "bullets": ["Right to KNOW what ladders are on site, their duty rating, and their condition", "Right to PARTICIPATE in hazard assessments and choosing the right tool", "Right to REFUSE climbing a damaged or wrong-rated ladder, or unsafe work (WCA s. 21)"]}]}, {"type": "content", "title": "Where ladders show up in our work", "eyebrow": "Section 1 \u2014 Why", "icon": "book", "accent": "blue", "blocks": [{"heading": "Typical ladder use on Refresh jobs", "bullets": ["Tank access \u2014 climbing onto frac tanks, totes, or storage tanks for sampling, gauging, or top-fill", "Equipment maintenance \u2014 reaching valves, instruments, and fittings above shoulder height", "Hose and line set-up \u2014 routing hoses, cables, or chemical injection lines at elevation", "Roof or building access \u2014 brief access to roofs, mezzanines, or platforms where stairs are not available", "Loading and unloading \u2014 working from the side of trucks, trailers, or tote skids", "Light maintenance \u2014 changing bulbs, replacing filters, accessing storage racks at the shop"]}, {"heading": "When a ladder is not enough", "body": "If working from a ladder is unsafe, BC OHS Reg s. 13.6 requires a work platform instead. A ladder is for short access \u2014 not a workstation."}]}, {"type": "content", "title": "Ladder types and selection", "eyebrow": "Section 2 \u2014 What", "icon": "wrench", "accent": "blue", "blocks": [{"heading": "The four types you will see", "bullets": ["Stepladder \u2014 self-supporting A-frame with a spreader bar that locks; for short reaches in open areas; NOT for leaning against a wall", "Single (straight) ladder \u2014 one fixed section; must lean against a stable surface; not self-supporting", "Extension ladder \u2014 two or more sliding sections, adjustable length; must lean against a stable surface; the most common ladder on Refresh sites", "Combination / multi-position \u2014 converts between stepladder, extension, and scaffold base; hinge locks must be fully engaged"]}, {"heading": "Pick the right ladder \u2014 ask first", "bullets": ["What height am I working at? Do not stand on the top rungs", "What is the surface like? Level, firm, dry \u2014 or do I need non-slip feet, a stabilizer, or a mud sill?", "Will I be near electricity? Use fibreglass, never aluminum within 3 m of energized conductors", "Do I need free hands at the top? If yes, secure the ladder and use a tool belt or hand line", "Is a ladder the right tool at all? If not \u2014 use a platform, scaffold, or lift"]}, {"heading": "When a ladder is the WRONG tool", "body": "BC OHS Reg s. 13.6(1) \u2014 if work cannot be done from a ladder without hazard, a work platform must be provided. Get a platform if you will be up there more than a few minutes, working with both hands, or carrying loads at height."}]}, {"type": "content", "title": "Duty ratings and materials", "eyebrow": "Section 2 \u2014 What", "icon": "tag", "accent": "purple", "blocks": [{"heading": "Duty rating \u2014 how much weight a ladder can carry", "body": "Every manufactured ladder must be marked with a CSA Z11 grade label that tells you its load capacity. The max load includes you, your tools, and any material you carry up."}, {"heading": "CSA Z11 grades", "bullets": ["Grade 1AA \u2014 Special Duty \u2014 375 lb \u2014 heavy industrial use", "Grade 1A \u2014 Extra Heavy Duty \u2014 300 lb \u2014 industrial, typical job site", "Grade 1 \u2014 Heavy Duty \u2014 250 lb \u2014 industrial", "Grade 2 \u2014 Medium Duty \u2014 225 lb \u2014 commercial, light industrial", "Grade 3 \u2014 Light Duty \u2014 200 lb \u2014 household, NOT for our work"]}, {"heading": "Use Grade 1A or better", "body": "Refresh sites require Grade 1A (300 lb) or better. BC OHS Reg s. 13.4 \u2014 manufactured portable ladders must be marked for material grade and intended use."}, {"heading": "Materials \u2014 where each one fits", "bullets": ["Fibreglass \u2014 non-conductive when clean and dry; the best choice for most Refresh work near pumps, panels, and live equipment", "Aluminum \u2014 lightweight and strong, but conducts electricity; do NOT use within 3 m of energized conductors", "Wood \u2014 rare on modern sites; conducts electricity when wet; must never be painted because paint hides defects"]}]}, {"type": "midcheck", "title": "Quick check \u2014 Selection", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "You will climb a 4 m extension ladder to a frac tank top, near pumps and electrical equipment. The nearest ladder is aluminum, Grade 2, with one bent rung. A fibreglass Grade 1A is in the truck. Which do you use?", "options": ["The aluminum Grade 2 \u2014 it is right there and the job is quick", "The fibreglass Grade 1A from the truck; tag the aluminum one out of service", "Either one \u2014 both will hold your weight"], "correct": 1, "why": "The aluminum ladder has a bent rung, which is a defect that must be tagged out (s. 13.3). It is also only Grade 2 (225 lb), and aluminum is unsafe near electrical. The fibreglass Grade 1A is the right call."}, {"q": "What is the minimum CSA Z11 grade for industrial work on Refresh sites?", "options": ["Grade 3 (Light Duty, 200 lb)", "Grade 2 (Medium Duty, 225 lb)", "Grade 1A (Extra Heavy Duty, 300 lb)"], "correct": 2, "why": "Refresh requires Grade 1A (300 lb) or better. Grades 2 and 3 are commercial and household ratings \u2014 not suitable for industrial loads with PPE, tools, and material."}, {"q": "You will work near an energized overhead power line. Which ladder material is safe to use?", "options": ["Aluminum \u2014 it is strong and lightweight", "Fibreglass \u2014 it is non-conductive when clean and dry", "Any material, as long as you are careful"], "correct": 1, "why": "BC OHS Reg s. 13.6(2) \u2014 a metal ladder must not be used where it or the worker may contact an energized conductor. Fibreglass is the safe choice near electrical."}]}, {"type": "content", "title": "Pre-use inspection", "eyebrow": "Section 3 \u2014 How", "icon": "clipboard", "accent": "blue", "blocks": [{"heading": "Every ladder. Every shift. Every time.", "body": "BC OHS Reg s. 13.3 \u2014 inspect a ladder before use on each shift, and after any modification. If you find any condition that might endanger workers, the ladder must be removed from service and tagged before it is used again."}, {"heading": "Inspect a ladder when", "bullets": ["Before each shift \u2014 even if it was inspected yesterday", "Before each use if multiple workers share it", "After it has been dropped, struck, or fallen", "After it has been transported in a truck", "After any repair or modification", "Any time a defect is suspected"]}, {"heading": "What to inspect \u2014 all ladders (from the inspection card)", "bullets": ["Side rails \u2014 no cracks, splits, dents, bends, or twists; any rail damage means remove from service", "Rungs / steps \u2014 all present, solid, not bent, loose, oily, or worn smooth", "Feet / shoes \u2014 non-slip pads intact, swivel freely, not cracked or torn", "Labels / markings \u2014 manufacturer label, duty rating, and warnings still readable", "Overall condition \u2014 no paint covering wood, no rust on metal joints, no chemical damage"]}, {"heading": "Extra checks by type", "bullets": ["Extension \u2014 rope not frayed, pulley spins freely, both rung locks engage at the same time and grip firmly", "Stepladder \u2014 BOTH spreader bars open and lock fully (the number-one stepladder failure), top cap not cracked, pail shelf folds out and locks (not for standing on)"]}]}, {"type": "content", "title": "If a ladder fails \u2014 tag it out", "eyebrow": "Section 3 \u2014 How", "icon": "alert", "accent": "red", "blocks": [{"heading": "Do this", "bullets": ["Stop using the ladder immediately", "Tag it clearly: DO NOT USE / OUT OF SERVICE", "Move it where it cannot be picked up by mistake", "Tell your supervisor and note it in the daily ladder log", "Get it repaired by a qualified person, or scrap it"]}, {"heading": "Never do this", "bullets": ["Field-repair it \u2014 no taping a rung or tying a side rail", "Leave it for the next worker, who may not know it is defective", "Use it just for one quick job", "Paint a wood ladder \u2014 paint hides cracks and defects", "Put it back on the rack without tagging it"]}, {"heading": "What remedied means", "body": "BC OHS Reg s. 13.3 \u2014 defective equipment must be remedied before use. Remedied means properly repaired by a qualified person, OR removed from service. There is no in-between."}]}, {"type": "midcheck", "title": "Quick check \u2014 Inspection", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "How often must a portable ladder be inspected under BC OHS Reg s. 13.3?", "options": ["Once a year, by a qualified person", "Before use on each shift, and after any modification", "Only when the worker thinks something might be wrong"], "correct": 1, "why": "Section 13.3 requires inspection before use on each shift and after any modification. Any condition that might endanger workers must be remedied before use."}, {"q": "You inspect a ladder and find one bent rung and a cracked side rail. What do you do?", "options": ["Use it for this one quick task", "Tape the rung, tie the rail, then use it carefully", "Tag it OUT OF SERVICE, remove it from the work area, and tell your supervisor"], "correct": 2, "why": "Defective equipment must be remedied before use (s. 13.3). No field repairs \u2014 tag it out, remove it, and report it."}, {"q": "On a stepladder, what is the number-one failure point to check?", "options": ["The pail shelf", "Both spreader bars \u2014 they must open and lock fully and not be bent", "The manufacturer sticker"], "correct": 1, "why": "Bent or unlocked spreader bars are the most common stepladder failure. Both bars must open fully and lock. A bent or missing spreader bar means the ladder is out of service."}]}, {"type": "content", "title": "Setting up the ladder", "eyebrow": "Section 3 \u2014 How", "icon": "wrench", "accent": "blue", "blocks": [{"heading": "The 4-to-1 rule \u2014 the most important set-up rule", "body": "For every 4 ft up, move the base 1 ft out. That gives an angle of about 75 degrees from horizontal. BC OHS Reg s. 13.5(a) requires this approximate 75-degree angle."}, {"heading": "The fingertip test", "body": "Stand at the foot of the ladder with your toes touching the rails and your arms straight out at shoulder height. Your fingertips should just touch the rungs. If you cannot reach, it is too steep. If your palms wrap around, it is too shallow."}, {"heading": "Base \u2014 firm and level", "bullets": ["All feet flat on the ground", "Use a stabilizer or mud sill on soft or uneven ground", "Never use boxes, blocks, or other objects to gain height", "Do not set up on a vehicle or tank top unless it is specifically rated for it"]}, {"heading": "Top and projection \u2014 secured with a hand-hold", "bullets": ["The top must rest against a solid surface \u2014 not a window, door, eavestrough, or panel; both rails must contact it", "Tie off the top to a fixed point; if you cannot tie off, block the bottom or have a worker foot it", "For access to an upper landing, the rails must extend at least 1 m (3 ft) above the landing for a hand-hold (s. 13.5(b))", "Clear the area \u2014 lock out doorways, watch for overhead lines, and keep the drop zone below clear"]}]}, {"type": "content", "title": "Climbing and working safely", "eyebrow": "Section 3 \u2014 How", "icon": "shield", "accent": "blue", "blocks": [{"heading": "3-point contact, always", "body": "Keep three points of contact at all times: two hands and one foot, OR two feet and one hand. Most ladder falls happen during the climb or descent \u2014 not while working at height. Slow down on the climb."}, {"heading": "What 3-point contact means in practice", "bullets": ["Face the ladder going up AND down", "Do not carry tools or material in your hands \u2014 use a tool belt, pouch, or hand line", "Move only one limb at a time, rung by rung \u2014 do not skip rungs", "Grip the rungs, not the side rails, so your hand holds if your foot slips", "Wear footwear with clean, dry, slip-resistant soles"]}, {"heading": "Do not overreach", "bullets": ["Keep your belt buckle between the rails \u2014 move the ladder if you need to reach further", "Never lean past the rails; you will tip the ladder sideways", "Do not stand on the top 4 rungs of an extension ladder, or the top 2 steps of a stepladder", "Never use a stepladder folded against a wall \u2014 it loses about 75% of its capacity", "Take a break before you get tired; fatigue causes overreach"]}, {"heading": "PPE and fall protection", "bullets": ["Slip-resistant footwear, free of mud, oil, and grease; steel-toe on industrial sites", "Hard hat on all sites \u2014 a dropped tool from 3 m can be fatal", "Tool belt or hand line for tools; never carry heavy or bulky items by hand", "Fall protection is required when there is a risk of falling 3 m (10 ft) or more, or a lesser height where injury is likely (BC OHS Reg s. 11.2)"]}]}, {"type": "scenarios", "title": "Real-world scenarios", "eyebrow": "Section 4 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "intro": "Four situations you may run into on the job. Read the situation, think about your move, then check.", "items": [{"title": "Scenario 1 \u2014 Tank-top sampling, wind picks up", "situation": "You set up a 4 m extension ladder against a frac tank, tied off the top, took your sample, and started back down. Halfway down, a strong wind gust comes up and the ladder shifts under you. Both feet are on a rung.", "question": "What do you do?", "answer_headline": "Stop. Hold tight with both hands. Wait it out.", "bullets": ["Keep 3-point contact \u2014 two feet on the rung, both hands gripping the rungs", "Stay still until the gust passes; do not rush down in the middle of it", "Once stable, descend slowly and carefully", "On the ground, re-assess the wind before going back up", "If wind is sustained above 40 km/h, postpone and talk to your supervisor about a different access"]}, {"title": "Scenario 2 \u2014 Co-worker using a stepladder backwards", "situation": "In the shop you see a co-worker on a 6 ft stepladder set up backwards \u2014 climbing the back rails with the steps facing away \u2014 reaching up to change a bulb. They say, 'Relax, it will only take a minute.'", "question": "What do you do?", "answer_headline": "Speak up. Climbing the back rails is a known fall.", "bullets": ["Tell them to come down \u2014 politely but firmly", "Set the ladder up the right way: steps facing them, both spreaders locked", "Get a taller stepladder if 6 ft is not enough \u2014 one minute is not worth a fall", "Looking out for each other is part of your worker responsibilities", "If they refuse to come down, tell your supervisor \u2014 do not walk away"]}, {"title": "Scenario 3 \u2014 Ladder rated less than the load", "situation": "You weigh 240 lb. With your tool belt, hard hat, harness, and a 25 lb test kit, you will carry about 290 lb up. The only ladder on site is a Grade 1 (250 lb max). Your supervisor says, 'It is just a 10-minute job, send it up.'", "question": "What do you do?", "answer_headline": "Stop. The ladder is the wrong tool for this load.", "bullets": ["Total load (290 lb) exceeds the rated capacity (250 lb) \u2014 a code violation and a likely failure point", "Get a Grade 1A (300 lb) or Grade 1AA (375 lb) ladder", "If none is available, stop the task and talk to the supervisor about the right equipment", "You have the right to refuse unsafe work \u2014 document the refusal", "Hoist the test kit up separately on a hand line once the right ladder is in place"]}, {"title": "Scenario 4 \u2014 Ladder near electrical", "situation": "You need to reach a control panel 4 m up on a wall. The only ladder on site is a 5 m aluminum extension ladder. An energized 220 V overhead service drop runs about 2 m to the side of where you would set up.", "question": "What do you do?", "answer_headline": "Do not use the aluminum ladder. Get a fibreglass one.", "bullets": ["BC OHS Reg s. 13.6(2) \u2014 a metal ladder must not be used where contact with an energized conductor is possible", "Minimum approach distance for under 750 V is 1 m; higher voltages need much more (Schedule 21A)", "If setting up, climbing, or losing balance could bring the ladder within reach of the line, it is too close", "Use a fibreglass ladder, OR have the line de-energized and confirmed before you set up", "If neither option is available, stop the task and talk to your supervisor"]}]}], "quiz": [{"q": "How often must a portable ladder be inspected, according to BC OHS Regulation s. 13.3?", "options": ["Once a year, by a qualified person", "Before use on each shift, and after any modification", "Only when the worker thinks something might be wrong", "Once a month, by the supervisor"], "correct": 1, "why": "BC OHS Reg s. 13.3 requires inspection before use on each shift and after any modification. Any condition that might endanger workers must be remedied before the equipment is used."}, {"q": "What angle should a portable extension or single ladder be set at when leaning against a wall?", "options": ["About 45 degrees from horizontal", "About 60 degrees from horizontal", "About 75 degrees from horizontal (the 4-to-1 rule)", "As steep as you can \u2014 almost vertical"], "correct": 2, "why": "BC OHS Reg s. 13.5(a) requires an approximate 75-degree angle from horizontal. The 4-to-1 rule (1 ft out for every 4 ft up) gives this angle."}, {"q": "When a ladder is used to access an upper landing (e.g. a tank top), how far must the rails extend ABOVE that landing?", "options": ["At least 0.3 m (1 ft)", "At least 1 m (3 ft)", "At least 2 m (6 ft)", "It does not matter as long as the worker can step off"], "correct": 1, "why": "BC OHS Reg s. 13.5(b) \u2014 the ladder must project approximately 1 m above an upper landing. This gives the worker a hand-hold while stepping on or off."}, {"q": "What is the minimum CSA Z11 grade for industrial use on Refresh sites?", "options": ["Grade 3 (Light Duty, 200 lb)", "Grade 2 (Medium Duty, 225 lb)", "Grade 1A (Extra Heavy Duty, 300 lb)", "Any grade is fine if the ladder is in good condition"], "correct": 2, "why": "Refresh requires Grade 1A (300 lb) or better for industrial work. Grade 2 and 3 are commercial and household ratings \u2014 not suitable for industrial sites with PPE, tools, and material loads."}, {"q": "What does '3-point contact' mean when climbing a ladder?", "options": ["Both feet and your forehead touching the ladder", "Two hands and one foot OR two feet and one hand on the ladder at all times", "Three rungs above the ground before letting go", "The ladder must touch the wall in three places"], "correct": 1, "why": "3-point contact means two hands and one foot, OR two feet and one hand, on the ladder at all times. This is why you cannot carry tools or material in your hands while climbing."}, {"q": "You are using a stepladder to change a light bulb. Which of these is UNSAFE?", "options": ["Opening both spreader bars and locking them", "Standing on the second-from-top step with one hand on the top cap", "Standing on the top cap and reaching overhead", "Setting the ladder on a firm, level floor with all four feet down"], "correct": 2, "why": "Standing on the top step or top cap is the leading cause of stepladder falls. The top 2 steps of a stepladder are NOT for standing \u2014 use a taller stepladder."}, {"q": "You are working near an energized 600 V overhead power line. Which ladder material should you use?", "options": ["Aluminum \u2014 it is strong and lightweight", "Wood \u2014 it is the cheapest", "Fibreglass \u2014 it is non-conductive when clean and dry", "It does not matter \u2014 just keep your distance"], "correct": 2, "why": "BC OHS Reg s. 13.6(2) \u2014 a metal ladder must not be used where it or the worker may contact an energized electrical conductor. Fibreglass is the only safe material for work near electrical."}, {"q": "You inspect a ladder and find one bent rung and a cracked side rail. What do you do?", "options": ["Use it for the current task \u2014 it is just one job", "Use it but warn other workers to be careful", "Tape the rung and tie the rail, then use it carefully", "Tag it OUT OF SERVICE, remove it from the work area, and tell your supervisor"], "correct": 3, "why": "BC OHS Reg s. 13.3 \u2014 defective equipment must be remedied before use. Remedied means properly repaired by a qualified person, OR removed from service entirely. No field repairs."}, {"q": "You need to carry a 20 lb tool kit up to a tank-top sampling point. What is the right way?", "options": ["Carry it in one hand and climb with the other \u2014 go slow", "Hold it in your teeth \u2014 you have done it before", "Use a tool belt, hand line, or have someone hand it up after you climb", "Throw it onto the tank top before you climb"], "correct": 2, "why": "3-point contact must be maintained at all times. Tools and material must be carried in a tool belt, on a hand line, or handed up by another worker once you are at the top."}, {"q": "When is a ladder NOT the right tool for the job?", "options": ["When you will be working from it for more than a few minutes", "When you will be working with both hands away from the ladder", "When you will be carrying or moving heavy or bulky material at height", "All of the above"], "correct": 3, "why": "BC OHS Reg s. 13.6(1) \u2014 if work cannot be done from a ladder without hazard, a work platform must be provided. Long-duration tasks, both-hands work, and carrying loads at height are all signs you need a platform, scaffold, or lift."}, {"q": "A co-worker just dropped an extension ladder off the back of a truck and wants to use it on the next job. What must happen first?", "options": ["Nothing \u2014 it was inspected at the start of the shift, so it is fine", "A full pre-use inspection \u2014 side rails, rungs, feet, rope and pulley, rung locks, and labels \u2014 before it is used again", "A quick look at the rungs only, since that is what usually breaks", "Let it sit overnight so any damage shows up"], "correct": 1, "why": "BC OHS Reg s. 13.3 requires inspection before use on each shift AND after any event that could affect the equipment. Dropping a ladder counts. Re-inspect side rails, rungs, feet, rope and pulley, rung locks, and labels; any defect means tag it out."}, {"q": "Which statement best describes the 4-to-1 rule and the fingertip check?", "options": ["Move the base 4 ft out for every 1 ft of height; lean in until your chest touches a rung", "Move the base 1 ft out for every 4 ft of height (about 75 degrees); stand with toes on the rails and arms straight out, and your fingertips should just touch a rung", "Set the ladder as vertical as possible; reach overhead until your hands touch the top", "Move the base 2 ft out for every 4 ft of height; the angle does not really matter"], "correct": 1, "why": "BC OHS Reg s. 13.5(a) \u2014 for every 4 ft of height the base is 1 ft from the wall, giving about 75 degrees. Fingertip test: toes on the rails, arms straight out at shoulder height, fingertips just touch a rung. Cannot reach means too steep; palms wrap around means too shallow."}, {"q": "On soft or uneven ground, how should you level the base of a ladder?", "options": ["Stack boxes or wood blocks under the low foot", "Use a manufactured leveling device or a mud sill, and keep all feet firm and flat", "Set it up anyway \u2014 a little lean is fine", "Rest one rail on a nearby vehicle to make up the difference"], "correct": 1, "why": "The base must be firm and level with all feet flat. Use a stabilizer, leveling device, or mud sill on soft or uneven ground. Never use boxes or blocks, and do not set up on a vehicle or tank top unless it is rated for it."}, {"q": "You are setting up an extension ladder and there is no anchor point at the top, on slightly sloped ground. What is the safe approach?", "options": ["Climb quickly before the ladder can shift", "Level the base with a leveling device or pads, and have a co-worker foot the ladder while you climb and work", "Lean the ladder a little flatter so it cannot slide", "Tie the ladder to your tool belt for extra security"], "correct": 1, "why": "BC OHS Reg s. 13.5(c) requires the ladder to be sufficiently secured for stability. If you cannot tie off the top, have a worker foot the base, and level the base properly on slopes \u2014 never with boxes or blocks."}], "tracking": {"provider": "supabase", "supabase_url": "https://muftkbpnedufsyiyuwhk.supabase.co", "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11ZnRrYnBuZWR1ZnN5aXl1d2hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjIzMzEsImV4cCI6MjA5NjI5ODMzMX0.OjnNDsjVizKn12GndFfRrD15JDmfqc4NKXFlnabbtxY", "token": "775a4933-6020-4fca-a42f-1ddbd480d561", "course_id": "ladders", "module_id": "ladders-v1.0"}};
+const BRAND = {"client_id": "refresh", "client_name": "Refresh Resources", "client_short": "REFRESH", "tagline": "REFRESH RESOURCES TRAINING", "logo_text_primary": "REFRESH", "logo_text_secondary": "RESOURCES", "colors": {"primary": "#0098DA", "primary_dark": "#007FB8", "navy": "#114F69", "accent": "#F0A500", "red": "#C8102E", "green": "#2BA84A", "purple": "#8A4FBE", "darkblue": "#0A3447"}};
+const SLIDES = [{"kind": "section_intro", "section_idx": 0, "section_title": "Why this matters", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "subtitle": "", "audio_text": "Why this matters.", "id": "why-this-matters", "audio": "audio/why-this-matters.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "Falls from ladders hurt people", "body": "Falls from ladders are a leading cause of serious injury in BC industry. Most ladder falls happen from less than 3 m (10 ft) \u2014 not from extreme heights. You do not need to be high up to be badly hurt.", "bullets": null, "audio_text": "Falls from ladders hurt people Falls from ladders are a leading cause of serious injury in BC industry. Most ladder falls happen from less than 3 m (10 ft) \u2014 not from extreme heights. You do not need to be high up to be badly hurt.", "id": "falls-from-ladders-hurt-people-falls-from-ladders-are-a-lead", "audio": "audio/falls-from-ladders-hurt-people-falls-from-ladders-are-a-lead.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "The most common causes", "body": "", "bullets": ["Wrong ladder for the job", "Ladder not inspected, or used while defective", "Set up wrong \u2014 too steep, too shallow, or not secured", "Overreaching, so the climber loses balance", "Carrying loads up or down with both hands"], "audio_text": "The most common causes Wrong ladder for the job Ladder not inspected, or used while defective Set up wrong \u2014 too steep, too shallow, or not secured Overreaching, so the climber loses balance Carrying loads up or down with both hands", "id": "the-most-common-causes-wrong-ladder-for-the-job-ladder-not-i", "audio": "audio/the-most-common-causes-wrong-ladder-for-the-job-ladder-not-i.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "This is an awareness module", "body": "This online module builds your knowledge. It does NOT replace the required hands-on ladder training. You must still complete a hands-on competency check with your trainer before you use a ladder unsupervised.", "bullets": null, "audio_text": "This is an awareness module This online module builds your knowledge. It does NOT replace the required hands-on ladder training. You must still complete a hands-on competency check with your trainer before you use a ladder unsupervised.", "id": "this-is-an-awareness-module-this-online-module-builds-your-k", "audio": "audio/this-is-an-awareness-module-this-online-module-builds-your-k.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "Your three rights as a worker", "body": "", "bullets": ["Right to KNOW what ladders are on site, their duty rating, and their condition", "Right to PARTICIPATE in hazard assessments and choosing the right tool", "Right to REFUSE climbing a damaged or wrong-rated ladder, or unsafe work (WCA s. 21)"], "audio_text": "Your three rights as a worker Right to KNOW what ladders are on site, their duty rating, and their condition Right to PARTICIPATE in hazard assessments and choosing the right tool Right to REFUSE climbing a damaged or wrong-rated ladder, or unsafe work (WCA s. 21)", "id": "your-three-rights-as-a-worker-right-to-know-what-ladders-are", "audio": "audio/your-three-rights-as-a-worker-right-to-know-what-ladders-are.mp3"}, {"kind": "section_intro", "section_idx": 1, "section_title": "Where ladders show up in our work", "title": "Where ladders show up in our work", "eyebrow": "Section 1 \u2014 Why", "icon": "book", "accent": "blue", "subtitle": "", "audio_text": "Where ladders show up in our work.", "id": "where-ladders-show-up-in-our-work", "audio": "audio/where-ladders-show-up-in-our-work.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "Where ladders show up in our work", "eyebrow": "Section 1 \u2014 Why", "accent": "blue", "heading": "Typical ladder use on Refresh jobs", "body": "", "bullets": ["Tank access \u2014 climbing onto frac tanks, totes, or storage tanks for sampling, gauging, or top-fill", "Equipment maintenance \u2014 reaching valves, instruments, and fittings above shoulder height", "Hose and line set-up \u2014 routing hoses, cables, or chemical injection lines at elevation", "Roof or building access \u2014 brief access to roofs, mezzanines, or platforms where stairs are not available", "Loading and unloading \u2014 working from the side of trucks, trailers, or tote skids", "Light maintenance \u2014 changing bulbs, replacing filters, accessing storage racks at the shop"], "audio_text": "Typical ladder use on Refresh jobs Tank access \u2014 climbing onto frac tanks, totes, or storage tanks for sampling, gauging, or top-fill Equipment maintenance \u2014 reaching valves, instruments, and fittings above shoulder height Hose and line set-up \u2014 routing hoses, cables, or chemical injection lines at elevation Roof or building access \u2014 brief access to roofs, mezzanines, or platforms where stairs are not available Loading and unloading \u2014 working from the side of trucks, trailers, or tote skids Light maintenance \u2014 changing bulbs, replacing filters, accessing storage racks at the shop", "id": "typical-ladder-use-on-refresh-jobs-tank-access-climbing-onto", "audio": "audio/typical-ladder-use-on-refresh-jobs-tank-access-climbing-onto.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "Where ladders show up in our work", "eyebrow": "Section 1 \u2014 Why", "accent": "blue", "heading": "When a ladder is not enough", "body": "If working from a ladder is unsafe, BC OHS Reg s. 13.6 requires a work platform instead. A ladder is for short access \u2014 not a workstation.", "bullets": null, "audio_text": "When a ladder is not enough If working from a ladder is unsafe, BC OHS Reg s. 13.6 requires a work platform instead. A ladder is for short access \u2014 not a workstation.", "id": "when-a-ladder-is-not-enough-if-working-from-a-ladder-is-unsa", "audio": "audio/when-a-ladder-is-not-enough-if-working-from-a-ladder-is-unsa.mp3"}, {"kind": "section_intro", "section_idx": 2, "section_title": "Ladder types and selection", "title": "Ladder types and selection", "eyebrow": "Section 2 \u2014 What", "icon": "wrench", "accent": "blue", "subtitle": "", "audio_text": "Ladder types and selection.", "id": "ladder-types-and-selection", "audio": "audio/ladder-types-and-selection.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Ladder types and selection", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "The four types you will see", "body": "", "bullets": ["Stepladder \u2014 self-supporting A-frame with a spreader bar that locks; for short reaches in open areas; NOT for leaning against a wall", "Single (straight) ladder \u2014 one fixed section; must lean against a stable surface; not self-supporting", "Extension ladder \u2014 two or more sliding sections, adjustable length; must lean against a stable surface; the most common ladder on Refresh sites", "Combination / multi-position \u2014 converts between stepladder, extension, and scaffold base; hinge locks must be fully engaged"], "audio_text": "The four types you will see Stepladder \u2014 self-supporting A-frame with a spreader bar that locks; for short reaches in open areas; NOT for leaning against a wall Single (straight) ladder \u2014 one fixed section; must lean against a stable surface; not self-supporting Extension ladder \u2014 two or more sliding sections, adjustable length; must lean against a stable surface; the most common ladder on Refresh sites Combination / multi-position \u2014 converts between stepladder, extension, and scaffold base; hinge locks must be fully engaged", "id": "the-four-types-you-will-see-stepladder-self-supporting-a-fra", "audio": "audio/the-four-types-you-will-see-stepladder-self-supporting-a-fra.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Ladder types and selection", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "Pick the right ladder \u2014 ask first", "body": "", "bullets": ["What height am I working at? Do not stand on the top rungs", "What is the surface like? Level, firm, dry \u2014 or do I need non-slip feet, a stabilizer, or a mud sill?", "Will I be near electricity? Use fibreglass, never aluminum within 3 m of energized conductors", "Do I need free hands at the top? If yes, secure the ladder and use a tool belt or hand line", "Is a ladder the right tool at all? If not \u2014 use a platform, scaffold, or lift"], "audio_text": "Pick the right ladder \u2014 ask first What height am I working at? Do not stand on the top rungs What is the surface like? Level, firm, dry \u2014 or do I need non-slip feet, a stabilizer, or a mud sill? Will I be near electricity? Use fibreglass, never aluminum within 3 m of energized conductors Do I need free hands at the top? If yes, secure the ladder and use a tool belt or hand line Is a ladder the right tool at all? If not \u2014 use a platform, scaffold, or lift", "id": "pick-the-right-ladder-ask-first-what-height-am-i-working-at-", "audio": "audio/pick-the-right-ladder-ask-first-what-height-am-i-working-at-.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Ladder types and selection", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "When a ladder is the WRONG tool", "body": "BC OHS Reg s. 13.6(1) \u2014 if work cannot be done from a ladder without hazard, a work platform must be provided. Get a platform if you will be up there more than a few minutes, working with both hands, or carrying loads at height.", "bullets": null, "audio_text": "When a ladder is the WRONG tool BC OHS Reg s. 13.6(1) \u2014 if work cannot be done from a ladder without hazard, a work platform must be provided. Get a platform if you will be up there more than a few minutes, working with both hands, or carrying loads at height.", "id": "when-a-ladder-is-the-wrong-tool-bc-ohs-reg-s-13-6-1-if-work-", "audio": "audio/when-a-ladder-is-the-wrong-tool-bc-ohs-reg-s-13-6-1-if-work-.mp3"}, {"kind": "section_intro", "section_idx": 3, "section_title": "Duty ratings and materials", "title": "Duty ratings and materials", "eyebrow": "Section 2 \u2014 What", "icon": "tag", "accent": "purple", "subtitle": "", "audio_text": "Duty ratings and materials.", "id": "duty-ratings-and-materials", "audio": "audio/duty-ratings-and-materials.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Duty ratings and materials", "eyebrow": "Section 2 \u2014 What", "accent": "purple", "heading": "Duty rating \u2014 how much weight a ladder can carry", "body": "Every manufactured ladder must be marked with a CSA Z11 grade label that tells you its load capacity. The max load includes you, your tools, and any material you carry up.", "bullets": null, "audio_text": "Duty rating \u2014 how much weight a ladder can carry Every manufactured ladder must be marked with a CSA Z11 grade label that tells you its load capacity. The max load includes you, your tools, and any material you carry up.", "id": "duty-rating-how-much-weight-a-ladder-can-carry-every-manufac", "audio": "audio/duty-rating-how-much-weight-a-ladder-can-carry-every-manufac.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Duty ratings and materials", "eyebrow": "Section 2 \u2014 What", "accent": "purple", "heading": "CSA Z11 grades", "body": "", "bullets": ["Grade 1AA \u2014 Special Duty \u2014 375 lb \u2014 heavy industrial use", "Grade 1A \u2014 Extra Heavy Duty \u2014 300 lb \u2014 industrial, typical job site", "Grade 1 \u2014 Heavy Duty \u2014 250 lb \u2014 industrial", "Grade 2 \u2014 Medium Duty \u2014 225 lb \u2014 commercial, light industrial", "Grade 3 \u2014 Light Duty \u2014 200 lb \u2014 household, NOT for our work"], "audio_text": "CSA Z11 grades Grade 1AA \u2014 Special Duty \u2014 375 lb \u2014 heavy industrial use Grade 1A \u2014 Extra Heavy Duty \u2014 300 lb \u2014 industrial, typical job site Grade 1 \u2014 Heavy Duty \u2014 250 lb \u2014 industrial Grade 2 \u2014 Medium Duty \u2014 225 lb \u2014 commercial, light industrial Grade 3 \u2014 Light Duty \u2014 200 lb \u2014 household, NOT for our work", "id": "csa-z11-grades-grade-1aa-special-duty-375-lb-heavy-industria", "audio": "audio/csa-z11-grades-grade-1aa-special-duty-375-lb-heavy-industria.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Duty ratings and materials", "eyebrow": "Section 2 \u2014 What", "accent": "purple", "heading": "Use Grade 1A or better", "body": "Refresh sites require Grade 1A (300 lb) or better. BC OHS Reg s. 13.4 \u2014 manufactured portable ladders must be marked for material grade and intended use.", "bullets": null, "audio_text": "Use Grade 1A or better Refresh sites require Grade 1A (300 lb) or better. BC OHS Reg s. 13.4 \u2014 manufactured portable ladders must be marked for material grade and intended use.", "id": "use-grade-1a-or-better-refresh-sites-require-grade-1a-300-lb", "audio": "audio/use-grade-1a-or-better-refresh-sites-require-grade-1a-300-lb.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "Duty ratings and materials", "eyebrow": "Section 2 \u2014 What", "accent": "purple", "heading": "Materials \u2014 where each one fits", "body": "", "bullets": ["Fibreglass \u2014 non-conductive when clean and dry; the best choice for most Refresh work near pumps, panels, and live equipment", "Aluminum \u2014 lightweight and strong, but conducts electricity; do NOT use within 3 m of energized conductors", "Wood \u2014 rare on modern sites; conducts electricity when wet; must never be painted because paint hides defects"], "audio_text": "Materials \u2014 where each one fits Fibreglass \u2014 non-conductive when clean and dry; the best choice for most Refresh work near pumps, panels, and live equipment Aluminum \u2014 lightweight and strong, but conducts electricity; do NOT use within 3 m of energized conductors Wood \u2014 rare on modern sites; conducts electricity when wet; must never be painted because paint hides defects", "id": "materials-where-each-one-fits-fibreglass-non-conductive-when", "audio": "audio/materials-where-each-one-fits-fibreglass-non-conductive-when.mp3"}, {"kind": "section_intro", "section_idx": 4, "section_title": "Quick check \u2014 Selection", "title": "Quick check \u2014 Selection", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Selection.", "id": "quick-check-selection", "audio": "audio/quick-check-selection.mp3"}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 Selection", "key": "4-0", "q": {"q": "You will climb a 4 m extension ladder to a frac tank top, near pumps and electrical equipment. The nearest ladder is aluminum, Grade 2, with one bent rung. A fibreglass Grade 1A is in the truck. Which do you use?", "options": ["The aluminum Grade 2 \u2014 it is right there and the job is quick", "The fibreglass Grade 1A from the truck; tag the aluminum one out of service", "Either one \u2014 both will hold your weight"], "correct": 1, "why": "The aluminum ladder has a bent rung, which is a defect that must be tagged out (s. 13.3). It is also only Grade 2 (225 lb), and aluminum is unsafe near electrical. The fibreglass Grade 1A is the right call."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 Selection", "key": "4-1", "q": {"q": "What is the minimum CSA Z11 grade for industrial work on Refresh sites?", "options": ["Grade 3 (Light Duty, 200 lb)", "Grade 2 (Medium Duty, 225 lb)", "Grade 1A (Extra Heavy Duty, 300 lb)"], "correct": 2, "why": "Refresh requires Grade 1A (300 lb) or better. Grades 2 and 3 are commercial and household ratings \u2014 not suitable for industrial loads with PPE, tools, and material."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 Selection", "key": "4-2", "q": {"q": "You will work near an energized overhead power line. Which ladder material is safe to use?", "options": ["Aluminum \u2014 it is strong and lightweight", "Fibreglass \u2014 it is non-conductive when clean and dry", "Any material, as long as you are careful"], "correct": 1, "why": "BC OHS Reg s. 13.6(2) \u2014 a metal ladder must not be used where it or the worker may contact an energized conductor. Fibreglass is the safe choice near electrical."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 5, "section_title": "Pre-use inspection", "title": "Pre-use inspection", "eyebrow": "Section 3 \u2014 How", "icon": "clipboard", "accent": "blue", "subtitle": "", "audio_text": "Pre-use inspection.", "id": "pre-use-inspection", "audio": "audio/pre-use-inspection.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Pre-use inspection", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Every ladder. Every shift. Every time.", "body": "BC OHS Reg s. 13.3 \u2014 inspect a ladder before use on each shift, and after any modification. If you find any condition that might endanger workers, the ladder must be removed from service and tagged before it is used again.", "bullets": null, "audio_text": "Every ladder. Every shift. Every time. BC OHS Reg s. 13.3 \u2014 inspect a ladder before use on each shift, and after any modification. If you find any condition that might endanger workers, the ladder must be removed from service and tagged before it is used again.", "id": "every-ladder-every-shift-every-time-bc-ohs-reg-s-13-3-inspec", "audio": "audio/every-ladder-every-shift-every-time-bc-ohs-reg-s-13-3-inspec.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Pre-use inspection", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Inspect a ladder when", "body": "", "bullets": ["Before each shift \u2014 even if it was inspected yesterday", "Before each use if multiple workers share it", "After it has been dropped, struck, or fallen", "After it has been transported in a truck", "After any repair or modification", "Any time a defect is suspected"], "audio_text": "Inspect a ladder when Before each shift \u2014 even if it was inspected yesterday Before each use if multiple workers share it After it has been dropped, struck, or fallen After it has been transported in a truck After any repair or modification Any time a defect is suspected", "id": "inspect-a-ladder-when-before-each-shift-even-if-it-was-inspe", "audio": "audio/inspect-a-ladder-when-before-each-shift-even-if-it-was-inspe.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Pre-use inspection", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "What to inspect \u2014 all ladders (from the inspection card)", "body": "", "bullets": ["Side rails \u2014 no cracks, splits, dents, bends, or twists; any rail damage means remove from service", "Rungs / steps \u2014 all present, solid, not bent, loose, oily, or worn smooth", "Feet / shoes \u2014 non-slip pads intact, swivel freely, not cracked or torn", "Labels / markings \u2014 manufacturer label, duty rating, and warnings still readable", "Overall condition \u2014 no paint covering wood, no rust on metal joints, no chemical damage"], "audio_text": "What to inspect \u2014 all ladders (from the inspection card) Side rails \u2014 no cracks, splits, dents, bends, or twists; any rail damage means remove from service Rungs / steps \u2014 all present, solid, not bent, loose, oily, or worn smooth Feet / shoes \u2014 non-slip pads intact, swivel freely, not cracked or torn Labels / markings \u2014 manufacturer label, duty rating, and warnings still readable Overall condition \u2014 no paint covering wood, no rust on metal joints, no chemical damage", "id": "what-to-inspect-all-ladders-from-the-inspection-card-side-ra", "audio": "audio/what-to-inspect-all-ladders-from-the-inspection-card-side-ra.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Pre-use inspection", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Extra checks by type", "body": "", "bullets": ["Extension \u2014 rope not frayed, pulley spins freely, both rung locks engage at the same time and grip firmly", "Stepladder \u2014 BOTH spreader bars open and lock fully (the number-one stepladder failure), top cap not cracked, pail shelf folds out and locks (not for standing on)"], "audio_text": "Extra checks by type Extension \u2014 rope not frayed, pulley spins freely, both rung locks engage at the same time and grip firmly Stepladder \u2014 BOTH spreader bars open and lock fully (the number-one stepladder failure), top cap not cracked, pail shelf folds out and locks (not for standing on)", "id": "extra-checks-by-type-extension-rope-not-frayed-pulley-spins-", "audio": "audio/extra-checks-by-type-extension-rope-not-frayed-pulley-spins-.mp3"}, {"kind": "section_intro", "section_idx": 6, "section_title": "If a ladder fails \u2014 tag it out", "title": "If a ladder fails \u2014 tag it out", "eyebrow": "Section 3 \u2014 How", "icon": "alert", "accent": "red", "subtitle": "", "audio_text": "If a ladder fails \u2014 tag it out.", "id": "if-a-ladder-fails-tag-it-out", "audio": "audio/if-a-ladder-fails-tag-it-out.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "If a ladder fails \u2014 tag it out", "eyebrow": "Section 3 \u2014 How", "accent": "red", "heading": "Do this", "body": "", "bullets": ["Stop using the ladder immediately", "Tag it clearly: DO NOT USE / OUT OF SERVICE", "Move it where it cannot be picked up by mistake", "Tell your supervisor and note it in the daily ladder log", "Get it repaired by a qualified person, or scrap it"], "audio_text": "Do this Stop using the ladder immediately Tag it clearly: DO NOT USE / OUT OF SERVICE Move it where it cannot be picked up by mistake Tell your supervisor and note it in the daily ladder log Get it repaired by a qualified person, or scrap it", "id": "do-this-stop-using-the-ladder-immediately-tag-it-clearly-do-", "audio": "audio/do-this-stop-using-the-ladder-immediately-tag-it-clearly-do-.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "If a ladder fails \u2014 tag it out", "eyebrow": "Section 3 \u2014 How", "accent": "red", "heading": "Never do this", "body": "", "bullets": ["Field-repair it \u2014 no taping a rung or tying a side rail", "Leave it for the next worker, who may not know it is defective", "Use it just for one quick job", "Paint a wood ladder \u2014 paint hides cracks and defects", "Put it back on the rack without tagging it"], "audio_text": "Never do this Field-repair it \u2014 no taping a rung or tying a side rail Leave it for the next worker, who may not know it is defective Use it just for one quick job Paint a wood ladder \u2014 paint hides cracks and defects Put it back on the rack without tagging it", "id": "never-do-this-field-repair-it-no-taping-a-rung-or-tying-a-si", "audio": "audio/never-do-this-field-repair-it-no-taping-a-rung-or-tying-a-si.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "If a ladder fails \u2014 tag it out", "eyebrow": "Section 3 \u2014 How", "accent": "red", "heading": "What remedied means", "body": "BC OHS Reg s. 13.3 \u2014 defective equipment must be remedied before use. Remedied means properly repaired by a qualified person, OR removed from service. There is no in-between.", "bullets": null, "audio_text": "What remedied means BC OHS Reg s. 13.3 \u2014 defective equipment must be remedied before use. Remedied means properly repaired by a qualified person, OR removed from service. There is no in-between.", "id": "what-remedied-means-bc-ohs-reg-s-13-3-defective-equipment-mu", "audio": "audio/what-remedied-means-bc-ohs-reg-s-13-3-defective-equipment-mu.mp3"}, {"kind": "section_intro", "section_idx": 7, "section_title": "Quick check \u2014 Inspection", "title": "Quick check \u2014 Inspection", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Inspection.", "id": "quick-check-inspection", "audio": "audio/quick-check-inspection.mp3"}, {"kind": "midcheck_q", "section_idx": 7, "section_title": "Quick check \u2014 Inspection", "key": "7-0", "q": {"q": "How often must a portable ladder be inspected under BC OHS Reg s. 13.3?", "options": ["Once a year, by a qualified person", "Before use on each shift, and after any modification", "Only when the worker thinks something might be wrong"], "correct": 1, "why": "Section 13.3 requires inspection before use on each shift and after any modification. Any condition that might endanger workers must be remedied before use."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 7, "section_title": "Quick check \u2014 Inspection", "key": "7-1", "q": {"q": "You inspect a ladder and find one bent rung and a cracked side rail. What do you do?", "options": ["Use it for this one quick task", "Tape the rung, tie the rail, then use it carefully", "Tag it OUT OF SERVICE, remove it from the work area, and tell your supervisor"], "correct": 2, "why": "Defective equipment must be remedied before use (s. 13.3). No field repairs \u2014 tag it out, remove it, and report it."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 7, "section_title": "Quick check \u2014 Inspection", "key": "7-2", "q": {"q": "On a stepladder, what is the number-one failure point to check?", "options": ["The pail shelf", "Both spreader bars \u2014 they must open and lock fully and not be bent", "The manufacturer sticker"], "correct": 1, "why": "Bent or unlocked spreader bars are the most common stepladder failure. Both bars must open fully and lock. A bent or missing spreader bar means the ladder is out of service."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 8, "section_title": "Setting up the ladder", "title": "Setting up the ladder", "eyebrow": "Section 3 \u2014 How", "icon": "wrench", "accent": "blue", "subtitle": "", "audio_text": "Setting up the ladder.", "id": "setting-up-the-ladder", "audio": "audio/setting-up-the-ladder.mp3"}, {"kind": "block", "section_idx": 8, "section_title": "Setting up the ladder", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "The 4-to-1 rule \u2014 the most important set-up rule", "body": "For every 4 ft up, move the base 1 ft out. That gives an angle of about 75 degrees from horizontal. BC OHS Reg s. 13.5(a) requires this approximate 75-degree angle.", "bullets": null, "audio_text": "The 4-to-1 rule \u2014 the most important set-up rule For every 4 ft up, move the base 1 ft out. That gives an angle of about 75 degrees from horizontal. BC OHS Reg s. 13.5(a) requires this approximate 75-degree angle.", "id": "the-4-to-1-rule-the-most-important-set-up-rule-for-every-4-f", "audio": "audio/the-4-to-1-rule-the-most-important-set-up-rule-for-every-4-f.mp3"}, {"kind": "block", "section_idx": 8, "section_title": "Setting up the ladder", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "The fingertip test", "body": "Stand at the foot of the ladder with your toes touching the rails and your arms straight out at shoulder height. Your fingertips should just touch the rungs. If you cannot reach, it is too steep. If your palms wrap around, it is too shallow.", "bullets": null, "audio_text": "The fingertip test Stand at the foot of the ladder with your toes touching the rails and your arms straight out at shoulder height. Your fingertips should just touch the rungs. If you cannot reach, it is too steep. If your palms wrap around, it is too shallow.", "id": "the-fingertip-test-stand-at-the-foot-of-the-ladder-with-your", "audio": "audio/the-fingertip-test-stand-at-the-foot-of-the-ladder-with-your.mp3"}, {"kind": "block", "section_idx": 8, "section_title": "Setting up the ladder", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Base \u2014 firm and level", "body": "", "bullets": ["All feet flat on the ground", "Use a stabilizer or mud sill on soft or uneven ground", "Never use boxes, blocks, or other objects to gain height", "Do not set up on a vehicle or tank top unless it is specifically rated for it"], "audio_text": "Base \u2014 firm and level All feet flat on the ground Use a stabilizer or mud sill on soft or uneven ground Never use boxes, blocks, or other objects to gain height Do not set up on a vehicle or tank top unless it is specifically rated for it", "id": "base-firm-and-level-all-feet-flat-on-the-ground-use-a-stabil", "audio": "audio/base-firm-and-level-all-feet-flat-on-the-ground-use-a-stabil.mp3"}, {"kind": "block", "section_idx": 8, "section_title": "Setting up the ladder", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Top and projection \u2014 secured with a hand-hold", "body": "", "bullets": ["The top must rest against a solid surface \u2014 not a window, door, eavestrough, or panel; both rails must contact it", "Tie off the top to a fixed point; if you cannot tie off, block the bottom or have a worker foot it", "For access to an upper landing, the rails must extend at least 1 m (3 ft) above the landing for a hand-hold (s. 13.5(b))", "Clear the area \u2014 lock out doorways, watch for overhead lines, and keep the drop zone below clear"], "audio_text": "Top and projection \u2014 secured with a hand-hold The top must rest against a solid surface \u2014 not a window, door, eavestrough, or panel; both rails must contact it Tie off the top to a fixed point; if you cannot tie off, block the bottom or have a worker foot it For access to an upper landing, the rails must extend at least 1 m (3 ft) above the landing for a hand-hold (s. 13.5(b)) Clear the area \u2014 lock out doorways, watch for overhead lines, and keep the drop zone below clear", "id": "top-and-projection-secured-with-a-hand-hold-the-top-must-res", "audio": "audio/top-and-projection-secured-with-a-hand-hold-the-top-must-res.mp3"}, {"kind": "section_intro", "section_idx": 9, "section_title": "Climbing and working safely", "title": "Climbing and working safely", "eyebrow": "Section 3 \u2014 How", "icon": "shield", "accent": "blue", "subtitle": "", "audio_text": "Climbing and working safely.", "id": "climbing-and-working-safely", "audio": "audio/climbing-and-working-safely.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "Climbing and working safely", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "3-point contact, always", "body": "Keep three points of contact at all times: two hands and one foot, OR two feet and one hand. Most ladder falls happen during the climb or descent \u2014 not while working at height. Slow down on the climb.", "bullets": null, "audio_text": "3-point contact, always Keep three points of contact at all times: two hands and one foot, OR two feet and one hand. Most ladder falls happen during the climb or descent \u2014 not while working at height. Slow down on the climb.", "id": "3-point-contact-always-keep-three-points-of-contact-at-all-t", "audio": "audio/3-point-contact-always-keep-three-points-of-contact-at-all-t.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "Climbing and working safely", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "What 3-point contact means in practice", "body": "", "bullets": ["Face the ladder going up AND down", "Do not carry tools or material in your hands \u2014 use a tool belt, pouch, or hand line", "Move only one limb at a time, rung by rung \u2014 do not skip rungs", "Grip the rungs, not the side rails, so your hand holds if your foot slips", "Wear footwear with clean, dry, slip-resistant soles"], "audio_text": "What 3-point contact means in practice Face the ladder going up AND down Do not carry tools or material in your hands \u2014 use a tool belt, pouch, or hand line Move only one limb at a time, rung by rung \u2014 do not skip rungs Grip the rungs, not the side rails, so your hand holds if your foot slips Wear footwear with clean, dry, slip-resistant soles", "id": "what-3-point-contact-means-in-practice-face-the-ladder-going", "audio": "audio/what-3-point-contact-means-in-practice-face-the-ladder-going.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "Climbing and working safely", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Do not overreach", "body": "", "bullets": ["Keep your belt buckle between the rails \u2014 move the ladder if you need to reach further", "Never lean past the rails; you will tip the ladder sideways", "Do not stand on the top 4 rungs of an extension ladder, or the top 2 steps of a stepladder", "Never use a stepladder folded against a wall \u2014 it loses about 75% of its capacity", "Take a break before you get tired; fatigue causes overreach"], "audio_text": "Do not overreach Keep your belt buckle between the rails \u2014 move the ladder if you need to reach further Never lean past the rails; you will tip the ladder sideways Do not stand on the top 4 rungs of an extension ladder, or the top 2 steps of a stepladder Never use a stepladder folded against a wall \u2014 it loses about 75% of its capacity Take a break before you get tired; fatigue causes overreach", "id": "do-not-overreach-keep-your-belt-buckle-between-the-rails-mov", "audio": "audio/do-not-overreach-keep-your-belt-buckle-between-the-rails-mov.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "Climbing and working safely", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "PPE and fall protection", "body": "", "bullets": ["Slip-resistant footwear, free of mud, oil, and grease; steel-toe on industrial sites", "Hard hat on all sites \u2014 a dropped tool from 3 m can be fatal", "Tool belt or hand line for tools; never carry heavy or bulky items by hand", "Fall protection is required when there is a risk of falling 3 m (10 ft) or more, or a lesser height where injury is likely (BC OHS Reg s. 11.2)"], "audio_text": "PPE and fall protection Slip-resistant footwear, free of mud, oil, and grease; steel-toe on industrial sites Hard hat on all sites \u2014 a dropped tool from 3 m can be fatal Tool belt or hand line for tools; never carry heavy or bulky items by hand Fall protection is required when there is a risk of falling 3 m (10 ft) or more, or a lesser height where injury is likely (BC OHS Reg s. 11.2)", "id": "ppe-and-fall-protection-slip-resistant-footwear-free-of-mud-", "audio": "audio/ppe-and-fall-protection-slip-resistant-footwear-free-of-mud-.mp3"}, {"kind": "section_intro", "section_idx": 10, "section_title": "Real-world scenarios", "title": "Real-world scenarios", "eyebrow": "Section 4 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "subtitle": "Four situations you may run into on the job. Read the situation, think about your move, then check.", "audio_text": "Real-world scenarios. Four situations you may run into on the job. Read the situation, think about your move, then check.", "id": "real-world-scenarios-four-situations-you-may-run-into-on-the", "audio": "audio/real-world-scenarios-four-situations-you-may-run-into-on-the.mp3"}, {"kind": "scenario", "section_idx": 10, "section_title": "Real-world scenarios", "scenario": {"title": "Scenario 1 \u2014 Tank-top sampling, wind picks up", "situation": "You set up a 4 m extension ladder against a frac tank, tied off the top, took your sample, and started back down. Halfway down, a strong wind gust comes up and the ladder shifts under you. Both feet are on a rung.", "question": "What do you do?", "answer_headline": "Stop. Hold tight with both hands. Wait it out.", "bullets": ["Keep 3-point contact \u2014 two feet on the rung, both hands gripping the rungs", "Stay still until the gust passes; do not rush down in the middle of it", "Once stable, descend slowly and carefully", "On the ground, re-assess the wind before going back up", "If wind is sustained above 40 km/h, postpone and talk to your supervisor about a different access"]}, "audio_text": "Scenario 1 \u2014 Tank-top sampling, wind picks up. You set up a 4 m extension ladder against a frac tank, tied off the top, took your sample, and started back down. Halfway down, a strong wind gust comes up and the ladder shifts under you. Both feet are on a rung. What do you do? The right answer: Stop. Hold tight with both hands. Wait it out.", "id": "scenario-1-tank-top-sampling-wind-picks-up-you-set-up-a-4-m-", "audio": "audio/scenario-1-tank-top-sampling-wind-picks-up-you-set-up-a-4-m-.mp3"}, {"kind": "scenario", "section_idx": 10, "section_title": "Real-world scenarios", "scenario": {"title": "Scenario 2 \u2014 Co-worker using a stepladder backwards", "situation": "In the shop you see a co-worker on a 6 ft stepladder set up backwards \u2014 climbing the back rails with the steps facing away \u2014 reaching up to change a bulb. They say, 'Relax, it will only take a minute.'", "question": "What do you do?", "answer_headline": "Speak up. Climbing the back rails is a known fall.", "bullets": ["Tell them to come down \u2014 politely but firmly", "Set the ladder up the right way: steps facing them, both spreaders locked", "Get a taller stepladder if 6 ft is not enough \u2014 one minute is not worth a fall", "Looking out for each other is part of your worker responsibilities", "If they refuse to come down, tell your supervisor \u2014 do not walk away"]}, "audio_text": "Scenario 2 \u2014 Co-worker using a stepladder backwards. In the shop you see a co-worker on a 6 ft stepladder set up backwards \u2014 climbing the back rails with the steps facing away \u2014 reaching up to change a bulb. They say, 'Relax, it will only take a minute.' What do you do? The right answer: Speak up. Climbing the back rails is a known fall.", "id": "scenario-2-co-worker-using-a-stepladder-backwards-in-the-sho", "audio": "audio/scenario-2-co-worker-using-a-stepladder-backwards-in-the-sho.mp3"}, {"kind": "scenario", "section_idx": 10, "section_title": "Real-world scenarios", "scenario": {"title": "Scenario 3 \u2014 Ladder rated less than the load", "situation": "You weigh 240 lb. With your tool belt, hard hat, harness, and a 25 lb test kit, you will carry about 290 lb up. The only ladder on site is a Grade 1 (250 lb max). Your supervisor says, 'It is just a 10-minute job, send it up.'", "question": "What do you do?", "answer_headline": "Stop. The ladder is the wrong tool for this load.", "bullets": ["Total load (290 lb) exceeds the rated capacity (250 lb) \u2014 a code violation and a likely failure point", "Get a Grade 1A (300 lb) or Grade 1AA (375 lb) ladder", "If none is available, stop the task and talk to the supervisor about the right equipment", "You have the right to refuse unsafe work \u2014 document the refusal", "Hoist the test kit up separately on a hand line once the right ladder is in place"]}, "audio_text": "Scenario 3 \u2014 Ladder rated less than the load. You weigh 240 lb. With your tool belt, hard hat, harness, and a 25 lb test kit, you will carry about 290 lb up. The only ladder on site is a Grade 1 (250 lb max). Your supervisor says, 'It is just a 10-minute job, send it up.' What do you do? The right answer: Stop. The ladder is the wrong tool for this load.", "id": "scenario-3-ladder-rated-less-than-the-load-you-weigh-240-lb-", "audio": "audio/scenario-3-ladder-rated-less-than-the-load-you-weigh-240-lb-.mp3"}, {"kind": "scenario", "section_idx": 10, "section_title": "Real-world scenarios", "scenario": {"title": "Scenario 4 \u2014 Ladder near electrical", "situation": "You need to reach a control panel 4 m up on a wall. The only ladder on site is a 5 m aluminum extension ladder. An energized 220 V overhead service drop runs about 2 m to the side of where you would set up.", "question": "What do you do?", "answer_headline": "Do not use the aluminum ladder. Get a fibreglass one.", "bullets": ["BC OHS Reg s. 13.6(2) \u2014 a metal ladder must not be used where contact with an energized conductor is possible", "Minimum approach distance for under 750 V is 1 m; higher voltages need much more (Schedule 21A)", "If setting up, climbing, or losing balance could bring the ladder within reach of the line, it is too close", "Use a fibreglass ladder, OR have the line de-energized and confirmed before you set up", "If neither option is available, stop the task and talk to your supervisor"]}, "audio_text": "Scenario 4 \u2014 Ladder near electrical. You need to reach a control panel 4 m up on a wall. The only ladder on site is a 5 m aluminum extension ladder. An energized 220 V overhead service drop runs about 2 m to the side of where you would set up. What do you do? The right answer: Do not use the aluminum ladder. Get a fibreglass one.", "id": "scenario-4-ladder-near-electrical-you-need-to-reach-a-contro", "audio": "audio/scenario-4-ladder-near-electrical-you-need-to-reach-a-contro.mp3"}];  // expanded list of slides — one entry per visible slide
+
+// Apply brand CSS variables
+const r = document.documentElement;
+r.style.setProperty('--brand-primary', BRAND.colors.primary);
+r.style.setProperty('--brand-primary-dark', BRAND.colors.primary_dark);
+r.style.setProperty('--brand-navy', BRAND.colors.navy);
+r.style.setProperty('--brand-darkblue', BRAND.colors.darkblue);
+r.style.setProperty('--brand-accent', BRAND.colors.accent);
+r.style.setProperty('--brand-red', BRAND.colors.red);
+r.style.setProperty('--brand-green', BRAND.colors.green);
+r.style.setProperty('--brand-purple', BRAND.colors.purple);
+document.title = (CONTENT.meta.topic || 'Training') + ' — ' + BRAND.client_name;
+
+const ACCENTS = { blue: BRAND.colors.primary, amber: BRAND.colors.accent, red: BRAND.colors.red, green: BRAND.colors.green, purple: BRAND.colors.purple, darkblue: BRAND.colors.darkblue };
+const ICONS = {
+  alert: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-20H6.5A2.5 2.5 0 004 4.5v15z"/>',
+  users: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/>',
+  video: '<path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/>',
+  flask: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>',
+  file: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/>',
+  beaker: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6M6 14h12"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+  clipboard: '<path d="M9 2h6a2 2 0 012 2v2H7V4a2 2 0 012-2zM5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  award: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>',
+  shieldcheck: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'
+};
+
+let state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+
+function svg(path, color) { return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
+function escapeHtml(s) { if (s == null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  state.screen = name;
+  // Pause any playing audio when changing screens
+  const aud = document.getElementById('slide-audio');
+  if (aud) { aud.pause(); aud.currentTime = 0; }
+}
+
+function renderIntroMeta() {
+  document.getElementById('brand-eyebrow').textContent = BRAND.tagline || (BRAND.client_name + ' E-LEARNING');
+  document.getElementById('module-code').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' · ' + CONTENT.meta.version : '');
+  document.getElementById('intro-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('intro-subtitle').textContent = CONTENT.meta.subtitle || '';
+  document.getElementById('topbar-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('quiz-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('r-module').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' ' + CONTENT.meta.version : '');
+  document.getElementById('result-footer').textContent = CONTENT.meta.regulation_alignment ? 'Aligned with ' + CONTENT.meta.regulation_alignment : '';
+
+  const pills = [
+    { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', label: 'Duration', value: CONTENT.meta.duration || '~30 min' },
+    { icon: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>', label: 'Pass mark', value: (CONTENT.meta.pass_mark_pct || 70) + '%' },
+    { icon: '<path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>', label: 'Slides', value: SLIDES.length },
+    { icon: '<path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14"/>', label: 'Audio', value: SLIDES.some(s => s.audio) ? 'Voiceover' : 'Read-only' }
+  ];
+  document.getElementById('meta-grid').innerHTML = pills.map(p => '<div class="meta-pill"><div class="icon">' + svg(p.icon) + '</div><div><div class="label">' + escapeHtml(p.label) + '</div><div class="value">' + escapeHtml(p.value) + '</div></div></div>').join('');
+
+  document.getElementById('learning-objectives').innerHTML = (CONTENT.meta.what_you_will_learn || []).map(o => '<li>' + escapeHtml(o) + '</li>').join('');
+  document.getElementById('footer-tracking-note').textContent = trackingEnabled() ? 'Your completion will be recorded with ' + BRAND.client_short + '.' : 'Print or save your certificate when you finish.';
+}
+
+function renderSlide() {
+  const slide = SLIDES[state.slideIdx];
+  if (!slide) return;
+  const total = SLIDES.length, progress = ((state.slideIdx + 1) / (total + 1)) * 100;
+
+  document.getElementById('slide-counter').textContent = slide.section_title || '';
+  document.getElementById('progress-pct').textContent = (state.slideIdx + 1) + ' / ' + total;
+  document.getElementById('progress-fill').style.width = progress + '%';
+
+  let html = '';
+  const slideKind = slide.kind;
+  if (slideKind === 'section_intro') html = renderSectionIntro(slide);
+  else if (slideKind === 'block') html = renderBlockSlide(slide);
+  else if (slideKind === 'video') html = renderVideoSlide(slide);
+  else if (slideKind === 'pictograms') html = renderPictogramsSlide(slide);
+  else if (slideKind === 'chemcard') html = renderChemCardSlide(slide);
+  else if (slideKind === 'scenario') html = renderScenarioSlide(slide);
+  else if (slideKind === 'midcheck_q') html = renderMidCheckQSlide(slide);
+
+  document.getElementById('slide-body').innerHTML = html;
+  attachMidCheckHandlers();
+
+  // Audio — autoplay each slide's narration. Browsers permit this after the learner's
+  // first interaction (Begin / Continue clicks); if blocked, the visible Play control still works.
+  const audioEl = document.getElementById('slide-audio');
+  const audioContainer = document.getElementById('audio-container');
+  if (slide.audio) {
+    audioEl.src = slide.audio;
+    audioContainer.classList.remove('empty');
+    audioEl.currentTime = 0;
+    const _p = audioEl.play();
+    if (_p && _p.catch) _p.catch(() => {});
+  } else {
+    audioEl.removeAttribute('src');
+    audioContainer.classList.add('empty');
+  }
+
+  // Nav
+  document.getElementById('btn-prev').disabled = state.slideIdx === 0;
+  const isLast = state.slideIdx === total - 1;
+  document.getElementById('btn-next').innerHTML = (isLast ? 'Final quiz' : 'Continue') + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+
+  // Scroll the slide content area to top
+  const sc = document.querySelector('#screen-learn .slide-content');
+  if (sc) sc.scrollTop = 0;
+}
+
+function renderSectionIntro(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="section-intro"><div class="icon-big" style="background:' + ac + '">' + svg(ICONS[slide.icon] || ICONS.book, '#fff') + '</div>' +
+    '<div class="eyebrow-text" style="color:' + ac + '">' + escapeHtml(slide.eyebrow || '') + '</div>' +
+    '<h2>' + escapeHtml(slide.title) + '</h2>' +
+    (slide.subtitle ? '<p class="subtitle">' + escapeHtml(slide.subtitle) + '</p>' : '') + '</div>';
+}
+
+function renderBlockSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    (slide.eyebrow ? '<div class="block-eyebrow" style="color:' + ac + '">' + escapeHtml(slide.eyebrow) + '</div>' : '') +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading) + '</h3>' +
+    (slide.body ? '<p class="block-body">' + escapeHtml(slide.body) + '</p>' : '') +
+    (slide.bullets ? '<ul class="block-bullets">' + slide.bullets.map(bl => '<li><svg viewBox="0 0 24 24" style="color:' + ac + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>' + escapeHtml(bl) + '</span></li>').join('') + '</ul>' : '') + '</div>';
+}
+
+function renderVideoSlide(slide) {
+  const url = slide.video_url || '#';
+  return '<div class="video-card"><div class="video-thumb"><div class="video-play-btn" onclick="window.open(' + JSON.stringify(url) + ', \'_blank\', \'noopener\')"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><h3>' + escapeHtml(slide.video_title || '') + '</h3><p>' + escapeHtml(slide.video_source || '') + ' · ' + escapeHtml(slide.video_duration || '') + '</p></div><div class="video-action"><div class="video-action-info"><strong>Click to watch</strong><span>Opens in a new tab</span></div><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener" class="btn-yt">Watch on YouTube <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a></div></div>';
+}
+
+function renderPictogramsSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading || 'Pictograms') + '</h3>' +
+    (slide.intro ? '<p class="block-body">' + escapeHtml(slide.intro) + '</p>' : '') +
+    '<div class="picto-grid">' + slide.items.map(p => '<div class="picto-cell"><img src="' + (p.image_data || p.image || '') + '" alt="' + escapeHtml(p.label) + '"><div class="picto-label">' + escapeHtml(p.label) + '</div><div class="picto-sub">' + escapeHtml(p.sub || '') + '</div></div>').join('') + '</div></div>';
+}
+
+function renderChemCardSlide(slide) {
+  const c = slide.card;
+  const sigColor = c.signal === 'DANGER' ? ACCENTS.red : ACCENTS.amber;
+  const rowColors = { 'EXPOSURE LIMITS': ACCENTS.amber, 'PPE': ACCENTS.blue, 'FIRST AID': ACCENTS.green, 'SPILL': ACCENTS.purple, 'STORAGE': ACCENTS.darkblue };
+  return '<div class="chem-card"><div class="chem-card-header"><div class="chem-pictos-row">' +
+    (c.pictogram_data || []).map(p => '<img src="' + p + '" alt="">').join('') +
+    '<span class="signal-badge" style="background:' + sigColor + '">' + escapeHtml(c.signal || '') + '</span></div>' +
+    '<div class="chem-card-name">' + escapeHtml(c.name) + '</div><div class="chem-card-full">' + escapeHtml(c.full_name || '') + (c.supplier ? ' · ' + escapeHtml(c.supplier) : '') + '</div>' +
+    '<div class="chem-haz">' + escapeHtml(c.hazard_summary || '') + '</div></div>' +
+    (c.rows || []).map(row => {
+      const rc = rowColors[row.label] || ACCENTS.blue;
+      return '<div class="chem-row"><div class="chem-row-label" style="background:' + rc + '">' + escapeHtml(row.label) + '</div><div class="chem-row-items"><ul>' +
+        row.items.map(it => '<li><span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:' + rc + ';margin-top:7px;margin-right:6px;flex-shrink:0;"></span>' + escapeHtml(it) + '</li>').join('') + '</ul></div></div>';
+    }).join('') + '</div>';
+}
+
+function renderScenarioSlide(slide) {
+  const sc = slide.scenario;
+  return '<div class="scenario"><div class="scenario-title">' + escapeHtml(sc.title) + '</div><div class="scenario-grid">' +
+    '<div class="scenario-side scenario-situation"><div class="scenario-eyebrow" style="color:' + ACCENTS.blue + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.blue + '"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Situation</div><p class="scenario-text">' + escapeHtml(sc.situation) + '</p><p class="scenario-question">' + escapeHtml(sc.question) + '</p></div>' +
+    '<div class="scenario-side scenario-answer"><div class="scenario-eyebrow" style="color:' + ACCENTS.green + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.green + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Right answer</div><p class="scenario-headline">' + escapeHtml(sc.answer_headline) + '</p><ul class="scenario-bullets">' + (sc.bullets || []).map(b => '<li>' + escapeHtml(b) + '</li>').join('') + '</ul></div></div></div>';
+}
+
+function renderMidCheckQSlide(slide) {
+  const q = slide.q, key = slide.key;
+  const ans = state.midAnswers[key], answered = ans !== undefined;
+  return '<div class="kc-banner"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><p><strong>Quick check.</strong> You\'ll see the answer right away — won\'t count against your final quiz.</p></div>' +
+    '<div class="q-card"><div class="q-text">' + escapeHtml(q.q) + '</div><div class="q-options">' +
+    q.options.map((opt, oi) => {
+      let cls = 'q-option';
+      if (answered) { if (oi === q.correct) cls += ' correct'; else if (ans === oi) cls += ' incorrect'; }
+      const checkSvg = answered && oi === q.correct ? '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>' : '';
+      return '<button class="' + cls + '" data-mid="' + key + '" data-opt="' + oi + '" ' + (answered ? 'disabled' : '') + '><span>' + escapeHtml(opt) + '</span>' + checkSvg + '</button>';
+    }).join('') + '</div>' +
+    (answered ? '<div class="feedback ' + (ans === q.correct ? 'right' : 'wrong') + '"><strong>' + (ans === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+}
+
+function attachMidCheckHandlers() {
+  document.querySelectorAll('[data-mid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.mid, opt = parseInt(btn.dataset.opt);
+      if (state.midAnswers[key] !== undefined) return;
+      state.midAnswers[key] = opt;
+      renderSlide();
+    });
+  });
+}
+
+function renderQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  document.getElementById('quiz-instructions').textContent = quiz.length + ' questions. ' + (CONTENT.meta.pass_mark_pct || 70) + '% to pass (' + passN + '/' + quiz.length + ').';
+  document.getElementById('quiz-questions').innerHTML = quiz.map((q, i) => {
+    return '<div class="quiz-q"><div><span style="font-size:11px;font-weight:700;color:var(--brand-primary);">Q' + (i + 1) + '.</span> <span style="font-weight:600;">' + escapeHtml(q.q) + '</span></div><div class="q-options" style="margin-top:14px;">' +
+      q.options.map((opt, j) => {
+        let cls = 'q-option';
+        if (state.quizSubmitted) { if (j === q.correct) cls += ' correct'; else if (state.quizAnswers[i] === j) cls += ' incorrect'; }
+        else if (state.quizAnswers[i] === j) cls += ' selected';
+        return '<button class="' + cls + '" data-q="' + i + '" data-opt="' + j + '" ' + (state.quizSubmitted ? 'disabled' : '') + '><span class="letter">' + String.fromCharCode(65 + j) + '.</span><span style="flex:1;">' + escapeHtml(opt) + '</span></button>';
+      }).join('') + '</div>' +
+      (state.quizSubmitted && q.why ? '<div class="feedback ' + (state.quizAnswers[i] === q.correct ? 'right' : 'wrong') + '" style="margin-top:12px;"><strong>' + (state.quizAnswers[i] === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+  }).join('');
+  document.querySelectorAll('#quiz-questions [data-q]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.quizSubmitted) return;
+      state.quizAnswers[parseInt(btn.dataset.q)] = parseInt(btn.dataset.opt);
+      renderQuiz();
+      checkQuizComplete();
+    });
+  });
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  const all = (CONTENT.quiz || []).every((_, i) => state.quizAnswers[i] !== undefined);
+  document.getElementById('btn-submit-quiz').disabled = !all;
+}
+
+function submitQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  let s = 0;
+  quiz.forEach((q, i) => { if (state.quizAnswers[i] === q.correct) s++; });
+  state.score = s; state.passed = s >= passN; state.quizSubmitted = true;
+  renderResult(); showScreen('result');
+  if (trackingEnabled()) sendCompletion();
+}
+
+function renderResult() {
+  const passed = state.passed, quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  const pct = Math.round((state.score / quiz.length) * 100);
+  document.querySelector('#screen-result .result-bg').className = 'result-bg ' + (passed ? 'passed' : 'failed');
+  document.getElementById('result-icon').className = 'result-icon ' + (passed ? 'pass' : 'fail');
+  document.getElementById('result-icon').innerHTML = passed ? svg(ICONS.award) : svg('<path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15A9 9 0 0018.36 18.36L23 14"/>');
+  document.getElementById('result-title').textContent = passed ? 'Module complete' : 'Not quite there';
+  document.getElementById('result-subtitle').textContent = passed ? 'You have successfully completed this training module.' : 'You need ' + passN + ' out of ' + quiz.length + ' correct to pass. Review and try again.';
+  document.getElementById('r-name').textContent = state.learnerName;
+  document.getElementById('r-employer').textContent = state.employer;
+  document.getElementById('r-score').textContent = state.score + ' / ' + quiz.length + ' (' + pct + '%)';
+  const rResult = document.getElementById('r-result');
+  rResult.textContent = passed ? 'PASSED' : 'FAILED';
+  rResult.style.color = passed ? ACCENTS.green : ACCENTS.amber;
+  document.getElementById('r-date').textContent = new Date().toLocaleString('en-CA');
+  document.getElementById('btn-retry').style.display = passed ? 'none' : 'inline-flex';
+}
+
+function setTrackingStatus(status, msg) {
+  const el = document.getElementById('tracking-status');
+  el.className = 'tracking-status ' + status; el.textContent = msg;
+}
+// Tracking is "enabled" only when real config is present — placeholders (containing "__")
+// leave it disabled so the module still works and just shows the print-certificate note.
+function trackingEnabled() {
+  const t = CONTENT.tracking || {};
+  if (t.provider === 'supabase') {
+    return /^https?:\/\//.test(t.supabase_url || '') && !!t.anon_key && !!t.token &&
+           (t.supabase_url.indexOf('__') === -1) && (String(t.token).indexOf('__') === -1);
+  }
+  return !!t.endpoint && t.endpoint.indexOf('__') === -1;
+}
+function sendCompletion() {
+  const t = CONTENT.tracking || {};
+  const total = (CONTENT.quiz || []).length;
+  const pct = total ? Math.round((state.score / total) * 100) : 0;
+  setTrackingStatus('pending', '⟳ Saving completion record...');
+  if (t.provider === 'supabase') {
+    // Strawboss-compatible path: call a SECURITY DEFINER RPC. The anon key is public by
+    // design; the per-course token scopes what can be written (company + course).
+    const url = t.supabase_url.replace(/\/+$/, '') + '/rest/v1/rpc/submit_course_completion';
+    fetch(url, {
+      method: 'POST',
+      headers: { 'apikey': t.anon_key, 'Authorization': 'Bearer ' + t.anon_key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        p_token: t.token,
+        p_worker_name: state.learnerName,
+        p_worker_email: state.workerEmail || null,
+        p_employer: state.employer,
+        p_score: state.score, p_total: total, p_pct: pct, p_passed: state.passed
+      })
+    }).then(res => {
+      if (res.ok) setTrackingStatus('ok', '✓ Completion recorded.');
+      else setTrackingStatus('fail', '⚠ Could not save record (' + res.status + '). Screenshot this page for your supervisor.');
+    }).catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  } else {
+    // Legacy path: generic endpoint (e.g. Google Apps Script), fire-and-forget.
+    const payload = {
+      module: t.module_id || ((CONTENT.meta.code || '') + ' ' + (CONTENT.meta.version || '')),
+      name: state.learnerName, employer: state.employer,
+      score: state.score, total: total, pct: pct,
+      passed: state.passed, timestamp: new Date().toISOString()
+    };
+    fetch(t.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload), mode: 'no-cors' })
+      .then(() => setTrackingStatus('ok', '✓ Completion record saved.'))
+      .catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  }
+}
+
+// Wire up
+function refreshStartButton() {
+  const name = document.getElementById('learner-name').value.trim();
+  const emp = document.getElementById('employer').value.trim();
+  document.getElementById('btn-start').disabled = !(name && emp);
+}
+document.getElementById('learner-name').addEventListener('input', refreshStartButton);
+document.getElementById('employer').addEventListener('input', refreshStartButton);
+document.getElementById('btn-start').addEventListener('click', () => {
+  state.learnerName = document.getElementById('learner-name').value.trim();
+  state.employer = document.getElementById('employer').value.trim();
+  state.slideIdx = 0;
+  showScreen('learn'); renderSlide();
+});
+document.getElementById('btn-prev').addEventListener('click', () => { if (state.slideIdx > 0) { state.slideIdx--; renderSlide(); } });
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (state.slideIdx < SLIDES.length - 1) { state.slideIdx++; renderSlide(); }
+  else { showScreen('quiz'); renderQuiz(); }
+});
+document.getElementById('btn-submit-quiz').addEventListener('click', submitQuiz);
+document.getElementById('btn-retry').addEventListener('click', () => { state.quizAnswers = {}; state.quizSubmitted = false; state.score = 0; showScreen('quiz'); renderQuiz(); });
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+document.getElementById('btn-restart').addEventListener('click', () => {
+  state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+  document.getElementById('learner-name').value = '';
+  document.getElementById('employer').value = '';
+  refreshStartButton(); showScreen('intro');
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (state.screen !== 'learn') return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); document.getElementById('btn-next').click(); }
+  else if (e.key === 'ArrowLeft') { document.getElementById('btn-prev').click(); }
+});
+
+renderIntroMeta();
+</script>
+</body>
+</html>

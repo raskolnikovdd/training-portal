@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Safety Training</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #F8FAFC; color: #0F172A; line-height: 1.5; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+button { font-family: inherit; cursor: pointer; border: none; }
+a { color: var(--brand-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* INTRO screen — full viewport, centered */
+.intro-bg { flex: 1; padding: 16px; background: linear-gradient(135deg, var(--brand-darkblue) 0%, var(--brand-navy) 50%, var(--brand-darkblue) 100%); display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.intro-card { max-width: 600px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 28px; }
+.intro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.brand-shield { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-shrink: 0; }
+.brand-shield svg { width: 24px; height: 24px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.brand-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary); }
+.brand-sub { font-size: 11px; color: #64748B; margin-top: 2px; }
+.intro-title { font-size: 36px; font-weight: 700; margin-bottom: 4px; letter-spacing: -1px; }
+.intro-subtitle { font-size: 15px; color: #475569; margin-bottom: 20px; }
+.meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+.meta-pill { display: flex; align-items: center; gap: 8px; padding: 10px; background: #F1F5F9; border-radius: 10px; }
+.meta-pill .icon { width: 28px; height: 28px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.meta-pill .icon svg { width: 12px; height: 12px; color: var(--brand-primary); fill: none; stroke: currentColor; stroke-width: 2; }
+.meta-pill .label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #64748B; }
+.meta-pill .value { font-size: 12px; font-weight: 700; color: #0F172A; }
+.intro-info { background: #EFF6FB; border: 1px solid #C5DEEC; border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+.intro-info .info-title { font-size: 12px; font-weight: 700; color: var(--brand-darkblue); margin-bottom: 8px; }
+.intro-info ul { list-style: none; }
+.intro-info li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; }
+.intro-info li::before { content: "✓"; color: var(--brand-primary); font-weight: 700; flex-shrink: 0; }
+.input-row { margin-bottom: 12px; }
+.input-row label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.input-row input { width: 100%; padding: 10px 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-family: inherit; transition: border-color 150ms; }
+.input-row input:focus { outline: none; border-color: var(--brand-primary); }
+.btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dark)); color: #fff; border-radius: 12px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: all 150ms; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.intro-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E8F0; font-size: 11px; color: #64748B; text-align: center; }
+
+/* SLIDE screens — one slide visible at a time, fixed viewport */
+.slide-wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; background: #F8FAFC; }
+.top-bar { background: #fff; border-bottom: 1px solid #E2E8F0; padding: 10px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0; }
+.top-bar-inner { max-width: 900px; margin: 0 auto; }
+.top-bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+.top-bar-left { display: flex; align-items: center; gap: 8px; font-size: 12px; min-width: 0; }
+.top-bar-shield { width: 24px; height: 24px; border-radius: 6px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.top-bar-shield svg { width: 12px; height: 12px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.top-bar-brand { font-weight: 700; letter-spacing: 1px; color: var(--brand-primary); white-space: nowrap; }
+.top-bar-context { color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progress-bar { height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-primary), var(--brand-primary-dark)); transition: width 500ms; }
+
+.slide-content { flex: 1; overflow-y: auto; padding: 24px 16px; display: flex; align-items: flex-start; justify-content: center; }
+.slide-inner { max-width: 760px; width: 100%; }
+
+/* SLIDE — section announcement */
+.section-intro { text-align: center; padding: 32px 16px; }
+.section-intro .icon-big { width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.section-intro .icon-big svg { width: 40px; height: 40px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.section-intro .eyebrow-text { font-size: 12px; font-weight: 700; letter-spacing: 3px; margin-bottom: 8px; }
+.section-intro h2 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.section-intro .subtitle { font-size: 16px; color: #64748B; max-width: 540px; margin: 0 auto; }
+
+/* SLIDE — content block */
+.block-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 32px; }
+.block-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; }
+.block-heading { font-size: 26px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; display: flex; gap: 12px; align-items: flex-start; }
+.block-accent { display: block; width: 5px; min-height: 28px; border-radius: 3px; margin-top: 4px; flex-shrink: 0; }
+.block-body { color: #475569; margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
+.block-bullets { list-style: none; }
+.block-bullets li { display: flex; gap: 12px; padding: 7px 0; font-size: 15px; color: #334155; line-height: 1.55; }
+.block-bullets li svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — pictograms grid (one per slide; or one slide showing the grid) */
+.picto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.picto-cell { text-align: center; padding: 16px; border: 2px solid #F1F5F9; border-radius: 12px; }
+.picto-cell img { width: 64px; height: 64px; margin-bottom: 8px; }
+.picto-label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.picto-sub { font-size: 11px; color: #64748B; line-height: 1.4; }
+
+/* SLIDE — video card */
+.video-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.video-thumb { background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); padding: 40px 24px; text-align: center; color: #fff; }
+.video-play-btn { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; margin-bottom: 12px; cursor: pointer; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+.video-play-btn svg { width: 28px; height: 28px; color: var(--brand-red); fill: currentColor; }
+.video-thumb h3 { font-size: 18px; margin-bottom: 4px; }
+.video-thumb p { font-size: 12px; color: #B0CADE; }
+.video-action { padding: 14px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.video-action-info strong { display: block; font-weight: 600; font-size: 13px; }
+.video-action-info span { color: #64748B; font-size: 12px; }
+.btn-yt { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: var(--brand-red); color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; }
+.btn-yt:hover { background: #A60D26; text-decoration: none; }
+.btn-yt svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — chemical card */
+.chem-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.chem-card-header { padding: 18px 24px; border-bottom: 1px solid #F1F5F9; }
+.chem-pictos-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.chem-pictos-row img { width: 40px; height: 40px; }
+.signal-badge { display: inline-block; padding: 5px 10px; border-radius: 6px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.chem-card-name { font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+.chem-card-full { font-size: 11px; color: #64748B; font-style: italic; margin-bottom: 10px; }
+.chem-haz { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #475569; }
+.chem-row { display: grid; grid-template-columns: 140px 1fr; border-top: 1px solid #F1F5F9; }
+.chem-row-label { padding: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; }
+.chem-row-items { padding: 12px 14px; }
+.chem-row-items ul { list-style: none; }
+.chem-row-items li { display: flex; gap: 8px; padding: 2px 0; font-size: 12px; color: #334155; align-items: flex-start; }
+
+/* SLIDE — scenario */
+.scenario { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.scenario-title { padding: 12px 18px; color: #fff; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); }
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.scenario-side { padding: 20px; }
+.scenario-situation { border-right: 1px solid #F1F5F9; }
+.scenario-answer { background: #EAF7EE; }
+.scenario-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; display: flex; gap: 6px; align-items: center; }
+.scenario-eyebrow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+.scenario-text { font-size: 12px; color: #334155; margin-bottom: 12px; line-height: 1.6; }
+.scenario-question { font-size: 16px; font-weight: 700; }
+.scenario-headline { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.scenario-bullets { list-style: none; }
+.scenario-bullets li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; line-height: 1.55; }
+.scenario-bullets li::before { content: "✓"; color: var(--brand-green); font-weight: 700; flex-shrink: 0; }
+
+/* SLIDE — knowledge check */
+.kc-banner { background: #EAF7EE; border: 2px solid #9DD8AC; border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+.kc-banner svg { width: 18px; height: 18px; color: var(--brand-green); flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+.kc-banner p { font-size: 12px; color: #334155; }
+.q-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; }
+.q-card .q-num { font-size: 11px; font-weight: 700; color: var(--brand-primary); margin-right: 6px; }
+.q-card .q-text { font-weight: 600; margin-bottom: 12px; line-height: 1.5; font-size: 16px; }
+.q-options { display: flex; flex-direction: column; gap: 6px; }
+.q-option { padding: 10px 14px; border: 2px solid #E2E8F0; border-radius: 8px; background: #fff; text-align: left; font-size: 14px; color: #334155; display: flex; align-items: center; gap: 8px; transition: all 120ms; }
+.q-option:hover { border-color: #94A3B8; }
+.q-option .letter { font-weight: 700; min-width: 20px; }
+.q-option.selected { background: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
+.q-option.correct { background: #EAF7EE; border-color: var(--brand-green); color: #1F6B33; }
+.q-option.incorrect { background: #FBE9EC; border-color: var(--brand-red); color: #8B1A2B; }
+.q-option svg { width: 16px; height: 16px; flex-shrink: 0; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; }
+.feedback { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+.feedback.right { background: #EAF7EE; color: #1F6B33; }
+.feedback.wrong { background: #FFF7E5; color: #8B5500; }
+
+/* QUIZ screen — scrollable, doesn't fit single screen */
+.quiz-screen { flex: 1; overflow-y: auto; padding: 24px 16px; }
+.quiz-inner { max-width: 760px; margin: 0 auto; }
+.quiz-q { border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fff; }
+
+/* RESULT screen */
+.result-bg { flex: 1; padding: 24px 16px; display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.result-bg.passed { background: linear-gradient(135deg, var(--brand-green), #1E8038); }
+.result-bg.failed { background: linear-gradient(135deg, var(--brand-accent), #D08000); }
+.result-card { max-width: 540px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 36px; text-align: center; }
+.result-icon { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.result-icon.pass { background: #EAF7EE; }
+.result-icon.fail { background: #FFF7E5; }
+.result-icon svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+.result-icon.pass svg { color: var(--brand-green); }
+.result-icon.fail svg { color: var(--brand-accent); }
+.result-title { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.result-subtitle { color: #475569; margin-bottom: 20px; font-size: 14px; }
+.result-record { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: left; }
+.result-record .row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 13px; }
+.result-record .row .label { color: #64748B; }
+.result-record .row .value { font-weight: 600; text-align: right; }
+.tracking-status { font-size: 12px; margin: 12px 0; padding: 8px 12px; border-radius: 8px; }
+.tracking-status.ok { background: #EAF7EE; color: #1F6B33; }
+.tracking-status.pending { background: #FFF7E5; color: #8B5500; }
+.tracking-status.fail { background: #FBE9EC; color: #8B1A2B; }
+.result-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.result-buttons button { flex: 1; min-width: 110px; }
+
+/* BOTTOM BAR — audio player + nav, fixed */
+.bottom-bar { background: #fff; border-top: 1px solid #E2E8F0; padding: 10px 16px; flex-shrink: 0; box-shadow: 0 -1px 3px rgba(0,0,0,0.04); }
+.bottom-bar-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.audio-player { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #F1F5F9; border-radius: 10px; }
+.audio-player audio { flex: 1; min-width: 0; height: 32px; }
+.audio-player audio::-webkit-media-controls-panel { background: #F1F5F9; }
+.audio-player.empty { display: none; }
+.btn-nav { padding: 10px 14px; background: #fff; color: #475569; border: 1px solid #CBD5E1; border-radius: 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.btn-nav.next { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
+.btn-nav.next:hover { background: var(--brand-primary-dark); }
+.btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+@media (max-width: 700px) {
+  .scenario-grid { grid-template-columns: 1fr; }
+  .scenario-situation { border-right: none; border-bottom: 1px solid #F1F5F9; }
+  .chem-row { grid-template-columns: 1fr; }
+  .meta-grid { grid-template-columns: 1fr; }
+  .block-card { padding: 24px 20px; }
+  .section-intro h2 { font-size: 28px; }
+  .block-heading { font-size: 22px; }
+  .top-bar-context { display: none; }
+  .btn-nav { padding: 10px 12px; }
+  .btn-nav span { display: none; }
+}
+
+.screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
+.screen.active { display: flex; }
+
+@media print {
+  html, body { overflow: visible; height: auto; }
+  .screen:not(.active), .bottom-bar, .top-bar { display: none !important; }
+  body { background: #fff; display: block; }
+  .result-card { box-shadow: none; border: 2px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div id="screen-intro" class="screen active">
+  <div class="intro-bg">
+    <div class="intro-card">
+      <div class="intro-header">
+        <div class="brand-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <div class="brand-eyebrow" id="brand-eyebrow"></div>
+          <div class="brand-sub" id="module-code"></div>
+        </div>
+      </div>
+      <h1 class="intro-title" id="intro-topic"></h1>
+      <p class="intro-subtitle" id="intro-subtitle"></p>
+      <div class="meta-grid" id="meta-grid"></div>
+      <div class="intro-info">
+        <div class="info-title">What you will learn</div>
+        <ul id="learning-objectives"></ul>
+      </div>
+      <div class="input-row">
+        <label for="learner-name">Your full name</label>
+        <input type="text" id="learner-name" placeholder="e.g. Casey Singh">
+      </div>
+      <div class="input-row">
+        <label for="employer">Employer / Organization</label>
+        <input type="text" id="employer" placeholder="e.g. Refresh Resources">
+      </div>
+      <button id="btn-start" class="btn-primary" disabled>Begin module <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <div class="intro-footer" id="footer-tracking-note"></div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-learn" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="topbar-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span class="top-bar-context" id="slide-counter"></span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600;" id="progress-pct"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div></div>
+  <div class="slide-content"><div class="slide-inner" id="slide-body"></div></div>
+  <div class="bottom-bar"><div class="bottom-bar-inner">
+    <button id="btn-prev" class="btn-nav"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> <span>Previous</span></button>
+    <div id="audio-container" class="audio-player empty">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#64748B" stroke-width="2" style="flex-shrink:0"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+      <audio id="slide-audio" controls preload="none"></audio>
+    </div>
+    <button id="btn-next" class="btn-nav next">Continue <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div></div>
+</div>
+
+<div id="screen-quiz" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="quiz-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span style="color: #475569;">Final quiz</span>
+      </div>
+    </div>
+  </div></div>
+  <div class="quiz-screen"><div class="quiz-inner">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary);">FINAL KNOWLEDGE CHECK</div>
+      <h2 style="font-size: 28px; font-weight: 700; margin: 8px 0;">Quiz</h2>
+      <p style="color: #475569; font-size: 14px;" id="quiz-instructions"></p>
+    </div>
+    <div id="quiz-questions"></div>
+    <button id="btn-submit-quiz" class="btn-primary" style="margin-top: 24px;" disabled>Submit answers</button>
+  </div></div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="result-bg">
+    <div class="result-card">
+      <div class="result-icon" id="result-icon"></div>
+      <h2 class="result-title" id="result-title"></h2>
+      <p class="result-subtitle" id="result-subtitle"></p>
+      <div class="result-record">
+        <div class="row"><div class="label">Name</div><div class="value" id="r-name"></div></div>
+        <div class="row"><div class="label">Employer</div><div class="value" id="r-employer"></div></div>
+        <div class="row"><div class="label">Module</div><div class="value" id="r-module"></div></div>
+        <div class="row"><div class="label">Score</div><div class="value" id="r-score"></div></div>
+        <div class="row"><div class="label">Result</div><div class="value" id="r-result"></div></div>
+        <div class="row"><div class="label">Completed</div><div class="value" id="r-date"></div></div>
+      </div>
+      <div id="tracking-status"></div>
+      <div class="result-buttons">
+        <button id="btn-retry" class="btn-primary" style="display: none;">Retry quiz</button>
+        <button id="btn-print" class="btn-nav" style="justify-content: center;">Print certificate</button>
+        <button id="btn-restart" class="btn-nav" style="justify-content: center;">New learner</button>
+      </div>
+      <p style="font-size: 11px; color: #94A3B8; margin-top: 16px;" id="result-footer"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {"meta": {"topic": "Transportation of Dangerous Goods (TDG)", "subtitle": "Shipping documents and classification basics", "code": "REF-TR-12", "version": "v1.0", "duration": "~30 min", "pass_mark_pct": 70, "regulation_alignment": "Transportation of Dangerous Goods Act & Regulations (TDGR)", "publication_basis": "Refresh TDG toolbox talk + product SDS Section 14", "client": "refresh", "audience_summary": "Refresh Resources field workers who transport product", "what_you_will_learn": ["What TDG is and what your duties are as a driver who handles dangerous goods", "What the shipping document must contain and why it is in the cab", "Classification basics \u2014 class, proper shipping name (PSN), and packing group", "How to read placards and safety marks and confirm they match the load", "What to check before you leave the yard \u2014 and how to verify it against the SDS"]}, "sections": [{"type": "content", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "blocks": [{"heading": "The shipping document is your first line of defense", "body": "Most of what Refresh hauls is TDG-regulated \u2014 totes of peroxide, methanol-containing scavengers, emulsion breaker. If the paperwork is wrong, the rest of the trip can go wrong with it."}, {"heading": "A wrong class or placard is a roadside violation", "body": "If the class, shipping name, or placard does not match what is actually on the truck, you can be put out of service at a roadside inspection. In a spill, responders use that information to keep you and the public safe \u2014 wrong information puts everyone at risk."}, {"heading": "What Refresh transports under TDG", "bullets": ["Totes and drums of OXID16899A (peroxide / PAA blend)", "Methanol-containing scavenger (HSCV20254A)", "Emulsion breaker (EMBR11058A)", "Mixed loads of small consumer-quantity chemicals", "Returned product, contaminated absorbent, or hazardous waste"]}, {"heading": "The one habit that keeps you legal", "body": "Always verify the class, proper shipping name, and packing group against the product SDS (Section 14) and the shipping document before you leave. This single check is the core message of this course."}]}, {"type": "content", "title": "What is TDG?", "eyebrow": "Section 2 \u2014 What", "icon": "book", "accent": "blue", "blocks": [{"heading": "TDG in plain language", "body": "TDG stands for Transportation of Dangerous Goods. It is the federal law that controls how dangerous goods are classified, documented, packaged, marked, and moved on Canadian roads."}, {"heading": "Your duties as a driver", "bullets": ["Hold a current TDG training certificate before you handle, offer for transport, or transport dangerous goods", "Carry the shipping document in the cab where you can reach it", "Make sure placards and safety marks match the load", "Confirm packaging is sound \u2014 no damage, no leaks", "Know what to do if there is a release or accident"]}, {"heading": "No certificate, no load", "body": "Under TDGR Part 6, your road TDG certificate is valid for three years. If it has expired, you do not handle or transport the product until it is renewed."}]}, {"type": "content", "title": "The shipping document", "eyebrow": "Section 2 \u2014 What", "icon": "file", "accent": "purple", "blocks": [{"heading": "What it is", "body": "The shipping document (often called the manifest or bill of lading) is the legal description of the dangerous goods on your truck. It must be in the cab before you leave the yard."}, {"heading": "What it must contain", "bullets": ["UN number (for example, UN3109 for an organic peroxide type F)", "Proper shipping name (PSN)", "Primary class and any subsidiary class", "Packing group", "Quantity of dangerous goods", "24-hour emergency telephone number", "ERAP reference number when one is required"]}, {"heading": "Keep it reachable and keep the record", "bullets": ["Store it within reach of the driver's seat, not buried in the back", "On return, file it properly \u2014 it is the legal record of the transport", "Do not leave it loose in the truck for two weeks"]}]}, {"type": "midcheck", "title": "Quick check \u2014 Duties and the shipping document", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "Your road TDG training certificate expired last month. Can you load and haul a tote of OXID16899A?", "options": ["Yes, as long as a supervisor says it is okay", "No \u2014 no current certificate means you do not handle or transport the product", "Yes, if it is a short trip"], "correct": 1, "why": "TDGR Part 6 requires a current certificate (3-year validity for road) before you handle, offer for transport, or transport dangerous goods. Expired means you do not load."}, {"q": "Where must the shipping document be during the trip?", "options": ["Anywhere in the truck", "In the cab, within reach of the driver's seat", "Emailed to dispatch is enough"], "correct": 1, "why": "The shipping document must be in the cab and reachable from the driver's seat so responders and inspectors can find it quickly."}, {"q": "Which of these is NOT required on the shipping document?", "options": ["Proper shipping name and class", "The driver's home address", "A 24-hour emergency telephone number"], "correct": 1, "why": "The document needs the UN number, PSN, class, packing group, quantity, and a 24-hour emergency number. Your home address is not part of it."}]}, {"type": "content", "title": "Classification basics", "eyebrow": "Section 3 \u2014 How", "icon": "flask", "accent": "blue", "blocks": [{"heading": "Three things describe a dangerous good", "bullets": ["Class \u2014 the type of hazard (for example, Class 3 flammable liquid)", "Proper shipping name (PSN) \u2014 the official name from the TDG list", "Packing group \u2014 how dangerous it is within its class (I high, II medium, III low)"]}, {"heading": "Class and subsidiary risk", "body": "The primary class is the main hazard. Some products also have a subsidiary risk \u2014 a second hazard that still matters. For example, an organic peroxide that is also corrosive carries a subsidiary Class 8."}, {"heading": "Where the right answer lives", "body": "The correct class, PSN, and packing group for each Refresh product are in Section 14 of that product's Safety Data Sheet. Section 14 is the transport section \u2014 it is the source of truth. Always check it against the shipping document before you leave."}]}, {"type": "content", "title": "Refresh product classifications", "eyebrow": "Section 3 \u2014 How", "icon": "beaker", "accent": "darkblue", "blocks": [{"heading": "OXID16899A (peroxide / PAA blend)", "bullets": ["Primary class: Class 5.2 \u2014 Organic Peroxide", "Subsidiary risk: Class 8 (corrosive)", "Packing group: II", "Proper shipping name: ORGANIC PEROXIDE TYPE F, LIQUID"]}, {"heading": "HSCV20254A (methanol-containing scavenger)", "bullets": ["Class: Class 3 only \u2014 Flammable Liquid", "Packing group: III", "Proper shipping name: FLAMMABLE LIQUID, N.O.S.", "No toxic (Class 6.1) subsidiary"]}, {"heading": "EMBR11058A (emulsion breaker)", "bullets": ["Class: Class 3 \u2014 Flammable Liquid", "Packing group: II"]}, {"heading": "Do not classify from memory", "body": "These values come from each product's SDS Section 14. Product formulas and shipping names can change between revisions, so confirm against the current SDS and the shipping document every time."}]}, {"type": "content", "title": "TDG class vs. WHMIS class", "eyebrow": "Section 3 \u2014 How", "icon": "book", "accent": "amber", "blocks": [{"heading": "Two systems, two purposes", "body": "TDG describes the transport hazard for the road. WHMIS describes the workplace hazard on the SDS and the container label. The same product can be named differently in each system \u2014 and both are correct."}, {"heading": "OXID16899A is a good example", "bullets": ["For transport (TDG): Class 5.2 Organic Peroxide, subsidiary 8, PG II", "In the workplace (WHMIS/GHS): an oxidizing liquid that is also corrosive", "For your shipping document and placards, use the TDG values from SDS Section 14"]}, {"heading": "Why this matters on the road", "body": "An inspector checks the TDG class and the placards, not the WHMIS pictograms. Use the transport information from Section 14 for the document and the placards, every time."}]}, {"type": "content", "title": "Placards and safety marks", "eyebrow": "Section 4 \u2014 How", "icon": "tag", "accent": "red", "blocks": [{"heading": "What placards do", "body": "Placards are the diamond-shaped signs on the sides and rear of the truck or trailer. They tell anyone nearby \u2014 especially emergency responders \u2014 what class of dangerous goods is on board."}, {"heading": "The placards must match the load", "bullets": ["The class number on the placard must match the class on the shipping document", "Show the placard on both sides and the rear of the unit", "A subsidiary risk may need its own placard", "A wrong or missing placard is a roadside violation"]}, {"heading": "Safety marks on packages", "body": "Totes, drums, and pails also carry safety marks \u2014 labels, the UN number, and the proper shipping name. These must match the shipping document and the placards on the unit."}, {"heading": "When OXID16899A is on board", "body": "Because OXID16899A is Class 5.2 with a subsidiary Class 8, the marks and placards must reflect the organic peroxide hazard, not an oxidizer (5.1) placard. Verify against Section 14 before you placard."}]}, {"type": "midcheck", "title": "Quick check \u2014 Classification and placards", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "What is the TDG primary class and packing group for OXID16899A?", "options": ["Class 5.1 oxidizer, PG III", "Class 5.2 organic peroxide, subsidiary 8, PG II", "Class 3 flammable, PG II"], "correct": 1, "why": "OXID16899A is Class 5.2 (Organic Peroxide), subsidiary risk 8, Packing Group II, PSN ORGANIC PEROXIDE TYPE F, LIQUID \u2014 confirmed in SDS Section 14. It is not a 5.1 oxidizer."}, {"q": "What does the packing group tell you?", "options": ["How heavy the package is", "How dangerous the product is within its class (I high, II medium, III low)", "How many packages are on the truck"], "correct": 1, "why": "Packing group ranks the degree of danger within a class: I is high, II is medium, III is low."}, {"q": "The class number on your placards must match what?", "options": ["The truck's licence plate", "The class on the shipping document and the goods actually on board", "The colour of the tote"], "correct": 1, "why": "Placards must match the class on the shipping document and the dangerous goods actually loaded. A mismatch is a roadside violation."}]}, {"type": "content", "title": "What to check before you leave", "eyebrow": "Section 4 \u2014 How", "icon": "clipboard", "accent": "blue", "blocks": [{"heading": "Verify the paperwork", "bullets": ["Shipping document is in the cab and within reach", "UN number, PSN, class, packing group, quantity all present", "Class, PSN, and packing group match the product SDS Section 14", "24-hour emergency number is on the document", "ERAP reference number is shown when one is required"]}, {"heading": "Walk around the unit", "bullets": ["Placards on both sides and the rear, and they match the load", "Package safety marks match the shipping document", "Load is secured and will not shift"]}, {"heading": "Check the packaging", "bullets": ["Drums, totes, and jugs show no damage and no leaks", "Lids tight; valves closed and capped where required", "For peroxide / PAA: separated from incompatibles, no wood pallets in direct contact, shaded loading in summer"]}]}, {"type": "content", "title": "If something goes wrong in transit", "eyebrow": "Section 5 \u2014 What if", "icon": "shield", "accent": "red", "blocks": [{"heading": "If you have a release or accident", "bullets": ["Stop in the safest spot you can reach", "Secure the area and keep people back", "Call 911", "Call the 24-hour emergency number on the shipping document", "Call your supervisor"]}, {"heading": "Why the shipping document matters here", "body": "Responders rely on the class, shipping name, and emergency number to act safely. That is why those fields must be correct before you leave \u2014 and why the document must be reachable in the cab."}]}, {"type": "scenarios", "title": "Four real Refresh shipping scenarios", "eyebrow": "Section 5 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "intro": "One right answer for each. Read the situation, think, then check.", "items": [{"title": "Scenario 1 \u2014 The placard says 5.1", "situation": "You are loading totes of OXID16899A. The trailer already has Class 5.1 (oxidizer) placards from a previous job, and the shipping document lists OXID16899A as a Class 5.2 organic peroxide.", "question": "Do you leave the yard?", "answer_headline": "No. The placards are wrong \u2014 fix them first.", "bullets": ["OXID16899A is Class 5.2 (organic peroxide), subsidiary 8, PG II \u2014 confirm in SDS Section 14", "A 5.1 placard does not match the load and is a roadside violation", "Replace the placards so they match the class on the shipping document before you go", "Wrong placards also mislead responders in a spill"]}, {"title": "Scenario 2 \u2014 The document shows a 6.1 subsidiary", "situation": "The shipping document for a load of HSCV20254A lists it as Class 3 with a subsidiary Class 6.1 (toxic). You check the product SDS Section 14 and it shows Class 3 only, PG III, PSN FLAMMABLE LIQUID, N.O.S.", "question": "What do you do?", "answer_headline": "Stop. The document does not match the SDS \u2014 get it corrected.", "bullets": ["HSCV20254A is Class 3 only, PG III \u2014 there is no 6.1 toxic subsidiary", "The SDS Section 14 is the source of truth \u2014 the document must match it", "Have the shipping document corrected before you leave", "Do not haul on paperwork you know is wrong"]}, {"title": "Scenario 3 \u2014 Missing packing group", "situation": "The shipping document for EMBR11058A lists the class as Class 3 but leaves the packing group blank.", "question": "Is the document ready to go?", "answer_headline": "No. The packing group is required \u2014 add it.", "bullets": ["EMBR11058A is Class 3, Packing Group II \u2014 confirm in SDS Section 14", "Packing group is a required field on the shipping document", "An incomplete document is not a valid document", "Have PG II entered before you leave the yard"]}, {"title": "Scenario 4 \u2014 A leaking tote", "situation": "During your walk-around you find a thin trickle of product under one OXID16899A tote and the valve cap is missing.", "question": "Do you load it and go?", "answer_headline": "No. Do not transport a leaking package.", "bullets": ["Packaging must be sound \u2014 no leaks, valves capped where required", "Set the tote aside, contain the leak, and notify your supervisor", "Clean up using the spill kit and the product SDS", "Only transport replacement product that passes the packaging check"]}]}], "quiz": [{"q": "What does TDG stand for, and what is its main purpose?", "options": ["Transport Driver Guidelines \u2014 rules for hours of service", "Transportation of Dangerous Goods \u2014 the federal law for classifying, documenting, marking, and moving dangerous goods", "Truck Daily Guide \u2014 a vehicle inspection checklist", "Total Delivery Goods \u2014 a shipping company standard"], "correct": 1, "why": "TDG is the Transportation of Dangerous Goods Act and Regulations \u2014 the federal framework for how dangerous goods are classified, documented, packaged, marked, and transported."}, {"q": "Your road TDG training certificate expired two weeks ago. What can you do?", "options": ["Handle and transport product as long as a supervisor approves", "Nothing TDG-regulated \u2014 you do not handle or transport until it is renewed", "Transport but not load", "Load but not drive"], "correct": 1, "why": "TDGR Part 6 requires a current certificate (3-year road validity) before you handle, offer for transport, or transport dangerous goods. Expired means you do not load or haul."}, {"q": "Which three things describe a dangerous good for transport?", "options": ["Colour, weight, and supplier", "Class, proper shipping name (PSN), and packing group", "Brand, price, and quantity", "Pictogram, signal word, and first aid"], "correct": 1, "why": "A dangerous good is described by its class (type of hazard), proper shipping name, and packing group (degree of danger within the class)."}, {"q": "Which SDS section is the source of truth for a product's transport class, PSN, and packing group?", "options": ["Section 2", "Section 8", "Section 14", "Section 16"], "correct": 2, "why": "Section 14 is the Transport Information section of the SDS. Always verify the shipping document against it before you leave."}, {"q": "What is the correct TDG classification for OXID16899A?", "options": ["Class 5.1 oxidizer, PG III", "Class 5.2 organic peroxide, subsidiary risk 8, PG II, PSN ORGANIC PEROXIDE TYPE F, LIQUID", "Class 8 corrosive only, PG II", "Class 3 flammable, PG II"], "correct": 1, "why": "Per SDS Section 14, OXID16899A is Class 5.2 (Organic Peroxide), subsidiary risk 8, Packing Group II, PSN ORGANIC PEROXIDE TYPE F, LIQUID. It is not a 5.1 oxidizer."}, {"q": "The shipping document for HSCV20254A lists a Class 6.1 (toxic) subsidiary, but SDS Section 14 shows Class 3 only. What is correct?", "options": ["The document is right \u2014 haul it", "HSCV20254A is Class 3 only, PG III, FLAMMABLE LIQUID, N.O.S. \u2014 get the document corrected", "Add a 6.1 placard to be safe", "It does not matter as long as the class is on there"], "correct": 1, "why": "HSCV20254A is Class 3 only, PG III, PSN FLAMMABLE LIQUID, N.O.S. There is no 6.1 toxic subsidiary. The document must match SDS Section 14 \u2014 correct it before leaving."}, {"q": "What is the packing group for EMBR11058A?", "options": ["No packing group", "Packing Group I", "Packing Group II", "Packing Group III"], "correct": 2, "why": "EMBR11058A is Class 3, Packing Group II. The packing group is a required field \u2014 confirm it in SDS Section 14 and on the shipping document."}, {"q": "What does the packing group tell you?", "options": ["The weight of the package", "The degree of danger within the class \u2014 I high, II medium, III low", "The number of packages", "Which truck to use"], "correct": 1, "why": "Packing group ranks how dangerous a product is within its class: I is high danger, II is medium, III is low."}, {"q": "What is the job of the placards on the truck?", "options": ["Advertise the company", "Tell responders and the public what class of dangerous goods is on board", "Show the driver's certificate number", "Mark the load weight"], "correct": 1, "why": "Placards are the diamond signs that identify the class of dangerous goods so responders can act safely. They must match the class on the shipping document."}, {"q": "You find Class 5.1 (oxidizer) placards on the trailer, but you are loading OXID16899A. What do you do?", "options": ["Leave them \u2014 close enough", "Replace them with the correct Class 5.2 placards before leaving", "Remove all placards and drive without any", "Add a Class 3 placard"], "correct": 1, "why": "OXID16899A is Class 5.2 (organic peroxide), not 5.1. The placards must match the load. Replace them before you leave \u2014 a wrong placard is a roadside violation."}, {"q": "Which of these is NOT required on a TDG shipping document?", "options": ["UN number and proper shipping name", "Packing group and quantity", "24-hour emergency telephone number", "The retail price of the product"], "correct": 3, "why": "The document needs the UN number, PSN, class, packing group, quantity, and a 24-hour emergency number. Price is not a TDG requirement."}, {"q": "During your walk-around you find a leaking OXID16899A tote with a missing valve cap. What is the right action?", "options": ["Load it and drive carefully", "Wipe it and go", "Do not transport it \u2014 set it aside, contain the leak, and notify your supervisor", "Put it at the back of the trailer"], "correct": 2, "why": "Packaging must be sound with no leaks. Never transport a leaking package. Set it aside, contain the spill, and only haul replacement product that passes the check."}, {"q": "You have a product release on the highway. What is the correct order of actions?", "options": ["Keep driving to the next town, then call", "Stop in the safest spot, secure the area, call 911, call the 24-hour number, call your supervisor", "Call your supervisor first and wait for instructions", "Clean it up yourself and carry on"], "correct": 1, "why": "Stop in the safest spot, secure the area, call 911, call the 24-hour emergency number on the shipping document, then call your supervisor."}, {"q": "What is the single most important habit this course teaches?", "options": ["Drive under the speed limit with dangerous goods", "Always verify the class, PSN, and packing group against the SDS Section 14 and the shipping document before you leave", "Keep the truck clean", "Memorize every UN number"], "correct": 1, "why": "Verifying class, PSN, and packing group against SDS Section 14 and the shipping document before you leave is the core message \u2014 it keeps you legal and keeps responders safe."}, {"q": "Why can the same product have a different class in TDG than in WHMIS?", "options": ["One of them is always wrong", "TDG describes the transport hazard for the road; WHMIS describes the workplace hazard on the SDS and label \u2014 both can be correct", "WHMIS does not apply to chemicals", "TDG only applies to gases"], "correct": 1, "why": "TDG and WHMIS are separate systems with different purposes. For the shipping document and placards, use the TDG transport values from SDS Section 14."}], "tracking": {"provider": "supabase", "supabase_url": "https://muftkbpnedufsyiyuwhk.supabase.co", "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11ZnRrYnBuZWR1ZnN5aXl1d2hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjIzMzEsImV4cCI6MjA5NjI5ODMzMX0.OjnNDsjVizKn12GndFfRrD15JDmfqc4NKXFlnabbtxY", "token": "d870186a-42a0-4ec3-81c1-2904032b876e", "course_id": "tdg", "module_id": "tdg-v1.0"}};
+const BRAND = {"client_id": "refresh", "client_name": "Refresh Resources", "client_short": "REFRESH", "tagline": "REFRESH RESOURCES TRAINING", "logo_text_primary": "REFRESH", "logo_text_secondary": "RESOURCES", "colors": {"primary": "#0098DA", "primary_dark": "#007FB8", "navy": "#114F69", "accent": "#F0A500", "red": "#C8102E", "green": "#2BA84A", "purple": "#8A4FBE", "darkblue": "#0A3447"}};
+const SLIDES = [{"kind": "section_intro", "section_idx": 0, "section_title": "Why this matters", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "subtitle": "", "audio_text": "Why this matters.", "id": "why-this-matters", "audio": "audio/why-this-matters.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "The shipping document is your first line of defense", "body": "Most of what Refresh hauls is TDG-regulated \u2014 totes of peroxide, methanol-containing scavengers, emulsion breaker. If the paperwork is wrong, the rest of the trip can go wrong with it.", "bullets": null, "audio_text": "The shipping document is your first line of defense Most of what Refresh hauls is TDG-regulated \u2014 totes of peroxide, methanol-containing scavengers, emulsion breaker. If the paperwork is wrong, the rest of the trip can go wrong with it.", "id": "the-shipping-document-is-your-first-line-of-defense-most-of-", "audio": "audio/the-shipping-document-is-your-first-line-of-defense-most-of-.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "A wrong class or placard is a roadside violation", "body": "If the class, shipping name, or placard does not match what is actually on the truck, you can be put out of service at a roadside inspection. In a spill, responders use that information to keep you and the public safe \u2014 wrong information puts everyone at risk.", "bullets": null, "audio_text": "A wrong class or placard is a roadside violation If the class, shipping name, or placard does not match what is actually on the truck, you can be put out of service at a roadside inspection. In a spill, responders use that information to keep you and the public safe \u2014 wrong information puts everyone at risk.", "id": "a-wrong-class-or-placard-is-a-roadside-violation-if-the-clas", "audio": "audio/a-wrong-class-or-placard-is-a-roadside-violation-if-the-clas.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "What Refresh transports under TDG", "body": "", "bullets": ["Totes and drums of OXID16899A (peroxide / PAA blend)", "Methanol-containing scavenger (HSCV20254A)", "Emulsion breaker (EMBR11058A)", "Mixed loads of small consumer-quantity chemicals", "Returned product, contaminated absorbent, or hazardous waste"], "audio_text": "What Refresh transports under TDG Totes and drums of OXID16899A (peroxide / PAA blend) Methanol-containing scavenger (HSCV20254A) Emulsion breaker (EMBR11058A) Mixed loads of small consumer-quantity chemicals Returned product, contaminated absorbent, or hazardous waste", "id": "what-refresh-transports-under-tdg-totes-and-drums-of-oxid168", "audio": "audio/what-refresh-transports-under-tdg-totes-and-drums-of-oxid168.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "The one habit that keeps you legal", "body": "Always verify the class, proper shipping name, and packing group against the product SDS (Section 14) and the shipping document before you leave. This single check is the core message of this course.", "bullets": null, "audio_text": "The one habit that keeps you legal Always verify the class, proper shipping name, and packing group against the product SDS (Section 14) and the shipping document before you leave. This single check is the core message of this course.", "id": "the-one-habit-that-keeps-you-legal-always-verify-the-class-p", "audio": "audio/the-one-habit-that-keeps-you-legal-always-verify-the-class-p.mp3"}, {"kind": "section_intro", "section_idx": 1, "section_title": "What is TDG?", "title": "What is TDG?", "eyebrow": "Section 2 \u2014 What", "icon": "book", "accent": "blue", "subtitle": "", "audio_text": "What is TDG?.", "id": "what-is-tdg", "audio": "audio/what-is-tdg.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "What is TDG?", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "TDG in plain language", "body": "TDG stands for Transportation of Dangerous Goods. It is the federal law that controls how dangerous goods are classified, documented, packaged, marked, and moved on Canadian roads.", "bullets": null, "audio_text": "TDG in plain language TDG stands for Transportation of Dangerous Goods. It is the federal law that controls how dangerous goods are classified, documented, packaged, marked, and moved on Canadian roads.", "id": "tdg-in-plain-language-tdg-stands-for-transportation-of-dange", "audio": "audio/tdg-in-plain-language-tdg-stands-for-transportation-of-dange.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "What is TDG?", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "Your duties as a driver", "body": "", "bullets": ["Hold a current TDG training certificate before you handle, offer for transport, or transport dangerous goods", "Carry the shipping document in the cab where you can reach it", "Make sure placards and safety marks match the load", "Confirm packaging is sound \u2014 no damage, no leaks", "Know what to do if there is a release or accident"], "audio_text": "Your duties as a driver Hold a current TDG training certificate before you handle, offer for transport, or transport dangerous goods Carry the shipping document in the cab where you can reach it Make sure placards and safety marks match the load Confirm packaging is sound \u2014 no damage, no leaks Know what to do if there is a release or accident", "id": "your-duties-as-a-driver-hold-a-current-tdg-training-certific", "audio": "audio/your-duties-as-a-driver-hold-a-current-tdg-training-certific.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "What is TDG?", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "No certificate, no load", "body": "Under TDGR Part 6, your road TDG certificate is valid for three years. If it has expired, you do not handle or transport the product until it is renewed.", "bullets": null, "audio_text": "No certificate, no load Under TDGR Part 6, your road TDG certificate is valid for three years. If it has expired, you do not handle or transport the product until it is renewed.", "id": "no-certificate-no-load-under-tdgr-part-6-your-road-tdg-certi", "audio": "audio/no-certificate-no-load-under-tdgr-part-6-your-road-tdg-certi.mp3"}, {"kind": "section_intro", "section_idx": 2, "section_title": "The shipping document", "title": "The shipping document", "eyebrow": "Section 2 \u2014 What", "icon": "file", "accent": "purple", "subtitle": "", "audio_text": "The shipping document.", "id": "the-shipping-document", "audio": "audio/the-shipping-document.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "The shipping document", "eyebrow": "Section 2 \u2014 What", "accent": "purple", "heading": "What it is", "body": "The shipping document (often called the manifest or bill of lading) is the legal description of the dangerous goods on your truck. It must be in the cab before you leave the yard.", "bullets": null, "audio_text": "What it is The shipping document (often called the manifest or bill of lading) is the legal description of the dangerous goods on your truck. It must be in the cab before you leave the yard.", "id": "what-it-is-the-shipping-document-often-called-the-manifest-o", "audio": "audio/what-it-is-the-shipping-document-often-called-the-manifest-o.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "The shipping document", "eyebrow": "Section 2 \u2014 What", "accent": "purple", "heading": "What it must contain", "body": "", "bullets": ["UN number (for example, UN3109 for an organic peroxide type F)", "Proper shipping name (PSN)", "Primary class and any subsidiary class", "Packing group", "Quantity of dangerous goods", "24-hour emergency telephone number", "ERAP reference number when one is required"], "audio_text": "What it must contain UN number (for example, UN3109 for an organic peroxide type F) Proper shipping name (PSN) Primary class and any subsidiary class Packing group Quantity of dangerous goods 24-hour emergency telephone number ERAP reference number when one is required", "id": "what-it-must-contain-un-number-for-example-un3109-for-an-org", "audio": "audio/what-it-must-contain-un-number-for-example-un3109-for-an-org.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "The shipping document", "eyebrow": "Section 2 \u2014 What", "accent": "purple", "heading": "Keep it reachable and keep the record", "body": "", "bullets": ["Store it within reach of the driver's seat, not buried in the back", "On return, file it properly \u2014 it is the legal record of the transport", "Do not leave it loose in the truck for two weeks"], "audio_text": "Keep it reachable and keep the record Store it within reach of the driver's seat, not buried in the back On return, file it properly \u2014 it is the legal record of the transport Do not leave it loose in the truck for two weeks", "id": "keep-it-reachable-and-keep-the-record-store-it-within-reach-", "audio": "audio/keep-it-reachable-and-keep-the-record-store-it-within-reach-.mp3"}, {"kind": "section_intro", "section_idx": 3, "section_title": "Quick check \u2014 Duties and the shipping document", "title": "Quick check \u2014 Duties and the shipping document", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Duties and the shipping document.", "id": "quick-check-duties-and-the-shipping-document", "audio": "audio/quick-check-duties-and-the-shipping-document.mp3"}, {"kind": "midcheck_q", "section_idx": 3, "section_title": "Quick check \u2014 Duties and the shipping document", "key": "3-0", "q": {"q": "Your road TDG training certificate expired last month. Can you load and haul a tote of OXID16899A?", "options": ["Yes, as long as a supervisor says it is okay", "No \u2014 no current certificate means you do not handle or transport the product", "Yes, if it is a short trip"], "correct": 1, "why": "TDGR Part 6 requires a current certificate (3-year validity for road) before you handle, offer for transport, or transport dangerous goods. Expired means you do not load."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 3, "section_title": "Quick check \u2014 Duties and the shipping document", "key": "3-1", "q": {"q": "Where must the shipping document be during the trip?", "options": ["Anywhere in the truck", "In the cab, within reach of the driver's seat", "Emailed to dispatch is enough"], "correct": 1, "why": "The shipping document must be in the cab and reachable from the driver's seat so responders and inspectors can find it quickly."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 3, "section_title": "Quick check \u2014 Duties and the shipping document", "key": "3-2", "q": {"q": "Which of these is NOT required on the shipping document?", "options": ["Proper shipping name and class", "The driver's home address", "A 24-hour emergency telephone number"], "correct": 1, "why": "The document needs the UN number, PSN, class, packing group, quantity, and a 24-hour emergency number. Your home address is not part of it."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 4, "section_title": "Classification basics", "title": "Classification basics", "eyebrow": "Section 3 \u2014 How", "icon": "flask", "accent": "blue", "subtitle": "", "audio_text": "Classification basics.", "id": "classification-basics", "audio": "audio/classification-basics.mp3"}, {"kind": "block", "section_idx": 4, "section_title": "Classification basics", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Three things describe a dangerous good", "body": "", "bullets": ["Class \u2014 the type of hazard (for example, Class 3 flammable liquid)", "Proper shipping name (PSN) \u2014 the official name from the TDG list", "Packing group \u2014 how dangerous it is within its class (I high, II medium, III low)"], "audio_text": "Three things describe a dangerous good Class \u2014 the type of hazard (for example, Class 3 flammable liquid) Proper shipping name (PSN) \u2014 the official name from the TDG list Packing group \u2014 how dangerous it is within its class (I high, II medium, III low)", "id": "three-things-describe-a-dangerous-good-class-the-type-of-haz", "audio": "audio/three-things-describe-a-dangerous-good-class-the-type-of-haz.mp3"}, {"kind": "block", "section_idx": 4, "section_title": "Classification basics", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Class and subsidiary risk", "body": "The primary class is the main hazard. Some products also have a subsidiary risk \u2014 a second hazard that still matters. For example, an organic peroxide that is also corrosive carries a subsidiary Class 8.", "bullets": null, "audio_text": "Class and subsidiary risk The primary class is the main hazard. Some products also have a subsidiary risk \u2014 a second hazard that still matters. For example, an organic peroxide that is also corrosive carries a subsidiary Class 8.", "id": "class-and-subsidiary-risk-the-primary-class-is-the-main-haza", "audio": "audio/class-and-subsidiary-risk-the-primary-class-is-the-main-haza.mp3"}, {"kind": "block", "section_idx": 4, "section_title": "Classification basics", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Where the right answer lives", "body": "The correct class, PSN, and packing group for each Refresh product are in Section 14 of that product's Safety Data Sheet. Section 14 is the transport section \u2014 it is the source of truth. Always check it against the shipping document before you leave.", "bullets": null, "audio_text": "Where the right answer lives The correct class, PSN, and packing group for each Refresh product are in Section 14 of that product's Safety Data Sheet. Section 14 is the transport section \u2014 it is the source of truth. Always check it against the shipping document before you leave.", "id": "where-the-right-answer-lives-the-correct-class-psn-and-packi", "audio": "audio/where-the-right-answer-lives-the-correct-class-psn-and-packi.mp3"}, {"kind": "section_intro", "section_idx": 5, "section_title": "Refresh product classifications", "title": "Refresh product classifications", "eyebrow": "Section 3 \u2014 How", "icon": "beaker", "accent": "darkblue", "subtitle": "", "audio_text": "Refresh product classifications.", "id": "refresh-product-classifications", "audio": "audio/refresh-product-classifications.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Refresh product classifications", "eyebrow": "Section 3 \u2014 How", "accent": "darkblue", "heading": "OXID16899A (peroxide / PAA blend)", "body": "", "bullets": ["Primary class: Class 5.2 \u2014 Organic Peroxide", "Subsidiary risk: Class 8 (corrosive)", "Packing group: II", "Proper shipping name: ORGANIC PEROXIDE TYPE F, LIQUID"], "audio_text": "OXID16899A (peroxide / PAA blend) Primary class: Class 5.2 \u2014 Organic Peroxide Subsidiary risk: Class 8 (corrosive) Packing group: II Proper shipping name: ORGANIC PEROXIDE TYPE F, LIQUID", "id": "oxid16899a-peroxide-paa-blend-primary-class-class-5-2-organi", "audio": "audio/oxid16899a-peroxide-paa-blend-primary-class-class-5-2-organi.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Refresh product classifications", "eyebrow": "Section 3 \u2014 How", "accent": "darkblue", "heading": "HSCV20254A (methanol-containing scavenger)", "body": "", "bullets": ["Class: Class 3 only \u2014 Flammable Liquid", "Packing group: III", "Proper shipping name: FLAMMABLE LIQUID, N.O.S.", "No toxic (Class 6.1) subsidiary"], "audio_text": "HSCV20254A (methanol-containing scavenger) Class: Class 3 only \u2014 Flammable Liquid Packing group: III Proper shipping name: FLAMMABLE LIQUID, N.O.S. No toxic (Class 6.1) subsidiary", "id": "hscv20254a-methanol-containing-scavenger-class-class-3-only-", "audio": "audio/hscv20254a-methanol-containing-scavenger-class-class-3-only-.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Refresh product classifications", "eyebrow": "Section 3 \u2014 How", "accent": "darkblue", "heading": "EMBR11058A (emulsion breaker)", "body": "", "bullets": ["Class: Class 3 \u2014 Flammable Liquid", "Packing group: II"], "audio_text": "EMBR11058A (emulsion breaker) Class: Class 3 \u2014 Flammable Liquid Packing group: II", "id": "embr11058a-emulsion-breaker-class-class-3-flammable-liquid-p", "audio": "audio/embr11058a-emulsion-breaker-class-class-3-flammable-liquid-p.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Refresh product classifications", "eyebrow": "Section 3 \u2014 How", "accent": "darkblue", "heading": "Do not classify from memory", "body": "These values come from each product's SDS Section 14. Product formulas and shipping names can change between revisions, so confirm against the current SDS and the shipping document every time.", "bullets": null, "audio_text": "Do not classify from memory These values come from each product's SDS Section 14. Product formulas and shipping names can change between revisions, so confirm against the current SDS and the shipping document every time.", "id": "do-not-classify-from-memory-these-values-come-from-each-prod", "audio": "audio/do-not-classify-from-memory-these-values-come-from-each-prod.mp3"}, {"kind": "section_intro", "section_idx": 6, "section_title": "TDG class vs. WHMIS class", "title": "TDG class vs. WHMIS class", "eyebrow": "Section 3 \u2014 How", "icon": "book", "accent": "amber", "subtitle": "", "audio_text": "TDG class vs. WHMIS class.", "id": "tdg-class-vs-whmis-class", "audio": "audio/tdg-class-vs-whmis-class.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "TDG class vs. WHMIS class", "eyebrow": "Section 3 \u2014 How", "accent": "amber", "heading": "Two systems, two purposes", "body": "TDG describes the transport hazard for the road. WHMIS describes the workplace hazard on the SDS and the container label. The same product can be named differently in each system \u2014 and both are correct.", "bullets": null, "audio_text": "Two systems, two purposes TDG describes the transport hazard for the road. WHMIS describes the workplace hazard on the SDS and the container label. The same product can be named differently in each system \u2014 and both are correct.", "id": "two-systems-two-purposes-tdg-describes-the-transport-hazard-", "audio": "audio/two-systems-two-purposes-tdg-describes-the-transport-hazard-.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "TDG class vs. WHMIS class", "eyebrow": "Section 3 \u2014 How", "accent": "amber", "heading": "OXID16899A is a good example", "body": "", "bullets": ["For transport (TDG): Class 5.2 Organic Peroxide, subsidiary 8, PG II", "In the workplace (WHMIS/GHS): an oxidizing liquid that is also corrosive", "For your shipping document and placards, use the TDG values from SDS Section 14"], "audio_text": "OXID16899A is a good example For transport (TDG): Class 5.2 Organic Peroxide, subsidiary 8, PG II In the workplace (WHMIS/GHS): an oxidizing liquid that is also corrosive For your shipping document and placards, use the TDG values from SDS Section 14", "id": "oxid16899a-is-a-good-example-for-transport-tdg-class-5-2-org", "audio": "audio/oxid16899a-is-a-good-example-for-transport-tdg-class-5-2-org.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "TDG class vs. WHMIS class", "eyebrow": "Section 3 \u2014 How", "accent": "amber", "heading": "Why this matters on the road", "body": "An inspector checks the TDG class and the placards, not the WHMIS pictograms. Use the transport information from Section 14 for the document and the placards, every time.", "bullets": null, "audio_text": "Why this matters on the road An inspector checks the TDG class and the placards, not the WHMIS pictograms. Use the transport information from Section 14 for the document and the placards, every time.", "id": "why-this-matters-on-the-road-an-inspector-checks-the-tdg-cla", "audio": "audio/why-this-matters-on-the-road-an-inspector-checks-the-tdg-cla.mp3"}, {"kind": "section_intro", "section_idx": 7, "section_title": "Placards and safety marks", "title": "Placards and safety marks", "eyebrow": "Section 4 \u2014 How", "icon": "tag", "accent": "red", "subtitle": "", "audio_text": "Placards and safety marks.", "id": "placards-and-safety-marks", "audio": "audio/placards-and-safety-marks.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Placards and safety marks", "eyebrow": "Section 4 \u2014 How", "accent": "red", "heading": "What placards do", "body": "Placards are the diamond-shaped signs on the sides and rear of the truck or trailer. They tell anyone nearby \u2014 especially emergency responders \u2014 what class of dangerous goods is on board.", "bullets": null, "audio_text": "What placards do Placards are the diamond-shaped signs on the sides and rear of the truck or trailer. They tell anyone nearby \u2014 especially emergency responders \u2014 what class of dangerous goods is on board.", "id": "what-placards-do-placards-are-the-diamond-shaped-signs-on-th", "audio": "audio/what-placards-do-placards-are-the-diamond-shaped-signs-on-th.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Placards and safety marks", "eyebrow": "Section 4 \u2014 How", "accent": "red", "heading": "The placards must match the load", "body": "", "bullets": ["The class number on the placard must match the class on the shipping document", "Show the placard on both sides and the rear of the unit", "A subsidiary risk may need its own placard", "A wrong or missing placard is a roadside violation"], "audio_text": "The placards must match the load The class number on the placard must match the class on the shipping document Show the placard on both sides and the rear of the unit A subsidiary risk may need its own placard A wrong or missing placard is a roadside violation", "id": "the-placards-must-match-the-load-the-class-number-on-the-pla", "audio": "audio/the-placards-must-match-the-load-the-class-number-on-the-pla.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Placards and safety marks", "eyebrow": "Section 4 \u2014 How", "accent": "red", "heading": "Safety marks on packages", "body": "Totes, drums, and pails also carry safety marks \u2014 labels, the UN number, and the proper shipping name. These must match the shipping document and the placards on the unit.", "bullets": null, "audio_text": "Safety marks on packages Totes, drums, and pails also carry safety marks \u2014 labels, the UN number, and the proper shipping name. These must match the shipping document and the placards on the unit.", "id": "safety-marks-on-packages-totes-drums-and-pails-also-carry-sa", "audio": "audio/safety-marks-on-packages-totes-drums-and-pails-also-carry-sa.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "Placards and safety marks", "eyebrow": "Section 4 \u2014 How", "accent": "red", "heading": "When OXID16899A is on board", "body": "Because OXID16899A is Class 5.2 with a subsidiary Class 8, the marks and placards must reflect the organic peroxide hazard, not an oxidizer (5.1) placard. Verify against Section 14 before you placard.", "bullets": null, "audio_text": "When OXID16899A is on board Because OXID16899A is Class 5.2 with a subsidiary Class 8, the marks and placards must reflect the organic peroxide hazard, not an oxidizer (5.1) placard. Verify against Section 14 before you placard.", "id": "when-oxid16899a-is-on-board-because-oxid16899a-is-class-5-2-", "audio": "audio/when-oxid16899a-is-on-board-because-oxid16899a-is-class-5-2-.mp3"}, {"kind": "section_intro", "section_idx": 8, "section_title": "Quick check \u2014 Classification and placards", "title": "Quick check \u2014 Classification and placards", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Classification and placards.", "id": "quick-check-classification-and-placards", "audio": "audio/quick-check-classification-and-placards.mp3"}, {"kind": "midcheck_q", "section_idx": 8, "section_title": "Quick check \u2014 Classification and placards", "key": "8-0", "q": {"q": "What is the TDG primary class and packing group for OXID16899A?", "options": ["Class 5.1 oxidizer, PG III", "Class 5.2 organic peroxide, subsidiary 8, PG II", "Class 3 flammable, PG II"], "correct": 1, "why": "OXID16899A is Class 5.2 (Organic Peroxide), subsidiary risk 8, Packing Group II, PSN ORGANIC PEROXIDE TYPE F, LIQUID \u2014 confirmed in SDS Section 14. It is not a 5.1 oxidizer."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 8, "section_title": "Quick check \u2014 Classification and placards", "key": "8-1", "q": {"q": "What does the packing group tell you?", "options": ["How heavy the package is", "How dangerous the product is within its class (I high, II medium, III low)", "How many packages are on the truck"], "correct": 1, "why": "Packing group ranks the degree of danger within a class: I is high, II is medium, III is low."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 8, "section_title": "Quick check \u2014 Classification and placards", "key": "8-2", "q": {"q": "The class number on your placards must match what?", "options": ["The truck's licence plate", "The class on the shipping document and the goods actually on board", "The colour of the tote"], "correct": 1, "why": "Placards must match the class on the shipping document and the dangerous goods actually loaded. A mismatch is a roadside violation."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 9, "section_title": "What to check before you leave", "title": "What to check before you leave", "eyebrow": "Section 4 \u2014 How", "icon": "clipboard", "accent": "blue", "subtitle": "", "audio_text": "What to check before you leave.", "id": "what-to-check-before-you-leave", "audio": "audio/what-to-check-before-you-leave.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "What to check before you leave", "eyebrow": "Section 4 \u2014 How", "accent": "blue", "heading": "Verify the paperwork", "body": "", "bullets": ["Shipping document is in the cab and within reach", "UN number, PSN, class, packing group, quantity all present", "Class, PSN, and packing group match the product SDS Section 14", "24-hour emergency number is on the document", "ERAP reference number is shown when one is required"], "audio_text": "Verify the paperwork Shipping document is in the cab and within reach UN number, PSN, class, packing group, quantity all present Class, PSN, and packing group match the product SDS Section 14 24-hour emergency number is on the document ERAP reference number is shown when one is required", "id": "verify-the-paperwork-shipping-document-is-in-the-cab-and-wit", "audio": "audio/verify-the-paperwork-shipping-document-is-in-the-cab-and-wit.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "What to check before you leave", "eyebrow": "Section 4 \u2014 How", "accent": "blue", "heading": "Walk around the unit", "body": "", "bullets": ["Placards on both sides and the rear, and they match the load", "Package safety marks match the shipping document", "Load is secured and will not shift"], "audio_text": "Walk around the unit Placards on both sides and the rear, and they match the load Package safety marks match the shipping document Load is secured and will not shift", "id": "walk-around-the-unit-placards-on-both-sides-and-the-rear-and", "audio": "audio/walk-around-the-unit-placards-on-both-sides-and-the-rear-and.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "What to check before you leave", "eyebrow": "Section 4 \u2014 How", "accent": "blue", "heading": "Check the packaging", "body": "", "bullets": ["Drums, totes, and jugs show no damage and no leaks", "Lids tight; valves closed and capped where required", "For peroxide / PAA: separated from incompatibles, no wood pallets in direct contact, shaded loading in summer"], "audio_text": "Check the packaging Drums, totes, and jugs show no damage and no leaks Lids tight; valves closed and capped where required For peroxide / PAA: separated from incompatibles, no wood pallets in direct contact, shaded loading in summer", "id": "check-the-packaging-drums-totes-and-jugs-show-no-damage-and-", "audio": "audio/check-the-packaging-drums-totes-and-jugs-show-no-damage-and-.mp3"}, {"kind": "section_intro", "section_idx": 10, "section_title": "If something goes wrong in transit", "title": "If something goes wrong in transit", "eyebrow": "Section 5 \u2014 What if", "icon": "shield", "accent": "red", "subtitle": "", "audio_text": "If something goes wrong in transit.", "id": "if-something-goes-wrong-in-transit", "audio": "audio/if-something-goes-wrong-in-transit.mp3"}, {"kind": "block", "section_idx": 10, "section_title": "If something goes wrong in transit", "eyebrow": "Section 5 \u2014 What if", "accent": "red", "heading": "If you have a release or accident", "body": "", "bullets": ["Stop in the safest spot you can reach", "Secure the area and keep people back", "Call 911", "Call the 24-hour emergency number on the shipping document", "Call your supervisor"], "audio_text": "If you have a release or accident Stop in the safest spot you can reach Secure the area and keep people back Call 911 Call the 24-hour emergency number on the shipping document Call your supervisor", "id": "if-you-have-a-release-or-accident-stop-in-the-safest-spot-yo", "audio": "audio/if-you-have-a-release-or-accident-stop-in-the-safest-spot-yo.mp3"}, {"kind": "block", "section_idx": 10, "section_title": "If something goes wrong in transit", "eyebrow": "Section 5 \u2014 What if", "accent": "red", "heading": "Why the shipping document matters here", "body": "Responders rely on the class, shipping name, and emergency number to act safely. That is why those fields must be correct before you leave \u2014 and why the document must be reachable in the cab.", "bullets": null, "audio_text": "Why the shipping document matters here Responders rely on the class, shipping name, and emergency number to act safely. That is why those fields must be correct before you leave \u2014 and why the document must be reachable in the cab.", "id": "why-the-shipping-document-matters-here-responders-rely-on-th", "audio": "audio/why-the-shipping-document-matters-here-responders-rely-on-th.mp3"}, {"kind": "section_intro", "section_idx": 11, "section_title": "Four real Refresh shipping scenarios", "title": "Four real Refresh shipping scenarios", "eyebrow": "Section 5 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "subtitle": "One right answer for each. Read the situation, think, then check.", "audio_text": "Four real Refresh shipping scenarios. One right answer for each. Read the situation, think, then check.", "id": "four-real-refresh-shipping-scenarios-one-right-answer-for-ea", "audio": "audio/four-real-refresh-shipping-scenarios-one-right-answer-for-ea.mp3"}, {"kind": "scenario", "section_idx": 11, "section_title": "Four real Refresh shipping scenarios", "scenario": {"title": "Scenario 1 \u2014 The placard says 5.1", "situation": "You are loading totes of OXID16899A. The trailer already has Class 5.1 (oxidizer) placards from a previous job, and the shipping document lists OXID16899A as a Class 5.2 organic peroxide.", "question": "Do you leave the yard?", "answer_headline": "No. The placards are wrong \u2014 fix them first.", "bullets": ["OXID16899A is Class 5.2 (organic peroxide), subsidiary 8, PG II \u2014 confirm in SDS Section 14", "A 5.1 placard does not match the load and is a roadside violation", "Replace the placards so they match the class on the shipping document before you go", "Wrong placards also mislead responders in a spill"]}, "audio_text": "Scenario 1 \u2014 The placard says 5.1. You are loading totes of OXID16899A. The trailer already has Class 5.1 (oxidizer) placards from a previous job, and the shipping document lists OXID16899A as a Class 5.2 organic peroxide. Do you leave the yard? The right answer: No. The placards are wrong \u2014 fix them first.", "id": "scenario-1-the-placard-says-5-1-you-are-loading-totes-of-oxi", "audio": "audio/scenario-1-the-placard-says-5-1-you-are-loading-totes-of-oxi.mp3"}, {"kind": "scenario", "section_idx": 11, "section_title": "Four real Refresh shipping scenarios", "scenario": {"title": "Scenario 2 \u2014 The document shows a 6.1 subsidiary", "situation": "The shipping document for a load of HSCV20254A lists it as Class 3 with a subsidiary Class 6.1 (toxic). You check the product SDS Section 14 and it shows Class 3 only, PG III, PSN FLAMMABLE LIQUID, N.O.S.", "question": "What do you do?", "answer_headline": "Stop. The document does not match the SDS \u2014 get it corrected.", "bullets": ["HSCV20254A is Class 3 only, PG III \u2014 there is no 6.1 toxic subsidiary", "The SDS Section 14 is the source of truth \u2014 the document must match it", "Have the shipping document corrected before you leave", "Do not haul on paperwork you know is wrong"]}, "audio_text": "Scenario 2 \u2014 The document shows a 6.1 subsidiary. The shipping document for a load of HSCV20254A lists it as Class 3 with a subsidiary Class 6.1 (toxic). You check the product SDS Section 14 and it shows Class 3 only, PG III, PSN FLAMMABLE LIQUID, N.O.S. What do you do? The right answer: Stop. The document does not match the SDS \u2014 get it corrected.", "id": "scenario-2-the-document-shows-a-6-1-subsidiary-the-shipping-", "audio": "audio/scenario-2-the-document-shows-a-6-1-subsidiary-the-shipping-.mp3"}, {"kind": "scenario", "section_idx": 11, "section_title": "Four real Refresh shipping scenarios", "scenario": {"title": "Scenario 3 \u2014 Missing packing group", "situation": "The shipping document for EMBR11058A lists the class as Class 3 but leaves the packing group blank.", "question": "Is the document ready to go?", "answer_headline": "No. The packing group is required \u2014 add it.", "bullets": ["EMBR11058A is Class 3, Packing Group II \u2014 confirm in SDS Section 14", "Packing group is a required field on the shipping document", "An incomplete document is not a valid document", "Have PG II entered before you leave the yard"]}, "audio_text": "Scenario 3 \u2014 Missing packing group. The shipping document for EMBR11058A lists the class as Class 3 but leaves the packing group blank. Is the document ready to go? The right answer: No. The packing group is required \u2014 add it.", "id": "scenario-3-missing-packing-group-the-shipping-document-for-e", "audio": "audio/scenario-3-missing-packing-group-the-shipping-document-for-e.mp3"}, {"kind": "scenario", "section_idx": 11, "section_title": "Four real Refresh shipping scenarios", "scenario": {"title": "Scenario 4 \u2014 A leaking tote", "situation": "During your walk-around you find a thin trickle of product under one OXID16899A tote and the valve cap is missing.", "question": "Do you load it and go?", "answer_headline": "No. Do not transport a leaking package.", "bullets": ["Packaging must be sound \u2014 no leaks, valves capped where required", "Set the tote aside, contain the leak, and notify your supervisor", "Clean up using the spill kit and the product SDS", "Only transport replacement product that passes the packaging check"]}, "audio_text": "Scenario 4 \u2014 A leaking tote. During your walk-around you find a thin trickle of product under one OXID16899A tote and the valve cap is missing. Do you load it and go? The right answer: No. Do not transport a leaking package.", "id": "scenario-4-a-leaking-tote-during-your-walk-around-you-find-a", "audio": "audio/scenario-4-a-leaking-tote-during-your-walk-around-you-find-a.mp3"}];  // expanded list of slides — one entry per visible slide
+
+// Apply brand CSS variables
+const r = document.documentElement;
+r.style.setProperty('--brand-primary', BRAND.colors.primary);
+r.style.setProperty('--brand-primary-dark', BRAND.colors.primary_dark);
+r.style.setProperty('--brand-navy', BRAND.colors.navy);
+r.style.setProperty('--brand-darkblue', BRAND.colors.darkblue);
+r.style.setProperty('--brand-accent', BRAND.colors.accent);
+r.style.setProperty('--brand-red', BRAND.colors.red);
+r.style.setProperty('--brand-green', BRAND.colors.green);
+r.style.setProperty('--brand-purple', BRAND.colors.purple);
+document.title = (CONTENT.meta.topic || 'Training') + ' — ' + BRAND.client_name;
+
+const ACCENTS = { blue: BRAND.colors.primary, amber: BRAND.colors.accent, red: BRAND.colors.red, green: BRAND.colors.green, purple: BRAND.colors.purple, darkblue: BRAND.colors.darkblue };
+const ICONS = {
+  alert: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-20H6.5A2.5 2.5 0 004 4.5v15z"/>',
+  users: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/>',
+  video: '<path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/>',
+  flask: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>',
+  file: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/>',
+  beaker: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6M6 14h12"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+  clipboard: '<path d="M9 2h6a2 2 0 012 2v2H7V4a2 2 0 012-2zM5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  award: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>',
+  shieldcheck: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'
+};
+
+let state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+
+function svg(path, color) { return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
+function escapeHtml(s) { if (s == null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  state.screen = name;
+  // Pause any playing audio when changing screens
+  const aud = document.getElementById('slide-audio');
+  if (aud) { aud.pause(); aud.currentTime = 0; }
+}
+
+function renderIntroMeta() {
+  document.getElementById('brand-eyebrow').textContent = BRAND.tagline || (BRAND.client_name + ' E-LEARNING');
+  document.getElementById('module-code').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' · ' + CONTENT.meta.version : '');
+  document.getElementById('intro-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('intro-subtitle').textContent = CONTENT.meta.subtitle || '';
+  document.getElementById('topbar-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('quiz-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('r-module').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' ' + CONTENT.meta.version : '');
+  document.getElementById('result-footer').textContent = CONTENT.meta.regulation_alignment ? 'Aligned with ' + CONTENT.meta.regulation_alignment : '';
+
+  const pills = [
+    { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', label: 'Duration', value: CONTENT.meta.duration || '~30 min' },
+    { icon: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>', label: 'Pass mark', value: (CONTENT.meta.pass_mark_pct || 70) + '%' },
+    { icon: '<path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>', label: 'Slides', value: SLIDES.length },
+    { icon: '<path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14"/>', label: 'Audio', value: SLIDES.some(s => s.audio) ? 'Voiceover' : 'Read-only' }
+  ];
+  document.getElementById('meta-grid').innerHTML = pills.map(p => '<div class="meta-pill"><div class="icon">' + svg(p.icon) + '</div><div><div class="label">' + escapeHtml(p.label) + '</div><div class="value">' + escapeHtml(p.value) + '</div></div></div>').join('');
+
+  document.getElementById('learning-objectives').innerHTML = (CONTENT.meta.what_you_will_learn || []).map(o => '<li>' + escapeHtml(o) + '</li>').join('');
+  document.getElementById('footer-tracking-note').textContent = trackingEnabled() ? 'Your completion will be recorded with ' + BRAND.client_short + '.' : 'Print or save your certificate when you finish.';
+}
+
+function renderSlide() {
+  const slide = SLIDES[state.slideIdx];
+  if (!slide) return;
+  const total = SLIDES.length, progress = ((state.slideIdx + 1) / (total + 1)) * 100;
+
+  document.getElementById('slide-counter').textContent = slide.section_title || '';
+  document.getElementById('progress-pct').textContent = (state.slideIdx + 1) + ' / ' + total;
+  document.getElementById('progress-fill').style.width = progress + '%';
+
+  let html = '';
+  const slideKind = slide.kind;
+  if (slideKind === 'section_intro') html = renderSectionIntro(slide);
+  else if (slideKind === 'block') html = renderBlockSlide(slide);
+  else if (slideKind === 'video') html = renderVideoSlide(slide);
+  else if (slideKind === 'pictograms') html = renderPictogramsSlide(slide);
+  else if (slideKind === 'chemcard') html = renderChemCardSlide(slide);
+  else if (slideKind === 'scenario') html = renderScenarioSlide(slide);
+  else if (slideKind === 'midcheck_q') html = renderMidCheckQSlide(slide);
+
+  document.getElementById('slide-body').innerHTML = html;
+  attachMidCheckHandlers();
+
+  // Audio — autoplay each slide's narration. Browsers permit this after the learner's
+  // first interaction (Begin / Continue clicks); if blocked, the visible Play control still works.
+  const audioEl = document.getElementById('slide-audio');
+  const audioContainer = document.getElementById('audio-container');
+  if (slide.audio) {
+    audioEl.src = slide.audio;
+    audioContainer.classList.remove('empty');
+    audioEl.currentTime = 0;
+    const _p = audioEl.play();
+    if (_p && _p.catch) _p.catch(() => {});
+  } else {
+    audioEl.removeAttribute('src');
+    audioContainer.classList.add('empty');
+  }
+
+  // Nav
+  document.getElementById('btn-prev').disabled = state.slideIdx === 0;
+  const isLast = state.slideIdx === total - 1;
+  document.getElementById('btn-next').innerHTML = (isLast ? 'Final quiz' : 'Continue') + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+
+  // Scroll the slide content area to top
+  const sc = document.querySelector('#screen-learn .slide-content');
+  if (sc) sc.scrollTop = 0;
+}
+
+function renderSectionIntro(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="section-intro"><div class="icon-big" style="background:' + ac + '">' + svg(ICONS[slide.icon] || ICONS.book, '#fff') + '</div>' +
+    '<div class="eyebrow-text" style="color:' + ac + '">' + escapeHtml(slide.eyebrow || '') + '</div>' +
+    '<h2>' + escapeHtml(slide.title) + '</h2>' +
+    (slide.subtitle ? '<p class="subtitle">' + escapeHtml(slide.subtitle) + '</p>' : '') + '</div>';
+}
+
+function renderBlockSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    (slide.eyebrow ? '<div class="block-eyebrow" style="color:' + ac + '">' + escapeHtml(slide.eyebrow) + '</div>' : '') +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading) + '</h3>' +
+    (slide.body ? '<p class="block-body">' + escapeHtml(slide.body) + '</p>' : '') +
+    (slide.bullets ? '<ul class="block-bullets">' + slide.bullets.map(bl => '<li><svg viewBox="0 0 24 24" style="color:' + ac + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>' + escapeHtml(bl) + '</span></li>').join('') + '</ul>' : '') + '</div>';
+}
+
+function renderVideoSlide(slide) {
+  const url = slide.video_url || '#';
+  return '<div class="video-card"><div class="video-thumb"><div class="video-play-btn" onclick="window.open(' + JSON.stringify(url) + ', \'_blank\', \'noopener\')"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><h3>' + escapeHtml(slide.video_title || '') + '</h3><p>' + escapeHtml(slide.video_source || '') + ' · ' + escapeHtml(slide.video_duration || '') + '</p></div><div class="video-action"><div class="video-action-info"><strong>Click to watch</strong><span>Opens in a new tab</span></div><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener" class="btn-yt">Watch on YouTube <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a></div></div>';
+}
+
+function renderPictogramsSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading || 'Pictograms') + '</h3>' +
+    (slide.intro ? '<p class="block-body">' + escapeHtml(slide.intro) + '</p>' : '') +
+    '<div class="picto-grid">' + slide.items.map(p => '<div class="picto-cell"><img src="' + (p.image_data || p.image || '') + '" alt="' + escapeHtml(p.label) + '"><div class="picto-label">' + escapeHtml(p.label) + '</div><div class="picto-sub">' + escapeHtml(p.sub || '') + '</div></div>').join('') + '</div></div>';
+}
+
+function renderChemCardSlide(slide) {
+  const c = slide.card;
+  const sigColor = c.signal === 'DANGER' ? ACCENTS.red : ACCENTS.amber;
+  const rowColors = { 'EXPOSURE LIMITS': ACCENTS.amber, 'PPE': ACCENTS.blue, 'FIRST AID': ACCENTS.green, 'SPILL': ACCENTS.purple, 'STORAGE': ACCENTS.darkblue };
+  return '<div class="chem-card"><div class="chem-card-header"><div class="chem-pictos-row">' +
+    (c.pictogram_data || []).map(p => '<img src="' + p + '" alt="">').join('') +
+    '<span class="signal-badge" style="background:' + sigColor + '">' + escapeHtml(c.signal || '') + '</span></div>' +
+    '<div class="chem-card-name">' + escapeHtml(c.name) + '</div><div class="chem-card-full">' + escapeHtml(c.full_name || '') + (c.supplier ? ' · ' + escapeHtml(c.supplier) : '') + '</div>' +
+    '<div class="chem-haz">' + escapeHtml(c.hazard_summary || '') + '</div></div>' +
+    (c.rows || []).map(row => {
+      const rc = rowColors[row.label] || ACCENTS.blue;
+      return '<div class="chem-row"><div class="chem-row-label" style="background:' + rc + '">' + escapeHtml(row.label) + '</div><div class="chem-row-items"><ul>' +
+        row.items.map(it => '<li><span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:' + rc + ';margin-top:7px;margin-right:6px;flex-shrink:0;"></span>' + escapeHtml(it) + '</li>').join('') + '</ul></div></div>';
+    }).join('') + '</div>';
+}
+
+function renderScenarioSlide(slide) {
+  const sc = slide.scenario;
+  return '<div class="scenario"><div class="scenario-title">' + escapeHtml(sc.title) + '</div><div class="scenario-grid">' +
+    '<div class="scenario-side scenario-situation"><div class="scenario-eyebrow" style="color:' + ACCENTS.blue + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.blue + '"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Situation</div><p class="scenario-text">' + escapeHtml(sc.situation) + '</p><p class="scenario-question">' + escapeHtml(sc.question) + '</p></div>' +
+    '<div class="scenario-side scenario-answer"><div class="scenario-eyebrow" style="color:' + ACCENTS.green + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.green + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Right answer</div><p class="scenario-headline">' + escapeHtml(sc.answer_headline) + '</p><ul class="scenario-bullets">' + (sc.bullets || []).map(b => '<li>' + escapeHtml(b) + '</li>').join('') + '</ul></div></div></div>';
+}
+
+function renderMidCheckQSlide(slide) {
+  const q = slide.q, key = slide.key;
+  const ans = state.midAnswers[key], answered = ans !== undefined;
+  return '<div class="kc-banner"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><p><strong>Quick check.</strong> You\'ll see the answer right away — won\'t count against your final quiz.</p></div>' +
+    '<div class="q-card"><div class="q-text">' + escapeHtml(q.q) + '</div><div class="q-options">' +
+    q.options.map((opt, oi) => {
+      let cls = 'q-option';
+      if (answered) { if (oi === q.correct) cls += ' correct'; else if (ans === oi) cls += ' incorrect'; }
+      const checkSvg = answered && oi === q.correct ? '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>' : '';
+      return '<button class="' + cls + '" data-mid="' + key + '" data-opt="' + oi + '" ' + (answered ? 'disabled' : '') + '><span>' + escapeHtml(opt) + '</span>' + checkSvg + '</button>';
+    }).join('') + '</div>' +
+    (answered ? '<div class="feedback ' + (ans === q.correct ? 'right' : 'wrong') + '"><strong>' + (ans === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+}
+
+function attachMidCheckHandlers() {
+  document.querySelectorAll('[data-mid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.mid, opt = parseInt(btn.dataset.opt);
+      if (state.midAnswers[key] !== undefined) return;
+      state.midAnswers[key] = opt;
+      renderSlide();
+    });
+  });
+}
+
+function renderQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  document.getElementById('quiz-instructions').textContent = quiz.length + ' questions. ' + (CONTENT.meta.pass_mark_pct || 70) + '% to pass (' + passN + '/' + quiz.length + ').';
+  document.getElementById('quiz-questions').innerHTML = quiz.map((q, i) => {
+    return '<div class="quiz-q"><div><span style="font-size:11px;font-weight:700;color:var(--brand-primary);">Q' + (i + 1) + '.</span> <span style="font-weight:600;">' + escapeHtml(q.q) + '</span></div><div class="q-options" style="margin-top:14px;">' +
+      q.options.map((opt, j) => {
+        let cls = 'q-option';
+        if (state.quizSubmitted) { if (j === q.correct) cls += ' correct'; else if (state.quizAnswers[i] === j) cls += ' incorrect'; }
+        else if (state.quizAnswers[i] === j) cls += ' selected';
+        return '<button class="' + cls + '" data-q="' + i + '" data-opt="' + j + '" ' + (state.quizSubmitted ? 'disabled' : '') + '><span class="letter">' + String.fromCharCode(65 + j) + '.</span><span style="flex:1;">' + escapeHtml(opt) + '</span></button>';
+      }).join('') + '</div>' +
+      (state.quizSubmitted && q.why ? '<div class="feedback ' + (state.quizAnswers[i] === q.correct ? 'right' : 'wrong') + '" style="margin-top:12px;"><strong>' + (state.quizAnswers[i] === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+  }).join('');
+  document.querySelectorAll('#quiz-questions [data-q]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.quizSubmitted) return;
+      state.quizAnswers[parseInt(btn.dataset.q)] = parseInt(btn.dataset.opt);
+      renderQuiz();
+      checkQuizComplete();
+    });
+  });
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  const all = (CONTENT.quiz || []).every((_, i) => state.quizAnswers[i] !== undefined);
+  document.getElementById('btn-submit-quiz').disabled = !all;
+}
+
+function submitQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  let s = 0;
+  quiz.forEach((q, i) => { if (state.quizAnswers[i] === q.correct) s++; });
+  state.score = s; state.passed = s >= passN; state.quizSubmitted = true;
+  renderResult(); showScreen('result');
+  if (trackingEnabled()) sendCompletion();
+}
+
+function renderResult() {
+  const passed = state.passed, quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  const pct = Math.round((state.score / quiz.length) * 100);
+  document.querySelector('#screen-result .result-bg').className = 'result-bg ' + (passed ? 'passed' : 'failed');
+  document.getElementById('result-icon').className = 'result-icon ' + (passed ? 'pass' : 'fail');
+  document.getElementById('result-icon').innerHTML = passed ? svg(ICONS.award) : svg('<path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15A9 9 0 0018.36 18.36L23 14"/>');
+  document.getElementById('result-title').textContent = passed ? 'Module complete' : 'Not quite there';
+  document.getElementById('result-subtitle').textContent = passed ? 'You have successfully completed this training module.' : 'You need ' + passN + ' out of ' + quiz.length + ' correct to pass. Review and try again.';
+  document.getElementById('r-name').textContent = state.learnerName;
+  document.getElementById('r-employer').textContent = state.employer;
+  document.getElementById('r-score').textContent = state.score + ' / ' + quiz.length + ' (' + pct + '%)';
+  const rResult = document.getElementById('r-result');
+  rResult.textContent = passed ? 'PASSED' : 'FAILED';
+  rResult.style.color = passed ? ACCENTS.green : ACCENTS.amber;
+  document.getElementById('r-date').textContent = new Date().toLocaleString('en-CA');
+  document.getElementById('btn-retry').style.display = passed ? 'none' : 'inline-flex';
+}
+
+function setTrackingStatus(status, msg) {
+  const el = document.getElementById('tracking-status');
+  el.className = 'tracking-status ' + status; el.textContent = msg;
+}
+// Tracking is "enabled" only when real config is present — placeholders (containing "__")
+// leave it disabled so the module still works and just shows the print-certificate note.
+function trackingEnabled() {
+  const t = CONTENT.tracking || {};
+  if (t.provider === 'supabase') {
+    return /^https?:\/\//.test(t.supabase_url || '') && !!t.anon_key && !!t.token &&
+           (t.supabase_url.indexOf('__') === -1) && (String(t.token).indexOf('__') === -1);
+  }
+  return !!t.endpoint && t.endpoint.indexOf('__') === -1;
+}
+function sendCompletion() {
+  const t = CONTENT.tracking || {};
+  const total = (CONTENT.quiz || []).length;
+  const pct = total ? Math.round((state.score / total) * 100) : 0;
+  setTrackingStatus('pending', '⟳ Saving completion record...');
+  if (t.provider === 'supabase') {
+    // Strawboss-compatible path: call a SECURITY DEFINER RPC. The anon key is public by
+    // design; the per-course token scopes what can be written (company + course).
+    const url = t.supabase_url.replace(/\/+$/, '') + '/rest/v1/rpc/submit_course_completion';
+    fetch(url, {
+      method: 'POST',
+      headers: { 'apikey': t.anon_key, 'Authorization': 'Bearer ' + t.anon_key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        p_token: t.token,
+        p_worker_name: state.learnerName,
+        p_worker_email: state.workerEmail || null,
+        p_employer: state.employer,
+        p_score: state.score, p_total: total, p_pct: pct, p_passed: state.passed
+      })
+    }).then(res => {
+      if (res.ok) setTrackingStatus('ok', '✓ Completion recorded.');
+      else setTrackingStatus('fail', '⚠ Could not save record (' + res.status + '). Screenshot this page for your supervisor.');
+    }).catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  } else {
+    // Legacy path: generic endpoint (e.g. Google Apps Script), fire-and-forget.
+    const payload = {
+      module: t.module_id || ((CONTENT.meta.code || '') + ' ' + (CONTENT.meta.version || '')),
+      name: state.learnerName, employer: state.employer,
+      score: state.score, total: total, pct: pct,
+      passed: state.passed, timestamp: new Date().toISOString()
+    };
+    fetch(t.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload), mode: 'no-cors' })
+      .then(() => setTrackingStatus('ok', '✓ Completion record saved.'))
+      .catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  }
+}
+
+// Wire up
+function refreshStartButton() {
+  const name = document.getElementById('learner-name').value.trim();
+  const emp = document.getElementById('employer').value.trim();
+  document.getElementById('btn-start').disabled = !(name && emp);
+}
+document.getElementById('learner-name').addEventListener('input', refreshStartButton);
+document.getElementById('employer').addEventListener('input', refreshStartButton);
+document.getElementById('btn-start').addEventListener('click', () => {
+  state.learnerName = document.getElementById('learner-name').value.trim();
+  state.employer = document.getElementById('employer').value.trim();
+  state.slideIdx = 0;
+  showScreen('learn'); renderSlide();
+});
+document.getElementById('btn-prev').addEventListener('click', () => { if (state.slideIdx > 0) { state.slideIdx--; renderSlide(); } });
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (state.slideIdx < SLIDES.length - 1) { state.slideIdx++; renderSlide(); }
+  else { showScreen('quiz'); renderQuiz(); }
+});
+document.getElementById('btn-submit-quiz').addEventListener('click', submitQuiz);
+document.getElementById('btn-retry').addEventListener('click', () => { state.quizAnswers = {}; state.quizSubmitted = false; state.score = 0; showScreen('quiz'); renderQuiz(); });
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+document.getElementById('btn-restart').addEventListener('click', () => {
+  state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+  document.getElementById('learner-name').value = '';
+  document.getElementById('employer').value = '';
+  refreshStartButton(); showScreen('intro');
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (state.screen !== 'learn') return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); document.getElementById('btn-next').click(); }
+  else if (e.key === 'ArrowLeft') { document.getElementById('btn-prev').click(); }
+});
+
+renderIntroMeta();
+</script>
+</body>
+</html>

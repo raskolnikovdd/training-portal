@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Safety Training</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #F8FAFC; color: #0F172A; line-height: 1.5; -webkit-font-smoothing: antialiased; display: flex; flex-direction: column; }
+button { font-family: inherit; cursor: pointer; border: none; }
+a { color: var(--brand-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* INTRO screen — full viewport, centered */
+.intro-bg { flex: 1; padding: 16px; background: linear-gradient(135deg, var(--brand-darkblue) 0%, var(--brand-navy) 50%, var(--brand-darkblue) 100%); display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.intro-card { max-width: 600px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 28px; }
+.intro-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.brand-shield { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); flex-shrink: 0; }
+.brand-shield svg { width: 24px; height: 24px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.brand-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary); }
+.brand-sub { font-size: 11px; color: #64748B; margin-top: 2px; }
+.intro-title { font-size: 36px; font-weight: 700; margin-bottom: 4px; letter-spacing: -1px; }
+.intro-subtitle { font-size: 15px; color: #475569; margin-bottom: 20px; }
+.meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+.meta-pill { display: flex; align-items: center; gap: 8px; padding: 10px; background: #F1F5F9; border-radius: 10px; }
+.meta-pill .icon { width: 28px; height: 28px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.meta-pill .icon svg { width: 12px; height: 12px; color: var(--brand-primary); fill: none; stroke: currentColor; stroke-width: 2; }
+.meta-pill .label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #64748B; }
+.meta-pill .value { font-size: 12px; font-weight: 700; color: #0F172A; }
+.intro-info { background: #EFF6FB; border: 1px solid #C5DEEC; border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+.intro-info .info-title { font-size: 12px; font-weight: 700; color: var(--brand-darkblue); margin-bottom: 8px; }
+.intro-info ul { list-style: none; }
+.intro-info li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; }
+.intro-info li::before { content: "✓"; color: var(--brand-primary); font-weight: 700; flex-shrink: 0; }
+.input-row { margin-bottom: 12px; }
+.input-row label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.input-row input { width: 100%; padding: 10px 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-family: inherit; transition: border-color 150ms; }
+.input-row input:focus { outline: none; border-color: var(--brand-primary); }
+.btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-primary-dark)); color: #fff; border-radius: 12px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: all 150ms; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.intro-footer { margin-top: 16px; padding-top: 16px; border-top: 1px solid #E2E8F0; font-size: 11px; color: #64748B; text-align: center; }
+
+/* SLIDE screens — one slide visible at a time, fixed viewport */
+.slide-wrap { flex: 1; display: flex; flex-direction: column; min-height: 0; background: #F8FAFC; }
+.top-bar { background: #fff; border-bottom: 1px solid #E2E8F0; padding: 10px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex-shrink: 0; }
+.top-bar-inner { max-width: 900px; margin: 0 auto; }
+.top-bar-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 8px; }
+.top-bar-left { display: flex; align-items: center; gap: 8px; font-size: 12px; min-width: 0; }
+.top-bar-shield { width: 24px; height: 24px; border-radius: 6px; background: var(--brand-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.top-bar-shield svg { width: 12px; height: 12px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.top-bar-brand { font-weight: 700; letter-spacing: 1px; color: var(--brand-primary); white-space: nowrap; }
+.top-bar-context { color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.progress-bar { height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-primary), var(--brand-primary-dark)); transition: width 500ms; }
+
+.slide-content { flex: 1; overflow-y: auto; padding: 24px 16px; display: flex; align-items: flex-start; justify-content: center; }
+.slide-inner { max-width: 760px; width: 100%; }
+
+/* SLIDE — section announcement */
+.section-intro { text-align: center; padding: 32px 16px; }
+.section-intro .icon-big { width: 80px; height: 80px; border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+.section-intro .icon-big svg { width: 40px; height: 40px; color: #fff; fill: none; stroke: currentColor; stroke-width: 2; }
+.section-intro .eyebrow-text { font-size: 12px; font-weight: 700; letter-spacing: 3px; margin-bottom: 8px; }
+.section-intro h2 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; margin-bottom: 12px; }
+.section-intro .subtitle { font-size: 16px; color: #64748B; max-width: 540px; margin: 0 auto; }
+
+/* SLIDE — content block */
+.block-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 32px; }
+.block-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 12px; }
+.block-heading { font-size: 26px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; display: flex; gap: 12px; align-items: flex-start; }
+.block-accent { display: block; width: 5px; min-height: 28px; border-radius: 3px; margin-top: 4px; flex-shrink: 0; }
+.block-body { color: #475569; margin-bottom: 14px; font-size: 15px; line-height: 1.6; }
+.block-bullets { list-style: none; }
+.block-bullets li { display: flex; gap: 12px; padding: 7px 0; font-size: 15px; color: #334155; line-height: 1.55; }
+.block-bullets li svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — pictograms grid (one per slide; or one slide showing the grid) */
+.picto-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.picto-cell { text-align: center; padding: 16px; border: 2px solid #F1F5F9; border-radius: 12px; }
+.picto-cell img { width: 64px; height: 64px; margin-bottom: 8px; }
+.picto-label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.picto-sub { font-size: 11px; color: #64748B; line-height: 1.4; }
+
+/* SLIDE — video card */
+.video-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.video-thumb { background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); padding: 40px 24px; text-align: center; color: #fff; }
+.video-play-btn { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 50%; background: #fff; margin-bottom: 12px; cursor: pointer; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+.video-play-btn svg { width: 28px; height: 28px; color: var(--brand-red); fill: currentColor; }
+.video-thumb h3 { font-size: 18px; margin-bottom: 4px; }
+.video-thumb p { font-size: 12px; color: #B0CADE; }
+.video-action { padding: 14px 20px; background: #F8FAFC; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.video-action-info strong { display: block; font-weight: 600; font-size: 13px; }
+.video-action-info span { color: #64748B; font-size: 12px; }
+.btn-yt { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; background: var(--brand-red); color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; }
+.btn-yt:hover { background: #A60D26; text-decoration: none; }
+.btn-yt svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+/* SLIDE — chemical card */
+.chem-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.chem-card-header { padding: 18px 24px; border-bottom: 1px solid #F1F5F9; }
+.chem-pictos-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.chem-pictos-row img { width: 40px; height: 40px; }
+.signal-badge { display: inline-block; padding: 5px 10px; border-radius: 6px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.chem-card-name { font-size: 22px; font-weight: 700; margin-bottom: 3px; }
+.chem-card-full { font-size: 11px; color: #64748B; font-style: italic; margin-bottom: 10px; }
+.chem-haz { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #475569; }
+.chem-row { display: grid; grid-template-columns: 140px 1fr; border-top: 1px solid #F1F5F9; }
+.chem-row-label { padding: 14px; color: #fff; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; display: flex; align-items: center; }
+.chem-row-items { padding: 12px 14px; }
+.chem-row-items ul { list-style: none; }
+.chem-row-items li { display: flex; gap: 8px; padding: 2px 0; font-size: 12px; color: #334155; align-items: flex-start; }
+
+/* SLIDE — scenario */
+.scenario { background: #fff; border: 1px solid #E2E8F0; border-radius: 16px; overflow: hidden; }
+.scenario-title { padding: 12px 18px; color: #fff; font-weight: 700; font-size: 15px; background: linear-gradient(135deg, var(--brand-darkblue), var(--brand-navy)); }
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.scenario-side { padding: 20px; }
+.scenario-situation { border-right: 1px solid #F1F5F9; }
+.scenario-answer { background: #EAF7EE; }
+.scenario-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; display: flex; gap: 6px; align-items: center; }
+.scenario-eyebrow svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+.scenario-text { font-size: 12px; color: #334155; margin-bottom: 12px; line-height: 1.6; }
+.scenario-question { font-size: 16px; font-weight: 700; }
+.scenario-headline { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.scenario-bullets { list-style: none; }
+.scenario-bullets li { display: flex; gap: 8px; padding: 3px 0; font-size: 12px; color: #334155; line-height: 1.55; }
+.scenario-bullets li::before { content: "✓"; color: var(--brand-green); font-weight: 700; flex-shrink: 0; }
+
+/* SLIDE — knowledge check */
+.kc-banner { background: #EAF7EE; border: 2px solid #9DD8AC; border-radius: 12px; padding: 12px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+.kc-banner svg { width: 18px; height: 18px; color: var(--brand-green); flex-shrink: 0; margin-top: 2px; fill: none; stroke: currentColor; stroke-width: 2; }
+.kc-banner p { font-size: 12px; color: #334155; }
+.q-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; }
+.q-card .q-num { font-size: 11px; font-weight: 700; color: var(--brand-primary); margin-right: 6px; }
+.q-card .q-text { font-weight: 600; margin-bottom: 12px; line-height: 1.5; font-size: 16px; }
+.q-options { display: flex; flex-direction: column; gap: 6px; }
+.q-option { padding: 10px 14px; border: 2px solid #E2E8F0; border-radius: 8px; background: #fff; text-align: left; font-size: 14px; color: #334155; display: flex; align-items: center; gap: 8px; transition: all 120ms; }
+.q-option:hover { border-color: #94A3B8; }
+.q-option .letter { font-weight: 700; min-width: 20px; }
+.q-option.selected { background: var(--brand-primary); border-color: var(--brand-primary); color: #fff; }
+.q-option.correct { background: #EAF7EE; border-color: var(--brand-green); color: #1F6B33; }
+.q-option.incorrect { background: #FBE9EC; border-color: var(--brand-red); color: #8B1A2B; }
+.q-option svg { width: 16px; height: 16px; flex-shrink: 0; margin-left: auto; fill: none; stroke: currentColor; stroke-width: 2; }
+.feedback { margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+.feedback.right { background: #EAF7EE; color: #1F6B33; }
+.feedback.wrong { background: #FFF7E5; color: #8B5500; }
+
+/* QUIZ screen — scrollable, doesn't fit single screen */
+.quiz-screen { flex: 1; overflow-y: auto; padding: 24px 16px; }
+.quiz-inner { max-width: 760px; margin: 0 auto; }
+.quiz-q { border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fff; }
+
+/* RESULT screen */
+.result-bg { flex: 1; padding: 24px 16px; display: flex; align-items: center; justify-content: center; overflow-y: auto; }
+.result-bg.passed { background: linear-gradient(135deg, var(--brand-green), #1E8038); }
+.result-bg.failed { background: linear-gradient(135deg, var(--brand-accent), #D08000); }
+.result-card { max-width: 540px; width: 100%; background: #fff; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); padding: 36px; text-align: center; }
+.result-icon { width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.result-icon.pass { background: #EAF7EE; }
+.result-icon.fail { background: #FFF7E5; }
+.result-icon svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+.result-icon.pass svg { color: var(--brand-green); }
+.result-icon.fail svg { color: var(--brand-accent); }
+.result-title { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.result-subtitle { color: #475569; margin-bottom: 20px; font-size: 14px; }
+.result-record { background: #F8FAFC; border: 2px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: left; }
+.result-record .row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 13px; }
+.result-record .row .label { color: #64748B; }
+.result-record .row .value { font-weight: 600; text-align: right; }
+.tracking-status { font-size: 12px; margin: 12px 0; padding: 8px 12px; border-radius: 8px; }
+.tracking-status.ok { background: #EAF7EE; color: #1F6B33; }
+.tracking-status.pending { background: #FFF7E5; color: #8B5500; }
+.tracking-status.fail { background: #FBE9EC; color: #8B1A2B; }
+.result-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.result-buttons button { flex: 1; min-width: 110px; }
+
+/* BOTTOM BAR — audio player + nav, fixed */
+.bottom-bar { background: #fff; border-top: 1px solid #E2E8F0; padding: 10px 16px; flex-shrink: 0; box-shadow: 0 -1px 3px rgba(0,0,0,0.04); }
+.bottom-bar-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+.audio-player { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 6px 12px; background: #F1F5F9; border-radius: 10px; }
+.audio-player audio { flex: 1; min-width: 0; height: 32px; }
+.audio-player audio::-webkit-media-controls-panel { background: #F1F5F9; }
+.audio-player.empty { display: none; }
+.btn-nav { padding: 10px 14px; background: #fff; color: #475569; border: 1px solid #CBD5E1; border-radius: 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.btn-nav.next { background: var(--brand-primary); color: #fff; border-color: var(--brand-primary); }
+.btn-nav.next:hover { background: var(--brand-primary-dark); }
+.btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-nav svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+@media (max-width: 700px) {
+  .scenario-grid { grid-template-columns: 1fr; }
+  .scenario-situation { border-right: none; border-bottom: 1px solid #F1F5F9; }
+  .chem-row { grid-template-columns: 1fr; }
+  .meta-grid { grid-template-columns: 1fr; }
+  .block-card { padding: 24px 20px; }
+  .section-intro h2 { font-size: 28px; }
+  .block-heading { font-size: 22px; }
+  .top-bar-context { display: none; }
+  .btn-nav { padding: 10px 12px; }
+  .btn-nav span { display: none; }
+}
+
+.screen { display: none; flex-direction: column; flex: 1; min-height: 0; }
+.screen.active { display: flex; }
+
+@media print {
+  html, body { overflow: visible; height: auto; }
+  .screen:not(.active), .bottom-bar, .top-bar { display: none !important; }
+  body { background: #fff; display: block; }
+  .result-card { box-shadow: none; border: 2px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div id="screen-intro" class="screen active">
+  <div class="intro-bg">
+    <div class="intro-card">
+      <div class="intro-header">
+        <div class="brand-shield"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div>
+          <div class="brand-eyebrow" id="brand-eyebrow"></div>
+          <div class="brand-sub" id="module-code"></div>
+        </div>
+      </div>
+      <h1 class="intro-title" id="intro-topic"></h1>
+      <p class="intro-subtitle" id="intro-subtitle"></p>
+      <div class="meta-grid" id="meta-grid"></div>
+      <div class="intro-info">
+        <div class="info-title">What you will learn</div>
+        <ul id="learning-objectives"></ul>
+      </div>
+      <div class="input-row">
+        <label for="learner-name">Your full name</label>
+        <input type="text" id="learner-name" placeholder="e.g. Casey Singh">
+      </div>
+      <div class="input-row">
+        <label for="employer">Employer / Organization</label>
+        <input type="text" id="employer" placeholder="e.g. Refresh Resources">
+      </div>
+      <button id="btn-start" class="btn-primary" disabled>Begin module <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      <div class="intro-footer" id="footer-tracking-note"></div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-learn" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="topbar-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span class="top-bar-context" id="slide-counter"></span>
+      </div>
+      <div style="font-size: 12px; font-weight: 600;" id="progress-pct"></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div></div>
+  <div class="slide-content"><div class="slide-inner" id="slide-body"></div></div>
+  <div class="bottom-bar"><div class="bottom-bar-inner">
+    <button id="btn-prev" class="btn-nav"><svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> <span>Previous</span></button>
+    <div id="audio-container" class="audio-player empty">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#64748B" stroke-width="2" style="flex-shrink:0"><path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+      <audio id="slide-audio" controls preload="none"></audio>
+    </div>
+    <button id="btn-next" class="btn-nav next">Continue <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div></div>
+</div>
+
+<div id="screen-quiz" class="screen slide-wrap">
+  <div class="top-bar"><div class="top-bar-inner">
+    <div class="top-bar-row">
+      <div class="top-bar-left">
+        <div class="top-bar-shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <span class="top-bar-brand" id="quiz-topic"></span>
+        <span style="color: #94A3B8;">·</span>
+        <span style="color: #475569;">Final quiz</span>
+      </div>
+    </div>
+  </div></div>
+  <div class="quiz-screen"><div class="quiz-inner">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--brand-primary);">FINAL KNOWLEDGE CHECK</div>
+      <h2 style="font-size: 28px; font-weight: 700; margin: 8px 0;">Quiz</h2>
+      <p style="color: #475569; font-size: 14px;" id="quiz-instructions"></p>
+    </div>
+    <div id="quiz-questions"></div>
+    <button id="btn-submit-quiz" class="btn-primary" style="margin-top: 24px;" disabled>Submit answers</button>
+  </div></div>
+</div>
+
+<div id="screen-result" class="screen">
+  <div class="result-bg">
+    <div class="result-card">
+      <div class="result-icon" id="result-icon"></div>
+      <h2 class="result-title" id="result-title"></h2>
+      <p class="result-subtitle" id="result-subtitle"></p>
+      <div class="result-record">
+        <div class="row"><div class="label">Name</div><div class="value" id="r-name"></div></div>
+        <div class="row"><div class="label">Employer</div><div class="value" id="r-employer"></div></div>
+        <div class="row"><div class="label">Module</div><div class="value" id="r-module"></div></div>
+        <div class="row"><div class="label">Score</div><div class="value" id="r-score"></div></div>
+        <div class="row"><div class="label">Result</div><div class="value" id="r-result"></div></div>
+        <div class="row"><div class="label">Completed</div><div class="value" id="r-date"></div></div>
+      </div>
+      <div id="tracking-status"></div>
+      <div class="result-buttons">
+        <button id="btn-retry" class="btn-primary" style="display: none;">Retry quiz</button>
+        <button id="btn-print" class="btn-nav" style="justify-content: center;">Print certificate</button>
+        <button id="btn-restart" class="btn-nav" style="justify-content: center;">New learner</button>
+      </div>
+      <p style="font-size: 11px; color: #94A3B8; margin-top: 16px;" id="result-footer"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {"meta": {"topic": "Hydrogen Sulfide (H\u2082S)", "subtitle": "Recognizing and monitoring H\u2082S", "code": "REF-TR-09", "version": "v1.0", "duration": "~40 min", "pass_mark_pct": 70, "regulation_alignment": "WorkSafeBC OHS Regulation Part 5 (exposure limits) & Part 3 (s. 3.12)", "publication_basis": "Refresh H\u2082S Personal Monitor mini-course", "client": "refresh", "audience_summary": "All Refresh Resources field & shop workers", "what_you_will_learn": ["What H\u2082S is and where it shows up at Refresh sites", "How H\u2082S affects your body at different concentrations", "The BC exposure limits for H\u2082S and what they mean for you", "How your personal H\u2082S monitor works \u2014 bump test, alarm set points, and calibration", "What to do the moment your monitor goes into alarm", "How to evacuate, muster, and report an H\u2082S release"]}, "sections": [{"type": "content", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "blocks": [{"heading": "H\u2082S is invisible, fast, and deadly", "body": "Hydrogen sulfide is a gas you cannot see and may not be able to smell. At Refresh's sour gas sites it can release at any time, and your personal H\u2082S monitor is often the difference between walking off the pad and not."}, {"heading": "Where Refresh runs into H\u2082S", "bullets": ["Registered sour gas pads where H\u2082S can release at any time", "Well-heads, separators, and tanks during sampling or chemical injection", "Low-lying or enclosed spots where the gas can collect"]}, {"heading": "Why your nose is not enough", "bullets": ["H\u2082S smells like rotten eggs at low concentrations", "Around 100 ppm it deadens your sense of smell \u2014 the odour fades", "At high concentrations you smell nothing at all", "Your monitor detects H\u2082S before it reaches dangerous levels \u2014 but only if it works"]}, {"heading": "This is a refresher, not H\u2082S Alive", "body": "This module is a refresher on the one piece of gear you must trust every shift \u2014 your monitor. It does not replace the H\u2082S Alive certification from Energy Safety Canada."}]}, {"type": "content", "title": "What H\u2082S is", "eyebrow": "Section 2 \u2014 What", "icon": "book", "accent": "blue", "blocks": [{"heading": "A toxic gas in sour gas operations", "body": "Hydrogen sulfide (H\u2082S) is a colourless, flammable, highly toxic gas. It is the \"sour\" in sour gas and is present at the registered pads where Refresh works."}, {"heading": "What makes it dangerous", "bullets": ["Invisible \u2014 you cannot see it coming", "Fast-acting \u2014 high concentrations affect you within a breath or two", "Heavier than air \u2014 it settles into low or enclosed areas", "Deadens smell \u2014 you cannot rely on the rotten-egg odour to warn you"]}]}, {"type": "content", "title": "Health effects by concentration", "eyebrow": "Section 2 \u2014 What", "icon": "alert", "accent": "red", "blocks": [{"heading": "The higher the concentration, the faster it hurts you", "body": "H\u2082S effects climb sharply with concentration. The numbers below are why we leave the area early instead of waiting to feel symptoms."}, {"heading": "What happens as ppm rises", "bullets": ["0.01\u20130.13 ppm \u2014 rotten-egg smell is first detectable", "Around 100 ppm \u2014 H\u2082S deadens your sense of smell; you can no longer rely on odour", "Around 500 ppm \u2014 one or two breaths can cause unconsciousness", "Around 1000 ppm \u2014 instant collapse"]}, {"heading": "The takeaway", "body": "By the time you feel the worst effects it is already too late. The monitor and the exposure limits exist to get you out long before you reach these levels."}]}, {"type": "content", "title": "The BC exposure limits", "eyebrow": "Section 2 \u2014 What", "icon": "shield", "accent": "darkblue", "blocks": [{"heading": "BC uses a ceiling limit for H\u2082S", "body": "In BC the exposure limit for H\u2082S is a 10 ppm ceiling. A ceiling means it must not be exceeded at any time \u2014 not an average over the shift."}, {"heading": "Two numbers to remember", "bullets": ["10 ppm ceiling \u2014 must never be exceeded; above this you leave the area", "5 ppm action level \u2014 the point where you act before the ceiling is reached", "These set points are also why the monitor alarms at 5 and 10 ppm"]}]}, {"type": "midcheck", "title": "Quick check \u2014 H\u2082S basics", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "Why can't you rely on smell to warn you about H\u2082S?", "options": ["H\u2082S has no smell at any concentration", "Around 100 ppm it deadens your sense of smell, and at high levels you smell nothing", "The smell only appears after you've been exposed for an hour"], "correct": 1, "why": "H\u2082S is detectable by smell at low levels, but around 100 ppm it paralyzes your sense of smell. At lethal concentrations you smell nothing \u2014 so the monitor, not your nose, is the warning."}, {"q": "What is the BC exposure limit for H\u2082S?", "options": ["A 100 ppm 8-hour average", "A 10 ppm ceiling that must not be exceeded at any time", "There is no BC limit for H\u2082S"], "correct": 1, "why": "BC uses a 10 ppm ceiling limit. A ceiling must never be exceeded \u2014 it is not an average over the shift."}, {"q": "What does the 5 ppm action level mean?", "options": ["The level where it is safe to keep working", "The point where you act before the 10 ppm ceiling is reached", "The level at which H\u2082S becomes flammable"], "correct": 1, "why": "5 ppm is the action level \u2014 the point to take action before exposure climbs to the 10 ppm ceiling. It is also the monitor's low-alarm set point."}]}, {"type": "content", "title": "Your personal H\u2082S monitor", "eyebrow": "Section 3 \u2014 How", "icon": "wrench", "accent": "blue", "blocks": [{"heading": "A chemical sensor you wear", "body": "Your monitor is a chemical sensor that detects H\u2082S before it reaches dangerous levels. Most Refresh units are 4-gas monitors."}, {"heading": "What a 4-gas monitor detects", "bullets": ["H\u2082S \u2014 hydrogen sulfide", "CO \u2014 carbon monoxide", "O\u2082 \u2014 oxygen level", "LEL \u2014 combustible gases (lower explosive limit)"]}, {"heading": "H\u2082S alarm set points", "bullets": ["Low alarm \u2014 typically 5 ppm (the action level)", "High alarm \u2014 typically 10 ppm (the ceiling limit)", "Both alarms must work \u2014 that is what the bump test confirms"]}]}, {"type": "content", "title": "Bump test vs. calibration", "eyebrow": "Section 3 \u2014 How", "icon": "beaker", "accent": "purple", "blocks": [{"heading": "Bump test (function test)", "body": "A bump test briefly exposes the monitor to a known concentration of test gas to verify the sensor reads gas AND the alarms sound. It is required before each shift of use per most manufacturers and most oil-and-gas client requirements."}, {"heading": "Calibration", "body": "Calibration is a full adjustment of the sensor reading against a certified gas standard. It is done by a qualified person, typically every 6 months per the manufacturer."}, {"heading": "Sensors do not last forever", "bullets": ["Sensors degrade over time", "A typical H\u2082S sensor lifespan is about 2 years", "A monitor that fails its bump test goes out of service \u2014 swap the unit"]}]}, {"type": "content", "title": "The bump test, step by step", "eyebrow": "Section 3 \u2014 How", "icon": "clipboard", "accent": "blue", "blocks": [{"heading": "Before you power on", "bullets": ["Visual inspection \u2014 case undamaged, sensors clean, clip secure, screen readable", "Battery check \u2014 fully charged, or replaceable batteries fresh"]}, {"heading": "Power on and test", "bullets": ["Power on and wait for the self-test (zero-cal, sensor warm-up, all 4 gases display)", "Connect calibration gas (typical: 25 ppm H\u2082S, 200 ppm CO, 18% O\u2082, 50% LEL methane) for about 30 seconds", "Confirm both the LOW and HIGH H\u2082S alarms trigger"]}, {"heading": "Document and wear it right", "bullets": ["Record the date, time, monitor serial number, and your initials", "A failed bump test means the monitor is out of service \u2014 swap the unit", "Wear it in your breathing zone \u2014 collar, lapel, or hard-hat strap", "Not in your pocket, not on your belt facing down"]}, {"heading": "End of shift", "body": "Turn the monitor off, put it on charge, and log it so it is ready for the next shift."}]}, {"type": "midcheck", "title": "Quick check \u2014 Your monitor", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "questions": [{"q": "How often must you bump test your personal H\u2082S monitor?", "options": ["Once a month", "Once a year, when the calibration is done", "Before each shift of use"], "correct": 2, "why": "Most manufacturers and oil-and-gas client procedures require a bump test before each shift of use. It confirms the sensor reads gas and the alarms sound."}, {"q": "What is the difference between a bump test and calibration?", "options": ["They are two names for the same thing", "A bump test checks the sensor and alarms work; calibration is a full sensor adjustment to a certified gas standard", "A bump test is done by a technician; calibration is done daily by the worker"], "correct": 1, "why": "A bump test is a quick function check you do before your shift. Calibration is a full adjustment against a certified gas standard, done by a qualified person, typically every 6 months."}, {"q": "Where on your body should you wear the monitor?", "options": ["In your back pocket where it won't get caught", "On your belt with the screen facing down", "In your breathing zone \u2014 collar, lapel, or hard-hat strap"], "correct": 2, "why": "H\u2082S accumulates near where you breathe. The monitor must be in your breathing zone to give an accurate reading \u2014 not in a pocket or facing down on your belt."}]}, {"type": "content", "title": "When the alarm sounds", "eyebrow": "Section 4 \u2014 What if it goes wrong?", "icon": "alert", "accent": "red", "blocks": [{"heading": "Do not investigate the source", "body": "Once the monitor alarms, the atmosphere is unsafe by definition. Never go toward a gas alarm to find the leak or try to fix it."}, {"heading": "What to do, in order", "bullets": ["Evacuate upwind, away from the release", "Account for your crew at the muster point", "Call the operator or supervisor to report the leak", "Do not re-enter until the area is ventilated, monitored, and confirmed clear"]}, {"heading": "Your right to refuse", "body": "If you are directed back into an area where H\u2082S is above the limit, you have the right to refuse unsafe work under BC OHS Regulation s. 3.12. Pressure to \"just finish\" is not lawful direction when the ceiling is exceeded."}]}, {"type": "scenarios", "title": "Real Refresh scenarios", "eyebrow": "Section 4 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "intro": "One right answer for each. Read the situation, think, then check.", "items": [{"title": "Scenario 1 \u2014 Low alarm at the well-head", "situation": "You're sampling at a well-head. Your personal monitor goes into LOW alarm \u2014 H\u2082S at 5 ppm. The crew chief says, \"Just finish the sample, it's a small leak.\"", "question": "What do you do?", "answer_headline": "Stop. The alarm is the action level, not the safe level.", "bullets": ["Stop work \u2014 5 ppm is the action level, not a level to keep working at", "Move upwind to your muster point and take other workers with you", "Account for the crew and call the operator or supervisor to report the leak", "Do not re-enter to finish the sample until the area is ventilated, monitored, and confirmed clear", "The crew chief's pressure is not lawful direction \u2014 your right to refuse (s. 3.12) covers this", "In an unknown leak the concentration can climb fast \u2014 trust your monitor"]}, {"title": "Scenario 2 \u2014 Failed bump test", "situation": "It's the start of your shift. You run the bump test and the HIGH H\u2082S alarm does not trigger when you apply the test gas.", "question": "Can you take this monitor out to the pad?", "answer_headline": "No. A failed bump test means out of service.", "bullets": ["A monitor that fails its bump test goes out of service immediately", "Tag it and swap it for a unit that passes", "Do not adjust your own reading \u2014 calibration is a qualified person's job", "A monitor that won't alarm cannot protect you, no matter how good it looks"]}, {"title": "Scenario 3 \u2014 No smell, but you're at a sour pad", "situation": "You're working a registered sour gas pad. You don't smell rotten eggs, so a co-worker says the air is fine and there's no need to wear the monitor on your collar.", "question": "Do you trust the lack of smell?", "answer_headline": "No. Smell is not a reliable indicator.", "bullets": ["Around 100 ppm H\u2082S deadens your sense of smell \u2014 no odour does not mean no gas", "At high concentrations you smell nothing at all", "Keep the monitor on, in your breathing zone, every time you're on the pad", "The monitor detects H\u2082S before it reaches dangerous levels \u2014 your nose does not"]}, {"title": "Scenario 4 \u2014 Monitor left in the truck", "situation": "You're heading out for a quick chemical top-up and realize you left your monitor charging in the truck. It's only a five-minute job at the tank.", "question": "Do you do the job without it?", "answer_headline": "No. Go back and get the monitor.", "bullets": ["H\u2082S can release at any time \u2014 a short job is still an exposure risk", "Retrieve the monitor and confirm it passed its bump test for the shift", "Wear it in your breathing zone before you approach the tank", "A five-minute job is not worth being unprotected at a sour gas site"]}]}], "quiz": [{"q": "What is the BC OHS exposure limit for H\u2082S?", "options": ["100 ppm 8-hour TWA", "A 10 ppm ceiling \u2014 must not be exceeded at any time", "50 ppm STEL", "There is no BC limit"], "correct": 1, "why": "BC uses a 10 ppm ceiling limit for H\u2082S. A ceiling must never be exceeded at any time \u2014 it is not an average over the shift."}, {"q": "What does the 5 ppm action level tell you to do?", "options": ["Keep working \u2014 5 ppm is safe", "Take action before exposure reaches the 10 ppm ceiling", "Put on a respirator and continue the task", "Wait until you smell rotten eggs"], "correct": 1, "why": "5 ppm is the action level \u2014 the point to act before the 10 ppm ceiling is reached. It is also the monitor's low-alarm set point."}, {"q": "What does smelling rotten eggs tell you about the H\u2082S concentration?", "options": ["It's safe \u2014 your nose works, so the concentration is low", "Smell is detectable from about 0.01 ppm, but above ~100 ppm it fades and you CANNOT rely on it", "It means you're near instant collapse \u2014 leave immediately", "It's just methane, so there's no danger"], "correct": 1, "why": "H\u2082S is detectable by smell at very low levels, but around 100 ppm it deadens your sense of smell, and at lethal levels you smell nothing. Smell is not a reliable indicator \u2014 your monitor is."}, {"q": "Roughly what happens to a person at about 500 ppm H\u2082S?", "options": ["Mild eye irritation only", "One or two breaths can cause unconsciousness", "A faint rotten-egg smell with no other effect", "Nothing until they've been exposed for several hours"], "correct": 1, "why": "Around 500 ppm, one or two breaths can cause unconsciousness; around 1000 ppm causes instant collapse. This is why we leave early instead of waiting for symptoms."}, {"q": "What does a standard 4-gas monitor detect?", "options": ["H\u2082S, CO, O\u2082, and combustibles (LEL)", "Only H\u2082S", "H\u2082S, CO\u2082, dust, and humidity", "Oxygen and temperature only"], "correct": 0, "why": "A standard 4-gas monitor detects H\u2082S, carbon monoxide (CO), oxygen (O\u2082), and combustible gases (LEL)."}, {"q": "What are the typical H\u2082S low and high alarm set points on a Refresh monitor?", "options": ["Low 10 ppm, High 50 ppm", "Low 5 ppm, High 10 ppm", "Low 1 ppm, High 5 ppm", "Low 25 ppm, High 100 ppm"], "correct": 1, "why": "Typical set points are Low 5 ppm (the action level) and High 10 ppm (the ceiling limit), matching the BC exposure limits."}, {"q": "How often must you bump test your personal H\u2082S monitor?", "options": ["Once a month", "Once a year, when the calibration is done", "Before each shift of use", "Only if you suspect it's broken"], "correct": 2, "why": "Most manufacturers and oil-and-gas client procedures require a bump test before each shift of use. It confirms the sensor reads gas and the alarms sound."}, {"q": "What is the difference between a bump test and a calibration?", "options": ["They are the same thing", "A bump test checks the sensor and alarms work; calibration fully adjusts the sensor to a certified gas standard by a qualified person", "A bump test is done every 6 months; calibration is done daily", "A bump test adjusts the sensor; calibration just checks the battery"], "correct": 1, "why": "A bump test is a quick function check before your shift. Calibration is a full sensor adjustment against a certified gas standard, done by a qualified person, typically every 6 months."}, {"q": "Your monitor fails its bump test at the start of the shift. What do you do?", "options": ["Use it anyway \u2014 it usually works fine in the field", "Take it out of service and swap it for a unit that passes", "Adjust the reading yourself and carry on", "Skip the bump test next time so it doesn't fail"], "correct": 1, "why": "A failed bump test means the monitor is out of service. Tag it and swap the unit \u2014 a monitor that won't alarm cannot protect you."}, {"q": "Where on your body should you wear the monitor?", "options": ["In your back pocket where it won't get caught", "On your belt with the screen facing down", "In your breathing zone \u2014 collar, lapel, or hard-hat strap", "On the dashboard of your truck"], "correct": 2, "why": "H\u2082S accumulates near where you breathe. The monitor must be in your breathing zone to read accurately \u2014 not in a pocket, on a belt facing down, or in the truck."}, {"q": "Your monitor goes into HIGH alarm at the well-head. What do you do FIRST?", "options": ["Investigate where the leak is coming from", "Try to fix the leak with your tools", "Evacuate upwind, account for the crew, then call it in", "Wait to see if the alarm clears on its own"], "correct": 2, "why": "Never investigate a gas alarm. Evacuate upwind to the muster point, account for everyone, then call. The atmosphere is unsafe by definition once the alarm sounds."}, {"q": "After an H\u2082S alarm and evacuation, when can the crew re-enter the area?", "options": ["As soon as the alarm stops sounding", "Once the area has been ventilated, monitored, and confirmed clear", "After five minutes, regardless of readings", "Whenever the crew chief says it's fine"], "correct": 1, "why": "Re-entry only happens after the area is ventilated, monitored, and confirmed clear \u2014 not just because the alarm went quiet or someone says it's fine."}, {"q": "A crew chief tells you to keep working while your monitor is in alarm above the limit. What protects you if you refuse?", "options": ["Nothing \u2014 you must follow the crew chief", "Your right to refuse unsafe work under BC OHS Regulation s. 3.12", "Only your H\u2082S Alive certificate", "The monitor's warranty"], "correct": 1, "why": "The right to refuse unsafe work (s. 3.12) covers this. Pressure to keep working above the H\u2082S limit is not lawful direction."}, {"q": "Why do we act on the exposure limits and the monitor instead of waiting to feel symptoms?", "options": ["Symptoms always give plenty of warning", "By the time you feel the worst effects of H\u2082S it is already too late", "The monitor is only a backup to how you feel", "Feeling dizzy is the first safe sign to leave"], "correct": 1, "why": "High concentrations can cause unconsciousness or collapse within a breath or two. The limits and the monitor get you out long before you reach those levels."}, {"q": "Roughly how long is the typical service life of an H\u2082S sensor?", "options": ["About 1 month", "About 2 years", "About 10 years", "It never needs replacing"], "correct": 1, "why": "Sensors degrade over time. A typical H\u2082S sensor lasts about 2 years, which is why regular bump tests and calibration matter."}], "tracking": {"provider": "supabase", "supabase_url": "https://muftkbpnedufsyiyuwhk.supabase.co", "anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im11ZnRrYnBuZWR1ZnN5aXl1d2hrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3MjIzMzEsImV4cCI6MjA5NjI5ODMzMX0.OjnNDsjVizKn12GndFfRrD15JDmfqc4NKXFlnabbtxY", "token": "2a5aec12-c429-4a95-a95b-38ed15175e75", "course_id": "h2s", "module_id": "h2s-v1.0"}};
+const BRAND = {"client_id": "refresh", "client_name": "Refresh Resources", "client_short": "REFRESH", "tagline": "REFRESH RESOURCES TRAINING", "logo_text_primary": "REFRESH", "logo_text_secondary": "RESOURCES", "colors": {"primary": "#0098DA", "primary_dark": "#007FB8", "navy": "#114F69", "accent": "#F0A500", "red": "#C8102E", "green": "#2BA84A", "purple": "#8A4FBE", "darkblue": "#0A3447"}};
+const SLIDES = [{"kind": "section_intro", "section_idx": 0, "section_title": "Why this matters", "title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "icon": "alert", "accent": "amber", "subtitle": "", "audio_text": "Why this matters.", "id": "why-this-matters", "audio": "audio/why-this-matters.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "H\u2082S is invisible, fast, and deadly", "body": "Hydrogen sulfide is a gas you cannot see and may not be able to smell. At Refresh's sour gas sites it can release at any time, and your personal H\u2082S monitor is often the difference between walking off the pad and not.", "bullets": null, "audio_text": "H\u2082S is invisible, fast, and deadly Hydrogen sulfide is a gas you cannot see and may not be able to smell. At Refresh's sour gas sites it can release at any time, and your personal H\u2082S monitor is often the difference between walking off the pad and not.", "id": "h-s-is-invisible-fast-and-deadly-hydrogen-sulfide-is-a-gas-y", "audio": "audio/h-s-is-invisible-fast-and-deadly-hydrogen-sulfide-is-a-gas-y.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "Where Refresh runs into H\u2082S", "body": "", "bullets": ["Registered sour gas pads where H\u2082S can release at any time", "Well-heads, separators, and tanks during sampling or chemical injection", "Low-lying or enclosed spots where the gas can collect"], "audio_text": "Where Refresh runs into H\u2082S Registered sour gas pads where H\u2082S can release at any time Well-heads, separators, and tanks during sampling or chemical injection Low-lying or enclosed spots where the gas can collect", "id": "where-refresh-runs-into-h-s-registered-sour-gas-pads-where-h", "audio": "audio/where-refresh-runs-into-h-s-registered-sour-gas-pads-where-h.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "Why your nose is not enough", "body": "", "bullets": ["H\u2082S smells like rotten eggs at low concentrations", "Around 100 ppm it deadens your sense of smell \u2014 the odour fades", "At high concentrations you smell nothing at all", "Your monitor detects H\u2082S before it reaches dangerous levels \u2014 but only if it works"], "audio_text": "Why your nose is not enough H\u2082S smells like rotten eggs at low concentrations Around 100 ppm it deadens your sense of smell \u2014 the odour fades At high concentrations you smell nothing at all Your monitor detects H\u2082S before it reaches dangerous levels \u2014 but only if it works", "id": "why-your-nose-is-not-enough-h-s-smells-like-rotten-eggs-at-l", "audio": "audio/why-your-nose-is-not-enough-h-s-smells-like-rotten-eggs-at-l.mp3"}, {"kind": "block", "section_idx": 0, "section_title": "Why this matters", "eyebrow": "Section 1 \u2014 Why", "accent": "amber", "heading": "This is a refresher, not H\u2082S Alive", "body": "This module is a refresher on the one piece of gear you must trust every shift \u2014 your monitor. It does not replace the H\u2082S Alive certification from Energy Safety Canada.", "bullets": null, "audio_text": "This is a refresher, not H\u2082S Alive This module is a refresher on the one piece of gear you must trust every shift \u2014 your monitor. It does not replace the H\u2082S Alive certification from Energy Safety Canada.", "id": "this-is-a-refresher-not-h-s-alive-this-module-is-a-refresher", "audio": "audio/this-is-a-refresher-not-h-s-alive-this-module-is-a-refresher.mp3"}, {"kind": "section_intro", "section_idx": 1, "section_title": "What H\u2082S is", "title": "What H\u2082S is", "eyebrow": "Section 2 \u2014 What", "icon": "book", "accent": "blue", "subtitle": "", "audio_text": "What H\u2082S is.", "id": "what-h-s-is", "audio": "audio/what-h-s-is.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "What H\u2082S is", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "A toxic gas in sour gas operations", "body": "Hydrogen sulfide (H\u2082S) is a colourless, flammable, highly toxic gas. It is the \"sour\" in sour gas and is present at the registered pads where Refresh works.", "bullets": null, "audio_text": "A toxic gas in sour gas operations Hydrogen sulfide (H\u2082S) is a colourless, flammable, highly toxic gas. It is the \"sour\" in sour gas and is present at the registered pads where Refresh works.", "id": "a-toxic-gas-in-sour-gas-operations-hydrogen-sulfide-h-s-is-a", "audio": "audio/a-toxic-gas-in-sour-gas-operations-hydrogen-sulfide-h-s-is-a.mp3"}, {"kind": "block", "section_idx": 1, "section_title": "What H\u2082S is", "eyebrow": "Section 2 \u2014 What", "accent": "blue", "heading": "What makes it dangerous", "body": "", "bullets": ["Invisible \u2014 you cannot see it coming", "Fast-acting \u2014 high concentrations affect you within a breath or two", "Heavier than air \u2014 it settles into low or enclosed areas", "Deadens smell \u2014 you cannot rely on the rotten-egg odour to warn you"], "audio_text": "What makes it dangerous Invisible \u2014 you cannot see it coming Fast-acting \u2014 high concentrations affect you within a breath or two Heavier than air \u2014 it settles into low or enclosed areas Deadens smell \u2014 you cannot rely on the rotten-egg odour to warn you", "id": "what-makes-it-dangerous-invisible-you-cannot-see-it-coming-f", "audio": "audio/what-makes-it-dangerous-invisible-you-cannot-see-it-coming-f.mp3"}, {"kind": "section_intro", "section_idx": 2, "section_title": "Health effects by concentration", "title": "Health effects by concentration", "eyebrow": "Section 2 \u2014 What", "icon": "alert", "accent": "red", "subtitle": "", "audio_text": "Health effects by concentration.", "id": "health-effects-by-concentration", "audio": "audio/health-effects-by-concentration.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Health effects by concentration", "eyebrow": "Section 2 \u2014 What", "accent": "red", "heading": "The higher the concentration, the faster it hurts you", "body": "H\u2082S effects climb sharply with concentration. The numbers below are why we leave the area early instead of waiting to feel symptoms.", "bullets": null, "audio_text": "The higher the concentration, the faster it hurts you H\u2082S effects climb sharply with concentration. The numbers below are why we leave the area early instead of waiting to feel symptoms.", "id": "the-higher-the-concentration-the-faster-it-hurts-you-h-s-eff", "audio": "audio/the-higher-the-concentration-the-faster-it-hurts-you-h-s-eff.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Health effects by concentration", "eyebrow": "Section 2 \u2014 What", "accent": "red", "heading": "What happens as ppm rises", "body": "", "bullets": ["0.01\u20130.13 ppm \u2014 rotten-egg smell is first detectable", "Around 100 ppm \u2014 H\u2082S deadens your sense of smell; you can no longer rely on odour", "Around 500 ppm \u2014 one or two breaths can cause unconsciousness", "Around 1000 ppm \u2014 instant collapse"], "audio_text": "What happens as ppm rises 0.01\u20130.13 ppm \u2014 rotten-egg smell is first detectable Around 100 ppm \u2014 H\u2082S deadens your sense of smell; you can no longer rely on odour Around 500 ppm \u2014 one or two breaths can cause unconsciousness Around 1000 ppm \u2014 instant collapse", "id": "what-happens-as-ppm-rises-0-01-0-13-ppm-rotten-egg-smell-is-", "audio": "audio/what-happens-as-ppm-rises-0-01-0-13-ppm-rotten-egg-smell-is-.mp3"}, {"kind": "block", "section_idx": 2, "section_title": "Health effects by concentration", "eyebrow": "Section 2 \u2014 What", "accent": "red", "heading": "The takeaway", "body": "By the time you feel the worst effects it is already too late. The monitor and the exposure limits exist to get you out long before you reach these levels.", "bullets": null, "audio_text": "The takeaway By the time you feel the worst effects it is already too late. The monitor and the exposure limits exist to get you out long before you reach these levels.", "id": "the-takeaway-by-the-time-you-feel-the-worst-effects-it-is-al", "audio": "audio/the-takeaway-by-the-time-you-feel-the-worst-effects-it-is-al.mp3"}, {"kind": "section_intro", "section_idx": 3, "section_title": "The BC exposure limits", "title": "The BC exposure limits", "eyebrow": "Section 2 \u2014 What", "icon": "shield", "accent": "darkblue", "subtitle": "", "audio_text": "The BC exposure limits.", "id": "the-bc-exposure-limits", "audio": "audio/the-bc-exposure-limits.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "The BC exposure limits", "eyebrow": "Section 2 \u2014 What", "accent": "darkblue", "heading": "BC uses a ceiling limit for H\u2082S", "body": "In BC the exposure limit for H\u2082S is a 10 ppm ceiling. A ceiling means it must not be exceeded at any time \u2014 not an average over the shift.", "bullets": null, "audio_text": "BC uses a ceiling limit for H\u2082S In BC the exposure limit for H\u2082S is a 10 ppm ceiling. A ceiling means it must not be exceeded at any time \u2014 not an average over the shift.", "id": "bc-uses-a-ceiling-limit-for-h-s-in-bc-the-exposure-limit-for", "audio": "audio/bc-uses-a-ceiling-limit-for-h-s-in-bc-the-exposure-limit-for.mp3"}, {"kind": "block", "section_idx": 3, "section_title": "The BC exposure limits", "eyebrow": "Section 2 \u2014 What", "accent": "darkblue", "heading": "Two numbers to remember", "body": "", "bullets": ["10 ppm ceiling \u2014 must never be exceeded; above this you leave the area", "5 ppm action level \u2014 the point where you act before the ceiling is reached", "These set points are also why the monitor alarms at 5 and 10 ppm"], "audio_text": "Two numbers to remember 10 ppm ceiling \u2014 must never be exceeded; above this you leave the area 5 ppm action level \u2014 the point where you act before the ceiling is reached These set points are also why the monitor alarms at 5 and 10 ppm", "id": "two-numbers-to-remember-10-ppm-ceiling-must-never-be-exceede", "audio": "audio/two-numbers-to-remember-10-ppm-ceiling-must-never-be-exceede.mp3"}, {"kind": "section_intro", "section_idx": 4, "section_title": "Quick check \u2014 H\u2082S basics", "title": "Quick check \u2014 H\u2082S basics", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 H\u2082S basics.", "id": "quick-check-h-s-basics", "audio": "audio/quick-check-h-s-basics.mp3"}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 H\u2082S basics", "key": "4-0", "q": {"q": "Why can't you rely on smell to warn you about H\u2082S?", "options": ["H\u2082S has no smell at any concentration", "Around 100 ppm it deadens your sense of smell, and at high levels you smell nothing", "The smell only appears after you've been exposed for an hour"], "correct": 1, "why": "H\u2082S is detectable by smell at low levels, but around 100 ppm it paralyzes your sense of smell. At lethal concentrations you smell nothing \u2014 so the monitor, not your nose, is the warning."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 H\u2082S basics", "key": "4-1", "q": {"q": "What is the BC exposure limit for H\u2082S?", "options": ["A 100 ppm 8-hour average", "A 10 ppm ceiling that must not be exceeded at any time", "There is no BC limit for H\u2082S"], "correct": 1, "why": "BC uses a 10 ppm ceiling limit. A ceiling must never be exceeded \u2014 it is not an average over the shift."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 4, "section_title": "Quick check \u2014 H\u2082S basics", "key": "4-2", "q": {"q": "What does the 5 ppm action level mean?", "options": ["The level where it is safe to keep working", "The point where you act before the 10 ppm ceiling is reached", "The level at which H\u2082S becomes flammable"], "correct": 1, "why": "5 ppm is the action level \u2014 the point to take action before exposure climbs to the 10 ppm ceiling. It is also the monitor's low-alarm set point."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 5, "section_title": "Your personal H\u2082S monitor", "title": "Your personal H\u2082S monitor", "eyebrow": "Section 3 \u2014 How", "icon": "wrench", "accent": "blue", "subtitle": "", "audio_text": "Your personal H\u2082S monitor.", "id": "your-personal-h-s-monitor", "audio": "audio/your-personal-h-s-monitor.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Your personal H\u2082S monitor", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "A chemical sensor you wear", "body": "Your monitor is a chemical sensor that detects H\u2082S before it reaches dangerous levels. Most Refresh units are 4-gas monitors.", "bullets": null, "audio_text": "A chemical sensor you wear Your monitor is a chemical sensor that detects H\u2082S before it reaches dangerous levels. Most Refresh units are 4-gas monitors.", "id": "a-chemical-sensor-you-wear-your-monitor-is-a-chemical-sensor", "audio": "audio/a-chemical-sensor-you-wear-your-monitor-is-a-chemical-sensor.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Your personal H\u2082S monitor", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "What a 4-gas monitor detects", "body": "", "bullets": ["H\u2082S \u2014 hydrogen sulfide", "CO \u2014 carbon monoxide", "O\u2082 \u2014 oxygen level", "LEL \u2014 combustible gases (lower explosive limit)"], "audio_text": "What a 4-gas monitor detects H\u2082S \u2014 hydrogen sulfide CO \u2014 carbon monoxide O\u2082 \u2014 oxygen level LEL \u2014 combustible gases (lower explosive limit)", "id": "what-a-4-gas-monitor-detects-h-s-hydrogen-sulfide-co-carbon-", "audio": "audio/what-a-4-gas-monitor-detects-h-s-hydrogen-sulfide-co-carbon-.mp3"}, {"kind": "block", "section_idx": 5, "section_title": "Your personal H\u2082S monitor", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "H\u2082S alarm set points", "body": "", "bullets": ["Low alarm \u2014 typically 5 ppm (the action level)", "High alarm \u2014 typically 10 ppm (the ceiling limit)", "Both alarms must work \u2014 that is what the bump test confirms"], "audio_text": "H\u2082S alarm set points Low alarm \u2014 typically 5 ppm (the action level) High alarm \u2014 typically 10 ppm (the ceiling limit) Both alarms must work \u2014 that is what the bump test confirms", "id": "h-s-alarm-set-points-low-alarm-typically-5-ppm-the-action-le", "audio": "audio/h-s-alarm-set-points-low-alarm-typically-5-ppm-the-action-le.mp3"}, {"kind": "section_intro", "section_idx": 6, "section_title": "Bump test vs. calibration", "title": "Bump test vs. calibration", "eyebrow": "Section 3 \u2014 How", "icon": "beaker", "accent": "purple", "subtitle": "", "audio_text": "Bump test vs. calibration.", "id": "bump-test-vs-calibration", "audio": "audio/bump-test-vs-calibration.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Bump test vs. calibration", "eyebrow": "Section 3 \u2014 How", "accent": "purple", "heading": "Bump test (function test)", "body": "A bump test briefly exposes the monitor to a known concentration of test gas to verify the sensor reads gas AND the alarms sound. It is required before each shift of use per most manufacturers and most oil-and-gas client requirements.", "bullets": null, "audio_text": "Bump test (function test) A bump test briefly exposes the monitor to a known concentration of test gas to verify the sensor reads gas AND the alarms sound. It is required before each shift of use per most manufacturers and most oil-and-gas client requirements.", "id": "bump-test-function-test-a-bump-test-briefly-exposes-the-moni", "audio": "audio/bump-test-function-test-a-bump-test-briefly-exposes-the-moni.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Bump test vs. calibration", "eyebrow": "Section 3 \u2014 How", "accent": "purple", "heading": "Calibration", "body": "Calibration is a full adjustment of the sensor reading against a certified gas standard. It is done by a qualified person, typically every 6 months per the manufacturer.", "bullets": null, "audio_text": "Calibration Calibration is a full adjustment of the sensor reading against a certified gas standard. It is done by a qualified person, typically every 6 months per the manufacturer.", "id": "calibration-calibration-is-a-full-adjustment-of-the-sensor-r", "audio": "audio/calibration-calibration-is-a-full-adjustment-of-the-sensor-r.mp3"}, {"kind": "block", "section_idx": 6, "section_title": "Bump test vs. calibration", "eyebrow": "Section 3 \u2014 How", "accent": "purple", "heading": "Sensors do not last forever", "body": "", "bullets": ["Sensors degrade over time", "A typical H\u2082S sensor lifespan is about 2 years", "A monitor that fails its bump test goes out of service \u2014 swap the unit"], "audio_text": "Sensors do not last forever Sensors degrade over time A typical H\u2082S sensor lifespan is about 2 years A monitor that fails its bump test goes out of service \u2014 swap the unit", "id": "sensors-do-not-last-forever-sensors-degrade-over-time-a-typi", "audio": "audio/sensors-do-not-last-forever-sensors-degrade-over-time-a-typi.mp3"}, {"kind": "section_intro", "section_idx": 7, "section_title": "The bump test, step by step", "title": "The bump test, step by step", "eyebrow": "Section 3 \u2014 How", "icon": "clipboard", "accent": "blue", "subtitle": "", "audio_text": "The bump test, step by step.", "id": "the-bump-test-step-by-step", "audio": "audio/the-bump-test-step-by-step.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "The bump test, step by step", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Before you power on", "body": "", "bullets": ["Visual inspection \u2014 case undamaged, sensors clean, clip secure, screen readable", "Battery check \u2014 fully charged, or replaceable batteries fresh"], "audio_text": "Before you power on Visual inspection \u2014 case undamaged, sensors clean, clip secure, screen readable Battery check \u2014 fully charged, or replaceable batteries fresh", "id": "before-you-power-on-visual-inspection-case-undamaged-sensors", "audio": "audio/before-you-power-on-visual-inspection-case-undamaged-sensors.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "The bump test, step by step", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Power on and test", "body": "", "bullets": ["Power on and wait for the self-test (zero-cal, sensor warm-up, all 4 gases display)", "Connect calibration gas (typical: 25 ppm H\u2082S, 200 ppm CO, 18% O\u2082, 50% LEL methane) for about 30 seconds", "Confirm both the LOW and HIGH H\u2082S alarms trigger"], "audio_text": "Power on and test Power on and wait for the self-test (zero-cal, sensor warm-up, all 4 gases display) Connect calibration gas (typical: 25 ppm H\u2082S, 200 ppm CO, 18% O\u2082, 50% LEL methane) for about 30 seconds Confirm both the LOW and HIGH H\u2082S alarms trigger", "id": "power-on-and-test-power-on-and-wait-for-the-self-test-zero-c", "audio": "audio/power-on-and-test-power-on-and-wait-for-the-self-test-zero-c.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "The bump test, step by step", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "Document and wear it right", "body": "", "bullets": ["Record the date, time, monitor serial number, and your initials", "A failed bump test means the monitor is out of service \u2014 swap the unit", "Wear it in your breathing zone \u2014 collar, lapel, or hard-hat strap", "Not in your pocket, not on your belt facing down"], "audio_text": "Document and wear it right Record the date, time, monitor serial number, and your initials A failed bump test means the monitor is out of service \u2014 swap the unit Wear it in your breathing zone \u2014 collar, lapel, or hard-hat strap Not in your pocket, not on your belt facing down", "id": "document-and-wear-it-right-record-the-date-time-monitor-seri", "audio": "audio/document-and-wear-it-right-record-the-date-time-monitor-seri.mp3"}, {"kind": "block", "section_idx": 7, "section_title": "The bump test, step by step", "eyebrow": "Section 3 \u2014 How", "accent": "blue", "heading": "End of shift", "body": "Turn the monitor off, put it on charge, and log it so it is ready for the next shift.", "bullets": null, "audio_text": "End of shift Turn the monitor off, put it on charge, and log it so it is ready for the next shift.", "id": "end-of-shift-turn-the-monitor-off-put-it-on-charge-and-log-i", "audio": "audio/end-of-shift-turn-the-monitor-off-put-it-on-charge-and-log-i.mp3"}, {"kind": "section_intro", "section_idx": 8, "section_title": "Quick check \u2014 Your monitor", "title": "Quick check \u2014 Your monitor", "eyebrow": "Knowledge check", "icon": "clipboard", "accent": "green", "subtitle": "", "audio_text": "Quick check \u2014 Your monitor.", "id": "quick-check-your-monitor", "audio": "audio/quick-check-your-monitor.mp3"}, {"kind": "midcheck_q", "section_idx": 8, "section_title": "Quick check \u2014 Your monitor", "key": "8-0", "q": {"q": "How often must you bump test your personal H\u2082S monitor?", "options": ["Once a month", "Once a year, when the calibration is done", "Before each shift of use"], "correct": 2, "why": "Most manufacturers and oil-and-gas client procedures require a bump test before each shift of use. It confirms the sensor reads gas and the alarms sound."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 8, "section_title": "Quick check \u2014 Your monitor", "key": "8-1", "q": {"q": "What is the difference between a bump test and calibration?", "options": ["They are two names for the same thing", "A bump test checks the sensor and alarms work; calibration is a full sensor adjustment to a certified gas standard", "A bump test is done by a technician; calibration is done daily by the worker"], "correct": 1, "why": "A bump test is a quick function check you do before your shift. Calibration is a full adjustment against a certified gas standard, done by a qualified person, typically every 6 months."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "midcheck_q", "section_idx": 8, "section_title": "Quick check \u2014 Your monitor", "key": "8-2", "q": {"q": "Where on your body should you wear the monitor?", "options": ["In your back pocket where it won't get caught", "On your belt with the screen facing down", "In your breathing zone \u2014 collar, lapel, or hard-hat strap"], "correct": 2, "why": "H\u2082S accumulates near where you breathe. The monitor must be in your breathing zone to give an accurate reading \u2014 not in a pocket or facing down on your belt."}, "audio_text": "", "id": "slide", "audio": ""}, {"kind": "section_intro", "section_idx": 9, "section_title": "When the alarm sounds", "title": "When the alarm sounds", "eyebrow": "Section 4 \u2014 What if it goes wrong?", "icon": "alert", "accent": "red", "subtitle": "", "audio_text": "When the alarm sounds.", "id": "when-the-alarm-sounds", "audio": "audio/when-the-alarm-sounds.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "When the alarm sounds", "eyebrow": "Section 4 \u2014 What if it goes wrong?", "accent": "red", "heading": "Do not investigate the source", "body": "Once the monitor alarms, the atmosphere is unsafe by definition. Never go toward a gas alarm to find the leak or try to fix it.", "bullets": null, "audio_text": "Do not investigate the source Once the monitor alarms, the atmosphere is unsafe by definition. Never go toward a gas alarm to find the leak or try to fix it.", "id": "do-not-investigate-the-source-once-the-monitor-alarms-the-at", "audio": "audio/do-not-investigate-the-source-once-the-monitor-alarms-the-at.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "When the alarm sounds", "eyebrow": "Section 4 \u2014 What if it goes wrong?", "accent": "red", "heading": "What to do, in order", "body": "", "bullets": ["Evacuate upwind, away from the release", "Account for your crew at the muster point", "Call the operator or supervisor to report the leak", "Do not re-enter until the area is ventilated, monitored, and confirmed clear"], "audio_text": "What to do, in order Evacuate upwind, away from the release Account for your crew at the muster point Call the operator or supervisor to report the leak Do not re-enter until the area is ventilated, monitored, and confirmed clear", "id": "what-to-do-in-order-evacuate-upwind-away-from-the-release-ac", "audio": "audio/what-to-do-in-order-evacuate-upwind-away-from-the-release-ac.mp3"}, {"kind": "block", "section_idx": 9, "section_title": "When the alarm sounds", "eyebrow": "Section 4 \u2014 What if it goes wrong?", "accent": "red", "heading": "Your right to refuse", "body": "If you are directed back into an area where H\u2082S is above the limit, you have the right to refuse unsafe work under BC OHS Regulation s. 3.12. Pressure to \"just finish\" is not lawful direction when the ceiling is exceeded.", "bullets": null, "audio_text": "Your right to refuse If you are directed back into an area where H\u2082S is above the limit, you have the right to refuse unsafe work under BC OHS Regulation s. 3.12. Pressure to \"just finish\" is not lawful direction when the ceiling is exceeded.", "id": "your-right-to-refuse-if-you-are-directed-back-into-an-area-w", "audio": "audio/your-right-to-refuse-if-you-are-directed-back-into-an-area-w.mp3"}, {"kind": "section_intro", "section_idx": 10, "section_title": "Real Refresh scenarios", "title": "Real Refresh scenarios", "eyebrow": "Section 4 \u2014 What if it goes wrong?", "icon": "alert", "accent": "amber", "subtitle": "One right answer for each. Read the situation, think, then check.", "audio_text": "Real Refresh scenarios. One right answer for each. Read the situation, think, then check.", "id": "real-refresh-scenarios-one-right-answer-for-each-read-the-si", "audio": "audio/real-refresh-scenarios-one-right-answer-for-each-read-the-si.mp3"}, {"kind": "scenario", "section_idx": 10, "section_title": "Real Refresh scenarios", "scenario": {"title": "Scenario 1 \u2014 Low alarm at the well-head", "situation": "You're sampling at a well-head. Your personal monitor goes into LOW alarm \u2014 H\u2082S at 5 ppm. The crew chief says, \"Just finish the sample, it's a small leak.\"", "question": "What do you do?", "answer_headline": "Stop. The alarm is the action level, not the safe level.", "bullets": ["Stop work \u2014 5 ppm is the action level, not a level to keep working at", "Move upwind to your muster point and take other workers with you", "Account for the crew and call the operator or supervisor to report the leak", "Do not re-enter to finish the sample until the area is ventilated, monitored, and confirmed clear", "The crew chief's pressure is not lawful direction \u2014 your right to refuse (s. 3.12) covers this", "In an unknown leak the concentration can climb fast \u2014 trust your monitor"]}, "audio_text": "Scenario 1 \u2014 Low alarm at the well-head. You're sampling at a well-head. Your personal monitor goes into LOW alarm \u2014 H\u2082S at 5 ppm. The crew chief says, \"Just finish the sample, it's a small leak.\" What do you do? The right answer: Stop. The alarm is the action level, not the safe level.", "id": "scenario-1-low-alarm-at-the-well-head-you-re-sampling-at-a-w", "audio": "audio/scenario-1-low-alarm-at-the-well-head-you-re-sampling-at-a-w.mp3"}, {"kind": "scenario", "section_idx": 10, "section_title": "Real Refresh scenarios", "scenario": {"title": "Scenario 2 \u2014 Failed bump test", "situation": "It's the start of your shift. You run the bump test and the HIGH H\u2082S alarm does not trigger when you apply the test gas.", "question": "Can you take this monitor out to the pad?", "answer_headline": "No. A failed bump test means out of service.", "bullets": ["A monitor that fails its bump test goes out of service immediately", "Tag it and swap it for a unit that passes", "Do not adjust your own reading \u2014 calibration is a qualified person's job", "A monitor that won't alarm cannot protect you, no matter how good it looks"]}, "audio_text": "Scenario 2 \u2014 Failed bump test. It's the start of your shift. You run the bump test and the HIGH H\u2082S alarm does not trigger when you apply the test gas. Can you take this monitor out to the pad? The right answer: No. A failed bump test means out of service.", "id": "scenario-2-failed-bump-test-it-s-the-start-of-your-shift-you", "audio": "audio/scenario-2-failed-bump-test-it-s-the-start-of-your-shift-you.mp3"}, {"kind": "scenario", "section_idx": 10, "section_title": "Real Refresh scenarios", "scenario": {"title": "Scenario 3 \u2014 No smell, but you're at a sour pad", "situation": "You're working a registered sour gas pad. You don't smell rotten eggs, so a co-worker says the air is fine and there's no need to wear the monitor on your collar.", "question": "Do you trust the lack of smell?", "answer_headline": "No. Smell is not a reliable indicator.", "bullets": ["Around 100 ppm H\u2082S deadens your sense of smell \u2014 no odour does not mean no gas", "At high concentrations you smell nothing at all", "Keep the monitor on, in your breathing zone, every time you're on the pad", "The monitor detects H\u2082S before it reaches dangerous levels \u2014 your nose does not"]}, "audio_text": "Scenario 3 \u2014 No smell, but you're at a sour pad. You're working a registered sour gas pad. You don't smell rotten eggs, so a co-worker says the air is fine and there's no need to wear the monitor on your collar. Do you trust the lack of smell? The right answer: No. Smell is not a reliable indicator.", "id": "scenario-3-no-smell-but-you-re-at-a-sour-pad-you-re-working-", "audio": "audio/scenario-3-no-smell-but-you-re-at-a-sour-pad-you-re-working-.mp3"}, {"kind": "scenario", "section_idx": 10, "section_title": "Real Refresh scenarios", "scenario": {"title": "Scenario 4 \u2014 Monitor left in the truck", "situation": "You're heading out for a quick chemical top-up and realize you left your monitor charging in the truck. It's only a five-minute job at the tank.", "question": "Do you do the job without it?", "answer_headline": "No. Go back and get the monitor.", "bullets": ["H\u2082S can release at any time \u2014 a short job is still an exposure risk", "Retrieve the monitor and confirm it passed its bump test for the shift", "Wear it in your breathing zone before you approach the tank", "A five-minute job is not worth being unprotected at a sour gas site"]}, "audio_text": "Scenario 4 \u2014 Monitor left in the truck. You're heading out for a quick chemical top-up and realize you left your monitor charging in the truck. It's only a five-minute job at the tank. Do you do the job without it? The right answer: No. Go back and get the monitor.", "id": "scenario-4-monitor-left-in-the-truck-you-re-heading-out-for-", "audio": "audio/scenario-4-monitor-left-in-the-truck-you-re-heading-out-for-.mp3"}];  // expanded list of slides — one entry per visible slide
+
+// Apply brand CSS variables
+const r = document.documentElement;
+r.style.setProperty('--brand-primary', BRAND.colors.primary);
+r.style.setProperty('--brand-primary-dark', BRAND.colors.primary_dark);
+r.style.setProperty('--brand-navy', BRAND.colors.navy);
+r.style.setProperty('--brand-darkblue', BRAND.colors.darkblue);
+r.style.setProperty('--brand-accent', BRAND.colors.accent);
+r.style.setProperty('--brand-red', BRAND.colors.red);
+r.style.setProperty('--brand-green', BRAND.colors.green);
+r.style.setProperty('--brand-purple', BRAND.colors.purple);
+document.title = (CONTENT.meta.topic || 'Training') + ' — ' + BRAND.client_name;
+
+const ACCENTS = { blue: BRAND.colors.primary, amber: BRAND.colors.accent, red: BRAND.colors.red, green: BRAND.colors.green, purple: BRAND.colors.purple, darkblue: BRAND.colors.darkblue };
+const ICONS = {
+  alert: '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-20H6.5A2.5 2.5 0 004 4.5v15z"/>',
+  users: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z"/>',
+  video: '<path d="M23 7l-7 5 7 5V7zM14 5H3a2 2 0 00-2 2v10a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2z"/>',
+  flask: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6"/>',
+  tag: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>',
+  file: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/>',
+  beaker: '<path d="M9 2v6L4 18a2 2 0 002 2h12a2 2 0 002-2L15 8V2M9 2h6M6 14h12"/>',
+  wrench: '<path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>',
+  clipboard: '<path d="M9 2h6a2 2 0 012 2v2H7V4a2 2 0 012-2zM5 6h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  award: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>',
+  shieldcheck: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'
+};
+
+let state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+
+function svg(path, color) { return '<svg viewBox="0 0 24 24" fill="none" stroke="' + (color || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + path + '</svg>'; }
+function escapeHtml(s) { if (s == null) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  state.screen = name;
+  // Pause any playing audio when changing screens
+  const aud = document.getElementById('slide-audio');
+  if (aud) { aud.pause(); aud.currentTime = 0; }
+}
+
+function renderIntroMeta() {
+  document.getElementById('brand-eyebrow').textContent = BRAND.tagline || (BRAND.client_name + ' E-LEARNING');
+  document.getElementById('module-code').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' · ' + CONTENT.meta.version : '');
+  document.getElementById('intro-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('intro-subtitle').textContent = CONTENT.meta.subtitle || '';
+  document.getElementById('topbar-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('quiz-topic').textContent = CONTENT.meta.topic || 'Training';
+  document.getElementById('r-module').textContent = (CONTENT.meta.code || '') + (CONTENT.meta.version ? ' ' + CONTENT.meta.version : '');
+  document.getElementById('result-footer').textContent = CONTENT.meta.regulation_alignment ? 'Aligned with ' + CONTENT.meta.regulation_alignment : '';
+
+  const pills = [
+    { icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', label: 'Duration', value: CONTENT.meta.duration || '~30 min' },
+    { icon: '<circle cx="12" cy="8" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/>', label: 'Pass mark', value: (CONTENT.meta.pass_mark_pct || 70) + '%' },
+    { icon: '<path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>', label: 'Slides', value: SLIDES.length },
+    { icon: '<path d="M11 5L6 9H2v6h4l5 4V5zM19.07 4.93a10 10 0 010 14.14"/>', label: 'Audio', value: SLIDES.some(s => s.audio) ? 'Voiceover' : 'Read-only' }
+  ];
+  document.getElementById('meta-grid').innerHTML = pills.map(p => '<div class="meta-pill"><div class="icon">' + svg(p.icon) + '</div><div><div class="label">' + escapeHtml(p.label) + '</div><div class="value">' + escapeHtml(p.value) + '</div></div></div>').join('');
+
+  document.getElementById('learning-objectives').innerHTML = (CONTENT.meta.what_you_will_learn || []).map(o => '<li>' + escapeHtml(o) + '</li>').join('');
+  document.getElementById('footer-tracking-note').textContent = trackingEnabled() ? 'Your completion will be recorded with ' + BRAND.client_short + '.' : 'Print or save your certificate when you finish.';
+}
+
+function renderSlide() {
+  const slide = SLIDES[state.slideIdx];
+  if (!slide) return;
+  const total = SLIDES.length, progress = ((state.slideIdx + 1) / (total + 1)) * 100;
+
+  document.getElementById('slide-counter').textContent = slide.section_title || '';
+  document.getElementById('progress-pct').textContent = (state.slideIdx + 1) + ' / ' + total;
+  document.getElementById('progress-fill').style.width = progress + '%';
+
+  let html = '';
+  const slideKind = slide.kind;
+  if (slideKind === 'section_intro') html = renderSectionIntro(slide);
+  else if (slideKind === 'block') html = renderBlockSlide(slide);
+  else if (slideKind === 'video') html = renderVideoSlide(slide);
+  else if (slideKind === 'pictograms') html = renderPictogramsSlide(slide);
+  else if (slideKind === 'chemcard') html = renderChemCardSlide(slide);
+  else if (slideKind === 'scenario') html = renderScenarioSlide(slide);
+  else if (slideKind === 'midcheck_q') html = renderMidCheckQSlide(slide);
+
+  document.getElementById('slide-body').innerHTML = html;
+  attachMidCheckHandlers();
+
+  // Audio — autoplay each slide's narration. Browsers permit this after the learner's
+  // first interaction (Begin / Continue clicks); if blocked, the visible Play control still works.
+  const audioEl = document.getElementById('slide-audio');
+  const audioContainer = document.getElementById('audio-container');
+  if (slide.audio) {
+    audioEl.src = slide.audio;
+    audioContainer.classList.remove('empty');
+    audioEl.currentTime = 0;
+    const _p = audioEl.play();
+    if (_p && _p.catch) _p.catch(() => {});
+  } else {
+    audioEl.removeAttribute('src');
+    audioContainer.classList.add('empty');
+  }
+
+  // Nav
+  document.getElementById('btn-prev').disabled = state.slideIdx === 0;
+  const isLast = state.slideIdx === total - 1;
+  document.getElementById('btn-next').innerHTML = (isLast ? 'Final quiz' : 'Continue') + ' <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+
+  // Scroll the slide content area to top
+  const sc = document.querySelector('#screen-learn .slide-content');
+  if (sc) sc.scrollTop = 0;
+}
+
+function renderSectionIntro(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="section-intro"><div class="icon-big" style="background:' + ac + '">' + svg(ICONS[slide.icon] || ICONS.book, '#fff') + '</div>' +
+    '<div class="eyebrow-text" style="color:' + ac + '">' + escapeHtml(slide.eyebrow || '') + '</div>' +
+    '<h2>' + escapeHtml(slide.title) + '</h2>' +
+    (slide.subtitle ? '<p class="subtitle">' + escapeHtml(slide.subtitle) + '</p>' : '') + '</div>';
+}
+
+function renderBlockSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    (slide.eyebrow ? '<div class="block-eyebrow" style="color:' + ac + '">' + escapeHtml(slide.eyebrow) + '</div>' : '') +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading) + '</h3>' +
+    (slide.body ? '<p class="block-body">' + escapeHtml(slide.body) + '</p>' : '') +
+    (slide.bullets ? '<ul class="block-bullets">' + slide.bullets.map(bl => '<li><svg viewBox="0 0 24 24" style="color:' + ac + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg><span>' + escapeHtml(bl) + '</span></li>').join('') + '</ul>' : '') + '</div>';
+}
+
+function renderVideoSlide(slide) {
+  const url = slide.video_url || '#';
+  return '<div class="video-card"><div class="video-thumb"><div class="video-play-btn" onclick="window.open(' + JSON.stringify(url) + ', \'_blank\', \'noopener\')"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div><h3>' + escapeHtml(slide.video_title || '') + '</h3><p>' + escapeHtml(slide.video_source || '') + ' · ' + escapeHtml(slide.video_duration || '') + '</p></div><div class="video-action"><div class="video-action-info"><strong>Click to watch</strong><span>Opens in a new tab</span></div><a href="' + escapeHtml(url) + '" target="_blank" rel="noopener" class="btn-yt">Watch on YouTube <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg></a></div></div>';
+}
+
+function renderPictogramsSlide(slide) {
+  const ac = ACCENTS[slide.accent] || ACCENTS.blue;
+  return '<div class="block-card">' +
+    '<h3 class="block-heading"><span class="block-accent" style="background:' + ac + '"></span>' + escapeHtml(slide.heading || 'Pictograms') + '</h3>' +
+    (slide.intro ? '<p class="block-body">' + escapeHtml(slide.intro) + '</p>' : '') +
+    '<div class="picto-grid">' + slide.items.map(p => '<div class="picto-cell"><img src="' + (p.image_data || p.image || '') + '" alt="' + escapeHtml(p.label) + '"><div class="picto-label">' + escapeHtml(p.label) + '</div><div class="picto-sub">' + escapeHtml(p.sub || '') + '</div></div>').join('') + '</div></div>';
+}
+
+function renderChemCardSlide(slide) {
+  const c = slide.card;
+  const sigColor = c.signal === 'DANGER' ? ACCENTS.red : ACCENTS.amber;
+  const rowColors = { 'EXPOSURE LIMITS': ACCENTS.amber, 'PPE': ACCENTS.blue, 'FIRST AID': ACCENTS.green, 'SPILL': ACCENTS.purple, 'STORAGE': ACCENTS.darkblue };
+  return '<div class="chem-card"><div class="chem-card-header"><div class="chem-pictos-row">' +
+    (c.pictogram_data || []).map(p => '<img src="' + p + '" alt="">').join('') +
+    '<span class="signal-badge" style="background:' + sigColor + '">' + escapeHtml(c.signal || '') + '</span></div>' +
+    '<div class="chem-card-name">' + escapeHtml(c.name) + '</div><div class="chem-card-full">' + escapeHtml(c.full_name || '') + (c.supplier ? ' · ' + escapeHtml(c.supplier) : '') + '</div>' +
+    '<div class="chem-haz">' + escapeHtml(c.hazard_summary || '') + '</div></div>' +
+    (c.rows || []).map(row => {
+      const rc = rowColors[row.label] || ACCENTS.blue;
+      return '<div class="chem-row"><div class="chem-row-label" style="background:' + rc + '">' + escapeHtml(row.label) + '</div><div class="chem-row-items"><ul>' +
+        row.items.map(it => '<li><span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:' + rc + ';margin-top:7px;margin-right:6px;flex-shrink:0;"></span>' + escapeHtml(it) + '</li>').join('') + '</ul></div></div>';
+    }).join('') + '</div>';
+}
+
+function renderScenarioSlide(slide) {
+  const sc = slide.scenario;
+  return '<div class="scenario"><div class="scenario-title">' + escapeHtml(sc.title) + '</div><div class="scenario-grid">' +
+    '<div class="scenario-side scenario-situation"><div class="scenario-eyebrow" style="color:' + ACCENTS.blue + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.blue + '"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Situation</div><p class="scenario-text">' + escapeHtml(sc.situation) + '</p><p class="scenario-question">' + escapeHtml(sc.question) + '</p></div>' +
+    '<div class="scenario-side scenario-answer"><div class="scenario-eyebrow" style="color:' + ACCENTS.green + '"><svg viewBox="0 0 24 24" style="color:' + ACCENTS.green + '"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>Right answer</div><p class="scenario-headline">' + escapeHtml(sc.answer_headline) + '</p><ul class="scenario-bullets">' + (sc.bullets || []).map(b => '<li>' + escapeHtml(b) + '</li>').join('') + '</ul></div></div></div>';
+}
+
+function renderMidCheckQSlide(slide) {
+  const q = slide.q, key = slide.key;
+  const ans = state.midAnswers[key], answered = ans !== undefined;
+  return '<div class="kc-banner"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><p><strong>Quick check.</strong> You\'ll see the answer right away — won\'t count against your final quiz.</p></div>' +
+    '<div class="q-card"><div class="q-text">' + escapeHtml(q.q) + '</div><div class="q-options">' +
+    q.options.map((opt, oi) => {
+      let cls = 'q-option';
+      if (answered) { if (oi === q.correct) cls += ' correct'; else if (ans === oi) cls += ' incorrect'; }
+      const checkSvg = answered && oi === q.correct ? '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>' : '';
+      return '<button class="' + cls + '" data-mid="' + key + '" data-opt="' + oi + '" ' + (answered ? 'disabled' : '') + '><span>' + escapeHtml(opt) + '</span>' + checkSvg + '</button>';
+    }).join('') + '</div>' +
+    (answered ? '<div class="feedback ' + (ans === q.correct ? 'right' : 'wrong') + '"><strong>' + (ans === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+}
+
+function attachMidCheckHandlers() {
+  document.querySelectorAll('[data-mid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.mid, opt = parseInt(btn.dataset.opt);
+      if (state.midAnswers[key] !== undefined) return;
+      state.midAnswers[key] = opt;
+      renderSlide();
+    });
+  });
+}
+
+function renderQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  document.getElementById('quiz-instructions').textContent = quiz.length + ' questions. ' + (CONTENT.meta.pass_mark_pct || 70) + '% to pass (' + passN + '/' + quiz.length + ').';
+  document.getElementById('quiz-questions').innerHTML = quiz.map((q, i) => {
+    return '<div class="quiz-q"><div><span style="font-size:11px;font-weight:700;color:var(--brand-primary);">Q' + (i + 1) + '.</span> <span style="font-weight:600;">' + escapeHtml(q.q) + '</span></div><div class="q-options" style="margin-top:14px;">' +
+      q.options.map((opt, j) => {
+        let cls = 'q-option';
+        if (state.quizSubmitted) { if (j === q.correct) cls += ' correct'; else if (state.quizAnswers[i] === j) cls += ' incorrect'; }
+        else if (state.quizAnswers[i] === j) cls += ' selected';
+        return '<button class="' + cls + '" data-q="' + i + '" data-opt="' + j + '" ' + (state.quizSubmitted ? 'disabled' : '') + '><span class="letter">' + String.fromCharCode(65 + j) + '.</span><span style="flex:1;">' + escapeHtml(opt) + '</span></button>';
+      }).join('') + '</div>' +
+      (state.quizSubmitted && q.why ? '<div class="feedback ' + (state.quizAnswers[i] === q.correct ? 'right' : 'wrong') + '" style="margin-top:12px;"><strong>' + (state.quizAnswers[i] === q.correct ? '✓ Correct.' : '✗ Not quite.') + '</strong> ' + escapeHtml(q.why) + '</div>' : '') + '</div>';
+  }).join('');
+  document.querySelectorAll('#quiz-questions [data-q]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (state.quizSubmitted) return;
+      state.quizAnswers[parseInt(btn.dataset.q)] = parseInt(btn.dataset.opt);
+      renderQuiz();
+      checkQuizComplete();
+    });
+  });
+  checkQuizComplete();
+}
+
+function checkQuizComplete() {
+  const all = (CONTENT.quiz || []).every((_, i) => state.quizAnswers[i] !== undefined);
+  document.getElementById('btn-submit-quiz').disabled = !all;
+}
+
+function submitQuiz() {
+  const quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  let s = 0;
+  quiz.forEach((q, i) => { if (state.quizAnswers[i] === q.correct) s++; });
+  state.score = s; state.passed = s >= passN; state.quizSubmitted = true;
+  renderResult(); showScreen('result');
+  if (trackingEnabled()) sendCompletion();
+}
+
+function renderResult() {
+  const passed = state.passed, quiz = CONTENT.quiz || [];
+  const passN = Math.ceil(quiz.length * (CONTENT.meta.pass_mark_pct || 70) / 100);
+  const pct = Math.round((state.score / quiz.length) * 100);
+  document.querySelector('#screen-result .result-bg').className = 'result-bg ' + (passed ? 'passed' : 'failed');
+  document.getElementById('result-icon').className = 'result-icon ' + (passed ? 'pass' : 'fail');
+  document.getElementById('result-icon').innerHTML = passed ? svg(ICONS.award) : svg('<path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 005.64 5.64L1 10M3.51 15A9 9 0 0018.36 18.36L23 14"/>');
+  document.getElementById('result-title').textContent = passed ? 'Module complete' : 'Not quite there';
+  document.getElementById('result-subtitle').textContent = passed ? 'You have successfully completed this training module.' : 'You need ' + passN + ' out of ' + quiz.length + ' correct to pass. Review and try again.';
+  document.getElementById('r-name').textContent = state.learnerName;
+  document.getElementById('r-employer').textContent = state.employer;
+  document.getElementById('r-score').textContent = state.score + ' / ' + quiz.length + ' (' + pct + '%)';
+  const rResult = document.getElementById('r-result');
+  rResult.textContent = passed ? 'PASSED' : 'FAILED';
+  rResult.style.color = passed ? ACCENTS.green : ACCENTS.amber;
+  document.getElementById('r-date').textContent = new Date().toLocaleString('en-CA');
+  document.getElementById('btn-retry').style.display = passed ? 'none' : 'inline-flex';
+}
+
+function setTrackingStatus(status, msg) {
+  const el = document.getElementById('tracking-status');
+  el.className = 'tracking-status ' + status; el.textContent = msg;
+}
+// Tracking is "enabled" only when real config is present — placeholders (containing "__")
+// leave it disabled so the module still works and just shows the print-certificate note.
+function trackingEnabled() {
+  const t = CONTENT.tracking || {};
+  if (t.provider === 'supabase') {
+    return /^https?:\/\//.test(t.supabase_url || '') && !!t.anon_key && !!t.token &&
+           (t.supabase_url.indexOf('__') === -1) && (String(t.token).indexOf('__') === -1);
+  }
+  return !!t.endpoint && t.endpoint.indexOf('__') === -1;
+}
+function sendCompletion() {
+  const t = CONTENT.tracking || {};
+  const total = (CONTENT.quiz || []).length;
+  const pct = total ? Math.round((state.score / total) * 100) : 0;
+  setTrackingStatus('pending', '⟳ Saving completion record...');
+  if (t.provider === 'supabase') {
+    // Strawboss-compatible path: call a SECURITY DEFINER RPC. The anon key is public by
+    // design; the per-course token scopes what can be written (company + course).
+    const url = t.supabase_url.replace(/\/+$/, '') + '/rest/v1/rpc/submit_course_completion';
+    fetch(url, {
+      method: 'POST',
+      headers: { 'apikey': t.anon_key, 'Authorization': 'Bearer ' + t.anon_key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        p_token: t.token,
+        p_worker_name: state.learnerName,
+        p_worker_email: state.workerEmail || null,
+        p_employer: state.employer,
+        p_score: state.score, p_total: total, p_pct: pct, p_passed: state.passed
+      })
+    }).then(res => {
+      if (res.ok) setTrackingStatus('ok', '✓ Completion recorded.');
+      else setTrackingStatus('fail', '⚠ Could not save record (' + res.status + '). Screenshot this page for your supervisor.');
+    }).catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  } else {
+    // Legacy path: generic endpoint (e.g. Google Apps Script), fire-and-forget.
+    const payload = {
+      module: t.module_id || ((CONTENT.meta.code || '') + ' ' + (CONTENT.meta.version || '')),
+      name: state.learnerName, employer: state.employer,
+      score: state.score, total: total, pct: pct,
+      passed: state.passed, timestamp: new Date().toISOString()
+    };
+    fetch(t.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload), mode: 'no-cors' })
+      .then(() => setTrackingStatus('ok', '✓ Completion record saved.'))
+      .catch(() => setTrackingStatus('fail', '⚠ Could not save record. Screenshot this page for your supervisor.'));
+  }
+}
+
+// Wire up
+function refreshStartButton() {
+  const name = document.getElementById('learner-name').value.trim();
+  const emp = document.getElementById('employer').value.trim();
+  document.getElementById('btn-start').disabled = !(name && emp);
+}
+document.getElementById('learner-name').addEventListener('input', refreshStartButton);
+document.getElementById('employer').addEventListener('input', refreshStartButton);
+document.getElementById('btn-start').addEventListener('click', () => {
+  state.learnerName = document.getElementById('learner-name').value.trim();
+  state.employer = document.getElementById('employer').value.trim();
+  state.slideIdx = 0;
+  showScreen('learn'); renderSlide();
+});
+document.getElementById('btn-prev').addEventListener('click', () => { if (state.slideIdx > 0) { state.slideIdx--; renderSlide(); } });
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (state.slideIdx < SLIDES.length - 1) { state.slideIdx++; renderSlide(); }
+  else { showScreen('quiz'); renderQuiz(); }
+});
+document.getElementById('btn-submit-quiz').addEventListener('click', submitQuiz);
+document.getElementById('btn-retry').addEventListener('click', () => { state.quizAnswers = {}; state.quizSubmitted = false; state.score = 0; showScreen('quiz'); renderQuiz(); });
+document.getElementById('btn-print').addEventListener('click', () => window.print());
+document.getElementById('btn-restart').addEventListener('click', () => {
+  state = { screen: 'intro', slideIdx: 0, learnerName: '', employer: '', midAnswers: {}, quizAnswers: {}, quizSubmitted: false, score: 0, passed: false };
+  document.getElementById('learner-name').value = '';
+  document.getElementById('employer').value = '';
+  refreshStartButton(); showScreen('intro');
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (state.screen !== 'learn') return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); document.getElementById('btn-next').click(); }
+  else if (e.key === 'ArrowLeft') { document.getElementById('btn-prev').click(); }
+});
+
+renderIntroMeta();
+</script>
+</body>
+</html>
